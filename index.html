@@ -266,17 +266,14 @@
                     statusBox.className = 'status-success';
                     statusBox.innerHTML = 'AI đã xử lý xong. Vui lòng kiểm tra lại.';
                     
-                    /* NÂNG CẤP: BỘ LỌC DỌN RÁC AI - Xóa thẳng tay các phần tiêu đề hành chính thừa */
                     let cleanText = result.text;
                     
-                    // 1. Quét tìm cụm từ bắt đầu phần nội dung và chặt đứt khúc trên
                     const matchPattern = /(?:NỘI DUNG CUỘC HỌP|NỘI DUNG VÀ KẾT LUẬN|NỘI DUNG CHÍNH)/i;
                     const markerMatch = cleanText.match(matchPattern);
                     if (markerMatch) {
                         cleanText = cleanText.substring(cleanText.indexOf(markerMatch[0]) + markerMatch[0].length);
                     }
                     
-                    // 2. Dọn các dòng rác hành chính khác (Nếu còn sót)
                     cleanText = cleanText.replace(/Để chuẩn hóa biên bản.*?NĐ-CP.*?\n/ig, '');
                     cleanText = cleanText.replace(/\(Tên cơ quan.*?\)\n/ig, '');
                     cleanText = cleanText.replace(/\*\*?BIÊN BẢN HỌP\*\*?\n?/ig, '');
@@ -388,10 +385,8 @@
                     document.getElementById('recordId').value = dataBlock.id || index;
                 }
 
-                /* NÂNG CẤP: Bóc tách thông minh chống lại các Form rác do AI đẻ ra */
                 let pureContent = fullContent;
                 
-                // Cắt theo các dải ranh giới thường gặp
                 const splitMarkers = [
                     "--- NỘI DUNG VÀ KẾT LUẬN ---",
                     "**NỘI DUNG CUỘC HỌP**",
@@ -408,7 +403,6 @@
                     }
                 }
 
-                // Chặn quét tiếp các nội dung dính rác "Về việc..." nếu AI làm mất ranh giới
                 pureContent = pureContent.replace(/Để chuẩn hóa biên bản.*?NĐ-CP.*?\n/ig, '');
                 pureContent = pureContent.replace(/\(Tên cơ quan.*?\)\n/ig, '');
                 pureContent = pureContent.replace(/Về việc.*?\n/ig, '');
@@ -420,7 +414,6 @@
                 
                 pureContent = pureContent.replace(/^[\s\-=\*_]+/g, '').trim();
 
-                // Đổ dữ liệu chuẩn hóa về đúng vị trí các ô
                 document.getElementById('location').value = extLocation;
                 document.getElementById('attendees').value = extAttendees;
                 document.getElementById('rawContent').value = pureContent;
