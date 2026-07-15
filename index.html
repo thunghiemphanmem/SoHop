@@ -14,9 +14,8 @@
             --text: #1e293b;
             --border: #cbd5e1;
         }
-
         body {
-            font-family: 'Tahoma', Times New Roman, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
@@ -24,7 +23,6 @@
             display: flex;
             justify-content: center;
         }
-
         .container {
             background: var(--card);
             width: 100%;
@@ -34,7 +32,6 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
             box-sizing: border-box;
         }
-
         .header {
             position: sticky;
             top: 0;
@@ -43,170 +40,172 @@
             backdrop-filter: blur(8px);
             text-align: center;
             padding: 5px 0;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             border-bottom: 2px solid var(--primary);
         }
-
         .header img {
             width: 40px;
             height: auto;
         }
-
         .header h1 {
             margin: 0;
             color: var(--primary);
             font-size: 1.2rem;
         }
-
-        .header h2 {
-            display: none;
-        }
-
-        .form-group {
-            margin-bottom: 0.5rem;
-        }
-
-        .form-row {
+        .header h2 { display: none; }
+        
+        /* NÂNG CẤP 1: Lưới hiển thị siêu gọn cho 4 trường thông tin đầu tiên */
+        .compact-header-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 5px 10px;
+            margin-bottom: 8px;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
         }
-
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 0; 
+        }
         label {
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-bottom: 2px;
+            color: #334155;
         }
-
         input, textarea {
             width: 100%;
-            padding: 0.5rem;
+            padding: 0.4rem;
             border: 1px solid var(--border);
             border-radius: 4px;
             box-sizing: border-box;
+            font-family: inherit;
         }
-
-        /* NÂNG CẤP: Bổ sung min-height để chống sập khung nhập trên màn hình có chiều cao thấp */
+        
+        /* NÂNG CẤP 1: Khung nội dung chính lấy lại được chiều cao tối đa */
+        .content-group {
+            margin-bottom: 5px;
+        }
         textarea {
-            height: calc(100vh - 350px);
-            min-height: 200px;
+            height: calc(100vh - 300px);
+            min-height: 250px;
             resize: vertical;
+            font-size: 0.95rem;
+            line-height: 1.4;
         }
-
+        
+        /* Cấu trúc các nút bấm thao tác */
         .action-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 8px;
             margin-top: 5px;
         }
-
-        /* NÂNG CẤP: Khai báo lớp action-grid-full bị thiếu để cố định các nút lưu trữ */
         .action-grid-full {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
+            grid-template-columns: 1fr 1fr 1fr; /* Nâng cấp thành 3 cột để chứa nút Dự thảo */
+            gap: 8px;
+            margin-top: 8px;
         }
-
         button {
             padding: 0.6rem;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 600;
             cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            color: white;
         }
-
-        #statusBox {
-            margin-top: 5px;
-            padding: 0.5rem;
-        }
-
-        .divider {
-            margin: 10px 0;
-        }
-
-        .search-flex {
-            display: flex;
-            gap: 5px;
-        }
-
-        .search-results {
-            max-height: 150px;
-            overflow-y: auto;
-            padding: 0;
-            list-style: none;
-        }
+        .btn-reformat { background: #3b82f6; }
+        .btn-draft { background: #8b5cf6; }
+        .btn-save-draft { background: #f59e0b; color: #fff; } /* Nút Lưu Dự Thảo */
+        .btn-generate { background: #10b981; }
+        .btn-reset { background: #ef4444; }
+        .btn-search { background: var(--primary); }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
         
-        .result-item {
-            padding: 8px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
+        #statusBox {
+            margin-top: 8px;
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            text-align: center;
         }
-
-        /* NÂNG CẤP: Cơ chế Responsive chống vỡ/sập giao diện trên màn hình điện thoại hẹp */
+        .status-loading { background: #e0f2fe; color: #0284c7; }
+        .status-success { background: #dcfce7; color: #166534; }
+        .status-error { background: #fee2e2; color: #991b1b; }
+        
+        .divider { margin: 10px 0; border-top: 1px dashed var(--border); }
+        .search-flex { display: flex; gap: 5px; }
+        .search-results { max-height: 150px; overflow-y: auto; padding: 0; list-style: none; margin-top: 5px; }
+        .result-item { padding: 8px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; }
+        .result-item a { text-decoration: none; font-weight: 600; color: var(--primary); }
+        
+        /* Responsive cơ bản */
         @media screen and (max-width: 600px) {
-            .form-row, 
-            .action-grid, 
-            .action-grid-full {
-                grid-template-columns: 1fr; /* Tự động chuyển về 1 cột dọc trên màn hình hẹp */
-            }
+            .compact-header-grid { grid-template-columns: 1fr; }
+            .action-grid-full { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header" id="headerArea"></div>
+        
+        <input type="hidden" id="recordId" value="">
 
-        <div class="form-group">
-            <label>1. Chủ đề / Tên cuộc họp:</label>
-            <input type="text" id="meetingTitle" placeholder="Ví dụ: Giao ban chuyên môn..." required>
-        </div>
-
-        <div class="form-row">
+        <div class="compact-header-grid">
+            <div class="form-group">
+                <label>1. Chủ đề / Tên cuộc họp:</label>
+                <input type="text" id="meetingTitle" placeholder="Ví dụ: Giao ban chuyên môn..." required>
+            </div>
             <div class="form-group">
                 <label>2. Thời gian:</label>
                 <input type="datetime-local" id="meetingDate" required>
             </div>
             <div class="form-group">
                 <label>3. Địa điểm:</label>
-                <input type="text" id="location" placeholder="Phòng hội đồng, phòng họp số 1..." required>
+                <input type="text" id="location" placeholder="Phòng hội đồng..." required>
+            </div>
+            <div class="form-group">
+                <label>4. Thành phần tham dự:</label>
+                <input type="text" id="attendees" placeholder="BGH, Giáo viên..." required>
             </div>
         </div>
 
-        <div class="form-group">
-            <label>4. Thành phần tham dự:</label>
-            <input type="text" id="attendees" placeholder="Ban giám hiệu, toàn thể giáo viên..." required>
-        </div>
-
-        <div class="form-group">
-            <label>Nội dung diễn biến (Khung nhập thô):</label>
+        <div class="content-group">
+            <label style="color:var(--primary); font-size:1rem;">Nội dung diễn biến (Khung nhập thô):</label>
             <textarea id="rawContent" placeholder="Ghi chép nhanh các ý kiến thảo luận tại đây..."></textarea>
         </div>
 
         <div class="action-grid">
-            <button id="btnReformat" class="btn-reformat" onclick="processAction('reformat')">Tạo lại bố cục nội dung</button>
-            <button id="btnDraft" class="btn-draft" onclick="processAction('draft')">Dự thảo Kết luận</button>
+            <button id="btnReformat" class="btn-reformat" onclick="processAction('reformat')">Tạo lại bố cục bằng AI</button>
+            <button id="btnDraft" class="btn-draft" onclick="processAction('draft')">AI Dự thảo Kết luận</button>
         </div>
 
         <div class="action-grid-full">
-            <button id="btnGenerate" class="btn-generate" onclick="processAction('generate')">Lưu Trữ vào Sổ</button>
+            <button id="btnSaveDraft" class="btn-save-draft" onclick="processAction('save_draft')">Lưu Dự Thảo</button>
+            <button id="btnGenerate" class="btn-generate" onclick="processAction('generate')">Hoàn Thành & Ghi Sổ</button>
             <button id="btnReset" class="btn-reset" onclick="resetMeeting()">Chuyển cuộc họp mới</button>
         </div>
 
-        <div id="statusBox"></div>
-
+        <div id="statusBox" style="display:none;"></div>
+        
         <div class="divider"></div>
-
-        <div class="form-group search-flex">
-            <input type="text" id="searchKeyword" placeholder="Nhập từ khóa nội dung cần tìm trong Sổ..." onkeypress="handleSearchEnter(event)">
+        
+        <div class="search-flex">
+            <input type="text" id="searchKeyword" placeholder="Nhập từ khóa tìm biên bản (hoặc Dự thảo)..." onkeypress="handleSearchEnter(event)">
             <button id="btnSearch" class="btn-search" onclick="searchMeetingData()">Tìm kiếm</button>
         </div>
-
         <ul id="searchResults" class="search-results"></ul>
     </div>
 
     <script>
         window.searchResultsData = [];
-
+        
         window.onload = function() {
             document.getElementById('headerArea').innerHTML = `
                 <img src="${KET_NOI.LOGO_TRUONG}" alt="Logo">
@@ -228,6 +227,7 @@
                 document.getElementById('location').value = '';
                 document.getElementById('attendees').value = '';
                 document.getElementById('rawContent').value = '';
+                document.getElementById('recordId').value = ''; /* Xóa ID định danh */
                 document.getElementById('statusBox').style.display = 'none';
                 setNow();
             }
@@ -236,6 +236,7 @@
         function toggleButtons(state) {
             document.getElementById('btnReformat').disabled = state;
             document.getElementById('btnDraft').disabled = state;
+            document.getElementById('btnSaveDraft').disabled = state;
             document.getElementById('btnGenerate').disabled = state;
             document.getElementById('btnReset').disabled = state;
             document.getElementById('btnSearch').disabled = state;
@@ -244,9 +245,10 @@
         async function processAction(actionType) {
             const rawContentField = document.getElementById('rawContent');
             const statusBox = document.getElementById('statusBox');
-
+            
             const payload = {
                 action: actionType,
+                recordId: document.getElementById('recordId').value, /* NÂNG CẤP 3: Gửi kèm ID để backend biết có cần ghi đè hay không */
                 title: document.getElementById('meetingTitle').value,
                 date: document.getElementById('meetingDate').value,
                 location: document.getElementById('location').value,
@@ -261,55 +263,55 @@
                 alert('Vui lòng nhập nội dung trước khi thực hiện thao tác!');
                 return;
             }
-
-            if(actionType === 'generate' && (!payload.title || !payload.location)) {
-                alert('Vui lòng nhập đủ Chủ đề và Địa điểm cuộc họp để lưu sổ!');
+            if((actionType === 'generate' || actionType === 'save_draft') && (!payload.title || !payload.location)) {
+                alert('Vui lòng nhập đủ Chủ đề và Địa điểm cuộc họp để lưu!');
                 return;
             }
 
             toggleButtons(true);
             statusBox.style.display = 'block';
             statusBox.className = 'status-loading';
-
-            if(actionType === 'generate') {
-                statusBox.innerHTML = 'Đang nạp dữ liệu ghi nối tiếp vào Sổ Hội Họp...';
+            
+            if (actionType === 'generate') {
+                statusBox.innerHTML = payload.recordId ? 'Đang cập nhật & GHI ĐÈ dữ liệu vào Sổ...' : 'Đang nạp dữ liệu ghi NỐI TIẾP vào Sổ...';
+            } else if (actionType === 'save_draft') {
+                statusBox.innerHTML = 'Đang lưu bản Dự thảo vào Sổ...';
             } else {
-                statusBox.innerHTML = 'Trợ lý AI đang đọc và xử lý văn bản...';
+                statusBox.innerHTML = 'Trợ lý AI đang xử lý văn bản...';
             }
 
             try {
                 const response = await fetch(KET_NOI.URL_API_BACKEND, {
                     method: 'POST',
                     redirect: 'follow',
-                    headers: {
-                        "Content-Type": "text/plain;charset=utf-8"
-                    },
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
                     body: JSON.stringify(payload)
                 });
-
+                
                 const result = await response.json();
-
+                
                 if(result.status === 'success_doc') {
                     statusBox.className = 'status-success';
-                    statusBox.innerHTML = `${result.message} <br><br>
-                    <a href="${result.url}" target="_blank" style="color:#166534; text-decoration:underline;">Mở Sổ Trực Tuyến</a>`;
+                    statusBox.innerHTML = `${result.message} <br><br> <a href="${result.url}" target="_blank" style="color:#166534; text-decoration:underline;">Mở Sổ Trực Tuyến</a>`;
+                    /* NÂNG CẤP: Nếu backend trả về ID mới sau khi lưu dự thảo, gán vào recordId để khi ấn tiếp nó sẽ ghi đè */
+                    if(result.recordId) {
+                        document.getElementById('recordId').value = result.recordId;
+                    }
                 } else if (result.status === 'success_text') {
                     statusBox.className = 'status-success';
                     statusBox.innerHTML = 'AI đã xử lý xong. Vui lòng kiểm tra lại.';
-                    
                     if(actionType === 'reformat') {
                         rawContentField.value = result.text;
                     } else if (actionType === 'draft') {
-                        /* NÂNG CẤP: Thêm một dòng trống khi dự thảo nối tiếp để dễ đọc hơn */
                         rawContentField.value += "\n\n" + result.text;
                     }
                 } else {
                     statusBox.className = 'status-error';
-                    statusBox.innerHTML = `Lỗi: ${result.message}`;
+                    statusBox.innerHTML = `Lỗi từ máy chủ: ${result.message}`;
                 }
             } catch (error) {
                 statusBox.className = 'status-error';
-                statusBox.innerHTML = `Lỗi kết nối API. Chi tiết: ${error}`;
+                statusBox.innerHTML = `Lỗi kết nối. Chi tiết: ${error}`;
             } finally {
                 toggleButtons(false);
             }
@@ -322,36 +324,30 @@
         async function searchMeetingData() {
             const keyword = document.getElementById('searchKeyword').value;
             const resultList = document.getElementById('searchResults');
-
+            
             if(!keyword.trim()) {
                 alert('Vui lòng nhập từ khóa!');
                 return;
             }
-
-            resultList.innerHTML = '<li class="result-item" style="justify-content:center; color:var(--primary);">Đang quét nội dung Sổ Hội Họp...</li>';
+            
+            resultList.innerHTML = '<li class="result-item" style="justify-content:center; color:var(--primary);">Đang quét nội dung Sổ...</li>';
             toggleButtons(true);
-
-            const payload = {
-                action: 'search',
-                keyword: keyword
-            };
-
+            
+            const payload = { action: 'search', keyword: keyword };
+            
             try {
                 const response = await fetch(KET_NOI.URL_API_BACKEND, {
                     method: 'POST',
                     redirect: 'follow',
-                    headers: {
-                        "Content-Type": "text/plain;charset=utf-8"
-                    },
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
                     body: JSON.stringify(payload)
                 });
-
+                
                 const result = await response.json();
-
                 if(result.status === 'success_search') {
                     resultList.innerHTML = '';
                     if(result.data.length === 0) {
-                        resultList.innerHTML = '<li class="result-item" style="justify-content:center; color:var(--secondary);">Không tìm thấy nội dung phù hợp.</li>';
+                        resultList.innerHTML = '<li class="result-item" style="color:var(--secondary);">Không tìm thấy.</li>';
                     } else {
                         window.searchResultsData = result.data;
                         result.data.forEach((item, index) => {
@@ -359,55 +355,64 @@
                             li.className = 'result-item';
                             li.innerHTML = `
                                 <a href="javascript:void(0)" onclick="extractToForm(${index})">🔍 ${item.title}</a>
-                                <span class="result-date" style="font-size: 0.85em; color: var(--secondary);">${item.date} (Click để nạp)</span>
+                                <span style="font-size: 0.85em; color: var(--secondary);">${item.date} (Click để nạp)</span>
                             `;
                             resultList.appendChild(li);
                         });
                     }
                 } else {
-                    resultList.innerHTML = `<li class="result-item" style="color:red;">Lỗi tra cứu: ${result.message}</li>`;
+                    resultList.innerHTML = `<li class="result-item" style="color:red;">Lỗi: ${result.message}</li>`;
                 }
             } catch (error) {
-                resultList.innerHTML = `<li class="result-item" style="color:red;">Lỗi kết nối máy chủ.</li>`;
+                resultList.innerHTML = `<li class="result-item" style="color:red;">Lỗi kết nối.</li>`;
             } finally {
                 toggleButtons(false);
             }
         }
 
-function extractToForm(index) {
-  if (window.searchResultsData && window.searchResultsData[index]) {
-    const dataBlock = window.searchResultsData[index];
-    
-    // Nâng cấp: Phục hồi dữ liệu vào đúng các trường tương ứng
-    if (dataBlock.title) document.getElementById('meetingTitle').value = dataBlock.title;
-    if (dataBlock.location) document.getElementById('location').value = dataBlock.location;
-    if (dataBlock.attendees) document.getElementById('attendees').value = dataBlock.attendees;
-    if (dataBlock.content) document.getElementById('rawContent').value = dataBlock.content;
-    
-    // Xử lý định dạng ngày tháng tương thích với input type="datetime-local" (YYYY-MM-DDTHH:mm)
-    if (dataBlock.date) {
-        try {
-            let dateStr = dataBlock.date;
-            // Nếu định dạng trả về có dấu cách (VD: 2026-07-15 08:30), chuyển thành chữ T
-            if (dateStr.includes(" ")) {
-                 dateStr = dateStr.replace(" ", "T");
-            }
-            // Lấy 16 ký tự đầu để vừa khớp với chuẩn datetime-local
-            document.getElementById('meetingDate').value = dateStr.substring(0, 16);
-        } catch (e) {
-            console.log("Lỗi định dạng ngày:", e);
-        }
-    }
+        /* NÂNG CẤP 2: Bóc tách tự động dữ liệu vào đúng vị trí 4 ô, lọc trả lại nội dung sạch cho Textarea */
+        function extractToForm(index) {
+            if(window.searchResultsData && window.searchResultsData[index]) {
+                const dataBlock = window.searchResultsData[index];
+                
+                // 1. Phục hồi Title cơ bản
+                document.getElementById('meetingTitle').value = dataBlock.title || '';
+                
+                // 2. Thu thập văn bản gộp (nếu backend đẩy nguyên khối Document về)
+                let fullContent = dataBlock.content || '';
+                let extLocation = dataBlock.location || '';
+                let extAttendees = dataBlock.attendees || '';
+                
+                // Dùng Regex quét các tham số bị dính trong văn bản (Dựa trên cấu trúc lưu từ Code.gs của đồng chí)
+                const locMatch = fullContent.match(/2\.\s*Địa\s*điểm:\s*(.*)/i);
+                if (locMatch && !extLocation) extLocation = locMatch[1].trim();
+                
+                const attMatch = fullContent.match(/3\.\s*Thành\s*phần\s*tham\s*dự:\s*(.*)/i);
+                if (attMatch && !extAttendees) extAttendees = attMatch[1].trim();
+                
+                // 3. Cắt bỏ râu ria phần Header (từ đoạn "NỘI DUNG VÀ KẾT LUẬN" trở đi) để đưa lại nội dung gốc vào khung
+                let pureContent = fullContent;
+                const bodyParts = fullContent.split(/---\s*NỘI DUNG VÀ KẾT LUẬN\s*---/i);
+                if (bodyParts.length > 1) {
+                    pureContent = bodyParts[1].trim();
+                }
 
-    const statusBox = document.getElementById('statusBox');
-    statusBox.className = 'status-success';
-    statusBox.innerHTML = 'Đã trích xuất và phục hồi các trường thông tin biên bản!';
-    statusBox.style.display = 'block';
-    
-    // Cuộn trang lên khu vực đầu form nhập liệu để người dùng dễ quan sát
-    document.getElementById('meetingTitle').scrollIntoView({ behavior: "smooth", block: "center" });
-  }
-}
+                // 4. Đổ dữ liệu về đúng vị trí
+                document.getElementById('location').value = extLocation;
+                document.getElementById('attendees').value = extAttendees;
+                document.getElementById('rawContent').value = pureContent;
+                
+                // 5. Nạp Record ID (nếu backend có gửi kèm index/id) để sẵn sàng tính năng GHI ĐÈ
+                document.getElementById('recordId').value = dataBlock.id || index;
+
+                const statusBox = document.getElementById('statusBox');
+                statusBox.className = 'status-success';
+                statusBox.innerHTML = 'Đã bóc tách Biên bản vào các trường. Sẵn sàng chỉnh sửa & Ghi đè!';
+                statusBox.style.display = 'block';
+                
+                document.getElementById('rawContent').scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+        }
     </script>
 </body>
 </html>
