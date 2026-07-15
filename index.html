@@ -7,18 +7,16 @@
   
   <script src="ketnoi.js"></script>
 
-  <style>
+<style>
     :root {
       --primary: #0284c7; 
       --secondary: #475569; 
-      --success: #059669;
       --bg: #e2e8f0;
       --card: #ffffff;
       --text: #1e293b;
       --border: #cbd5e1;
     }
     
-    /* Ép sát lề trình duyệt, loại bỏ padding thừa của body */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background-color: var(--bg);
@@ -29,18 +27,19 @@
       justify-content: center;
     }
     
-    /* Mở rộng không gian làm việc dọc và ngang */
-    .container {
+    /* NÂNG CẤP: Giãn rộng container tối đa */
+   .container {
       background: var(--card);
       width: 100%;
-      max-width: 1000px; /* Giãn rộng khung */
+      /* Thay vì fix cứng 1000px, chúng ta dùng max-width rất lớn để ép nó giãn theo màn hình */
+      max-width: 98%; 
       min-height: 100vh;
-      padding: 0 2rem 2rem 2rem;
+      /* Giảm padding 2 bên xuống còn 10px để sát lề hơn */
+      padding: 0 10px 20px 10px; 
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
       box-sizing: border-box;
     }
     
-    /* Cố định Header lên đầu trang (Sticky) */
     .header {
       position: sticky;
       top: 0;
@@ -48,130 +47,52 @@
       background: rgba(255, 255, 255, 0.98);
       backdrop-filter: blur(8px);
       text-align: center;
-      padding: 10px 0;
-      margin-bottom: 15px;
+      padding: 5px 0; /* Giảm padding header */
+      margin-bottom: 10px;
       border-bottom: 2px solid var(--primary);
     }
-    .header img { width: 50px; height: auto; margin-bottom: 5px; }
-    .header h2 { margin: 0; color: #334155; font-size: 0.95rem; }
-    .header h1 { margin: 2px 0 0 0; color: var(--primary); font-size: 1.4rem; }
     
-    /* Giảm vùng đệm giữa các ô nhập liệu */
-    .form-group { margin-bottom: 0.8rem; }
+    .header img { width: 40px; height: auto; } /* Thu nhỏ logo hơn nữa để tiết kiệm không gian */
+    .header h1 { margin: 0; color: var(--primary); font-size: 1.2rem; }
+    .header h2 { display: none; } /* Ẩn tên trường nếu muốn tiết kiệm không gian dọc tối đa */
+    
+    .form-group { margin-bottom: 0.5rem; }
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 15px;
+      gap: 10px;
     }
     
-    label { display: block; font-weight: 600; margin-bottom: 0.3rem; font-size: 0.95rem; }
+    label { font-weight: 600; font-size: 0.9rem; margin-bottom: 2px; }
     input, textarea {
       width: 100%;
-      padding: 0.6rem;
+      padding: 0.5rem;
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 4px;
       box-sizing: border-box;
-      font-family: inherit;
-      font-size: 1rem;
-      transition: border-color 0.3s;
     }
-    input:focus, textarea:focus { outline: none; border-color: var(--primary); }
     
-    /* Mở rộng tối đa chiều cao khung nhập nội dung */
-    textarea { height: 280px; resize: vertical; line-height: 1.5; }
+    /* Ô nội dung chiếm không gian còn lại của màn hình */
+    textarea { height: calc(100vh - 350px); resize: vertical; }
     
     .action-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
-      margin-top: 1rem;
+      margin-top: 5px;
     }
-    .action-grid-full {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
+    
     button {
-      color: white;
-      border: none;
-      padding: 0.75rem;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-    }
-    button:disabled { opacity: 0.6; cursor: not-allowed; }
-    
-    .btn-reformat { background-color: var(--secondary); }
-    .btn-reformat:hover:not(:disabled) { background-color: #334155; }
-    
-    .btn-draft { background-color: #0d9488; }
-    .btn-draft:hover:not(:disabled) { background-color: #0f766e; }
-    
-    .btn-generate { background-color: var(--primary); font-size: 1.1rem; padding: 0.85rem; }
-    .btn-generate:hover:not(:disabled) { background-color: #0369a1; }
-    
-    .btn-reset { background-color: transparent; border: 2px solid var(--secondary); color: var(--secondary); }
-    .btn-reset:hover:not(:disabled) { background-color: #f1f5f9; }
-    
-    #statusBox {
-      margin-top: 1rem;
-      padding: 0.8rem;
-      border-radius: 6px;
-      text-align: center;
-      font-weight: bold;
-      display: none;
-    }
-    .status-loading { background-color: #e0f2fe; color: #0284c7; }
-    .status-success { background-color: #dcfce7; color: #166534; }
-    .status-error { background-color: #fee2e2; color: #991b1b; }
-
-    /* Khối giao diện Tìm kiếm */
-    .divider {
-      margin: 1.5rem 0 1rem 0;
-      border-top: 2px dashed var(--border);
-      position: relative;
-    }
-    .divider::after {
-      content: "TRA CỨU TRONG SỔ";
-      position: absolute;
-      top: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--card);
-      padding: 0 10px;
-      color: var(--secondary);
-      font-weight: bold;
-      font-size: 0.85rem;
-    }
-    .search-flex { display: flex; gap: 10px; }
-    .search-flex input { flex-grow: 1; }
-    .btn-search { background-color: #f59e0b; width: auto; padding: 0 1.5rem; }
-    .btn-search:hover:not(:disabled) { background-color: #d97706; }
-    
-    .search-results {
-      margin-top: 0.5rem;
-      list-style: none;
-      padding: 0;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-    .result-item {
       padding: 0.6rem;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      font-size: 0.9rem;
     }
-    .result-item:last-child { border-bottom: none; }
-    .result-item a { color: var(--primary); text-decoration: none; font-weight: 600; cursor: pointer; }
-    .result-item a:hover { text-decoration: underline; color: #0369a1; }
-    .result-date { font-size: 0.85rem; color: #64748b; }
-
-  </style>
+    
+    #statusBox { margin-top: 5px; padding: 0.5rem; }
+    
+    /* Điều chỉnh khối tìm kiếm để không chiếm nhiều diện tích */
+    .divider { margin: 10px 0; }
+    .search-flex { display: flex; gap: 5px; }
+    .search-results { max-height: 150px; }
 </head>
 <body>
 
