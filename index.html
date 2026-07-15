@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sổ Hội Họp Thông Minh</title>
+  
+  <script src="ketnoi.js"></script>
+
+  <style>
+    :root {
+      --primary: #0284c7; 
+      --secondary: #475569; 
+      --success: #059669;
+      --bg: #f1f5f9;
+      --card: #ffffff;
+      --text: #1e293b;
+      --border: #cbd5e1;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      padding: 2rem;
+      margin: 0;
+    }
+    .container {
+      background: var(--card);
+      padding: 2rem 3rem;
+      border-radius: 12px;
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+      width: 100%;
+      max-width: 800px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 1rem;
+    }
+    .header img { width: 80px; height: auto; margin-bottom: 10px; }
+    .header h2 { margin: 0; color: #334155; font-size: 1.2rem; }
+    .header h1 { margin: 5px 0 0 0; color: var(--primary); font-size: 1.8rem; }
+    
+    .form-group { margin-bottom: 1.2rem; }
+    label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+    input, textarea {
+      width: 100%;
+      padding: 0.85rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    input:focus, textarea:focus { outline: none; border-color: var(--primary); }
+    textarea { height: 180px; resize: vertical; line-height: 1.5; }
+    
+    .action-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 1rem;
+    }
+    .action-grid-full {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    button {
+      color: white;
+      border: none;
+      padding: 0.85rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    
+    .btn-reformat { background-color: var(--secondary); }
+    .btn-reformat:hover:not(:disabled) { background-color: #334155; }
+    
+    .btn-draft { background-color: #0d9488; }
+    .btn-draft:hover:not(:disabled) { background-color: #0f766e; }
+    
+    .btn-generate { background-color: var(--primary); font-size: 1.1rem; padding: 1rem; }
+    .btn-generate:hover:not(:disabled) { background-color: #0369a1; }
+    
+    .btn-reset { background-color: transparent; border: 2px solid var(--secondary); color: var(--secondary); }
+    .btn-reset:hover:not(:disabled) { background-color: var(--bg); }
+    
+    #statusBox {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      display: none;
+    }
+    .status-loading { background-color: #e0f2fe; color: #0284c7; }
+    .status-success { background-color: #dcfce7; color: #166534; }
+    .status-error { background-color: #fee2e2; color: #991b1b; }
+
+    /* Nâng cấp: Khối giao diện Tìm kiếm */
+    .divider {
+      margin: 2.5rem 0 1.5rem 0;
+      border-top: 2px dashed var(--border);
+      position: relative;
+    }
+    .divider::after {
+      content: "TRA CỨU SỔ HỘI HỌP";
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card);
+      padding: 0 15px;
+      color: var(--secondary);
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    .search-flex {
+      display: flex;
+      gap: 10px;
+    }
+    .search-flex input { flex-grow: 1; }
+    .btn-search { background-color: #f59e0b; width: auto; padding: 0 1.5rem; }
+    .btn-search:hover:not(:disabled) { background-color: #d97706; }
+    
+    .search-results {
+      margin-top: 1rem;
+      list-style: none;
+      padding: 0;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+    .result-item {
+      padding: 0.8rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .result-item:last-child { border-bottom: none; }
+    .result-item a { color: var(--primary); text-decoration: none; font-weight: 600; }
+    .result-item a:hover { text-decoration: underline; }
+    .result-date { font-size: 0.85rem; color: #64748b; }
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header" id="headerArea"></div>
+    
+    <div class="form-group">
+      <label>Chủ đề cuộc họp:</label>
+      <input type="text" id="meetingTitle" placeholder="Ví dụ: Giao ban chuyên môn..." required>
+    </div>
+    
+    <div class="form-group">
+      <label>Thời gian:</label>
+      <input type="datetime-local" id="meetingDate" required>
+    </div>
+
+    <div class="form-group">
+      <label>Thành phần tham dự:</label>
+      <input type="text" id="attendees" placeholder="Ban giám hiệu, toàn thể giáo viên..." required>
+    </div>
+    
+    <div class="form-group">
+      <label>Nội dung diễn biến (Nhập thô):</label>
+      <textarea id="rawContent" placeholder="Ghi chép nhanh các ý kiến thảo luận tại đây..."></textarea>
+    </div>
+
+    <div class="action-grid">
+      <button id="btnReformat" class="btn-reformat" onclick="processAction('reformat')">Tạo lại bố cục nội dung</button>
+      <button id="btnDraft" class="btn-draft" onclick="processAction('draft')">Dự thảo Kết luận</button>
+    </div>
+    
+    <div class="action-grid-full">
+      <button id="btnGenerate" class="btn-generate" onclick="processAction('generate')">Lưu Trữ & Khởi Tạo Sổ (Doc)</button>
+      <button id="btnReset" class="btn-reset" onclick="resetMeeting()">Chuyển cuộc họp mới (Xóa Form)</button>
+    </div>
+    
+    <div id="statusBox"></div>
+
+    <div class="divider"></div>
+    <div class="form-group search-flex">
+      <input type="text" id="searchKeyword" placeholder="Nhập từ khóa (tên cuộc họp, nội dung, người phát biểu...)" onkeypress="handleSearchEnter(event)">
+      <button id="btnSearch" class="btn-search" onclick="searchMeetingData()">Tìm kiếm</button>
+    </div>
+    
+    <ul id="searchResults" class="search-results">
+      </ul>
+
+  </div>
+
+  <script>
+    window.onload = function() {
+      document.getElementById('headerArea').innerHTML = `
+        <img src="${KET_NOI.LOGO_TRUONG}" alt="Logo">
+        <h2>${KET_NOI.TEN_TO_CHUC}</h2>
+        <h1>${KET_NOI.TIEU_DE_PHAN_MEM}</h1>
+      `;
+      setNow();
+    };
+
+    function setNow() {
+      var now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      document.getElementById('meetingDate').value = now.toISOString().slice(0,16);
+    }
+
+    function resetMeeting() {
+      if(confirm("Bạn có chắc muốn chuyển sang cuộc họp mới? Toàn bộ nội dung đang nhập sẽ bị xóa.")) {
+        document.getElementById('meetingTitle').value = '';
+        document.getElementById('attendees').value = '';
+        document.getElementById('rawContent').value = '';
+        document.getElementById('statusBox').style.display = 'none';
+        setNow();
+      }
+    }
+
+    function toggleButtons(state) {
+      document.getElementById('btnReformat').disabled = state;
+      document.getElementById('btnDraft').disabled = state;
+      document.getElementById('btnGenerate').disabled = state;
+      document.getElementById('btnReset').disabled = state;
+      document.getElementById('btnSearch').disabled = state;
+    }
+
+    // Luồng xử lý Nhập liệu & AI
+    async function processAction(actionType) {
+      const rawContentField = document.getElementById('rawContent');
+      const statusBox = document.getElementById('statusBox');
+      
+      const payload = {
+        action: actionType,
+        title: document.getElementById('meetingTitle').value,
+        date: document.getElementById('meetingDate').value,
+        attendees: document.getElementById('attendees').value,
+        rawContent: rawContentField.value,
+        appName: KET_NOI.TIEU_DE_PHAN_MEM,
+        orgName: KET_NOI.TEN_TO_CHUC,
+        accountOperator: KET_NOI.CAN_BO_THAO_TAC
+      };
+
+      if(!payload.rawContent) {
+        alert('Vui lòng nhập nội dung trước khi thực hiện thao tác AI!');
+        return;
+      }
+
+      if(actionType === 'generate' && !payload.title) {
+        alert('Vui lòng nhập Chủ đề cuộc họp để lưu sổ!');
+        return;
+      }
+
+      toggleButtons(true);
+      statusBox.style.display = 'block';
+      statusBox.className = 'status-loading';
+      
+      if(actionType === 'generate') statusBox.innerHTML = 'Đang khởi tạo Sổ Hội Họp lên Google Docs...';
+      else statusBox.innerHTML = 'Trợ lý AI đang đọc và xử lý văn bản...';
+
+      try {
+        const response = await fetch(KET_NOI.URL_API_BACKEND, {
+          method: 'POST',
+          redirect: 'follow', 
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if(result.status === 'success_doc') {
+          statusBox.className = 'status-success';
+          statusBox.innerHTML = `${result.message} <br><br> <a href="${result.url}" target="_blank" style="color:#166534; text-decoration:underline;">Mở File Trực Tuyến</a>`;
+        } else if (result.status === 'success_text') {
+          statusBox.className = 'status-success';
+          statusBox.innerHTML = 'AI đã xử lý xong. Vui lòng kiểm tra lại trên ô nội dung.';
+          if(actionType === 'reformat') rawContentField.value = result.text;
+          else if (actionType === 'draft') rawContentField.value += result.text;
+        } else {
+          statusBox.className = 'status-error';
+          statusBox.innerHTML = `Lỗi: ${result.message}`;
+        }
+      } catch (error) {
+        statusBox.className = 'status-error';
+        statusBox.innerHTML = `Lỗi kết nối API. Chi tiết: ${error}`;
+      } finally {
+        toggleButtons(false);
+      }
+    }
+
+    // Nâng cấp: Bắt sự kiện phím Enter khi gõ tìm kiếm
+    function handleSearchEnter(event) {
+      if (event.key === "Enter") {
+        searchMeetingData();
+      }
+    }
+
+    // Nâng cấp: Hàm xử lý luồng Tra cứu
+    async function searchMeetingData() {
+      const keyword = document.getElementById('searchKeyword').value;
+      const resultList = document.getElementById('searchResults');
+      
+      if(!keyword.trim()) {
+        alert('Vui lòng nhập từ khóa để tìm kiếm!');
+        return;
+      }
+
+      resultList.innerHTML = '<li class="result-item" style="justify-content:center; color:var(--primary);">Đang quét dữ liệu trong kho lưu trữ...</li>';
+      toggleButtons(true);
+
+      const payload = { action: 'search', keyword: keyword };
+
+      try {
+        const response = await fetch(KET_NOI.URL_API_BACKEND, {
+          method: 'POST',
+          redirect: 'follow',
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if(result.status === 'success_search') {
+          resultList.innerHTML = '';
+          if(result.data.length === 0) {
+            resultList.innerHTML = '<li class="result-item" style="justify-content:center; color:var(--secondary);">Không tìm thấy biên bản nào phù hợp.</li>';
+          } else {
+            result.data.forEach(item => {
+              const li = document.createElement('li');
+              li.className = 'result-item';
+              li.innerHTML = `
+                <a href="${item.url}" target="_blank">📄 ${item.name}</a>
+                <span class="result-date">${item.date}</span>
+              `;
+              resultList.appendChild(li);
+            });
+          }
+        } else {
+          resultList.innerHTML = `<li class="result-item" style="color:red;">Lỗi tra cứu: ${result.message}</li>`;
+        }
+      } catch (error) {
+        resultList.innerHTML = `<li class="result-item" style="color:red;">Lỗi kết nối máy chủ khi tìm kiếm.</li>`;
+      } finally {
+        toggleButtons(false);
+      }
+    }
+  </script>
+</body>
+</html>
