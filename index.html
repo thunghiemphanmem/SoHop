@@ -111,14 +111,14 @@
     .status-success { background-color: #dcfce7; color: #166534; }
     .status-error { background-color: #fee2e2; color: #991b1b; }
 
-    /* Nâng cấp: Khối giao diện Tìm kiếm */
+    /* Khối giao diện Tìm kiếm */
     .divider {
       margin: 2.5rem 0 1.5rem 0;
       border-top: 2px dashed var(--border);
       position: relative;
     }
     .divider::after {
-      content: "TRA CỨU SỔ HỘI HỌP";
+      content: "TRA CỨU TRONG SỔ HỘI HỌP";
       position: absolute;
       top: -12px;
       left: 50%;
@@ -152,8 +152,8 @@
       align-items: center;
     }
     .result-item:last-child { border-bottom: none; }
-    .result-item a { color: var(--primary); text-decoration: none; font-weight: 600; }
-    .result-item a:hover { text-decoration: underline; }
+    .result-item a { color: var(--primary); text-decoration: none; font-weight: 600; cursor: pointer; }
+    .result-item a:hover { text-decoration: underline; color: #0369a1; }
     .result-date { font-size: 0.85rem; color: #64748b; }
 
   </style>
@@ -163,6 +163,7 @@
   <div class="container">
     <div class="header" id="headerArea"></div>
     
+    <!-- KHỐI NHẬP LIỆU -->
     <div class="form-group">
       <label>Chủ đề cuộc họp:</label>
       <input type="text" id="meetingTitle" placeholder="Ví dụ: Giao ban chuyên môn..." required>
@@ -189,24 +190,29 @@
     </div>
     
     <div class="action-grid-full">
-      <button id="btnGenerate" class="btn-generate" onclick="processAction('generate')">Lưu Trữ & Khởi Tạo Sổ (Doc)</button>
+      <button id="btnGenerate" class="btn-generate" onclick="processAction('generate')">Lưu Trữ & Ghi Nối Tiếp Vào Sổ</button>
       <button id="btnReset" class="btn-reset" onclick="resetMeeting()">Chuyển cuộc họp mới (Xóa Form)</button>
     </div>
     
     <div id="statusBox"></div>
 
+    <!-- KHỐI TRA CỨU & TRÍCH XUẤT -->
     <div class="divider"></div>
     <div class="form-group search-flex">
-      <input type="text" id="searchKeyword" placeholder="Nhập từ khóa (tên cuộc họp, nội dung, người phát biểu...)" onkeypress="handleSearchEnter(event)">
+      <input type="text" id="searchKeyword" placeholder="Nhập từ khóa nội dung cần tìm trong Sổ..." onkeypress="handleSearchEnter(event)">
       <button id="btnSearch" class="btn-search" onclick="searchMeetingData()">Tìm kiếm</button>
     </div>
     
     <ul id="searchResults" class="search-results">
-      </ul>
+      <!-- Kết quả trả về sẽ hiển thị ở đây -->
+    </ul>
 
   </div>
 
   <script>
+    // Biến toàn cục để lưu trữ kết quả tra cứu tạm thời trên trình duyệt
+    window.searchResultsData = [];
+
     window.onload = function() {
       document.getElementById('headerArea').innerHTML = `
         <img src="${KET_NOI.LOGO_TRUONG}" alt="Logo">
@@ -240,7 +246,6 @@
       document.getElementById('btnSearch').disabled = state;
     }
 
-    // Luồng xử lý Nhập liệu & AI
     async function processAction(actionType) {
       const rawContentField = document.getElementById('rawContent');
       const statusBox = document.getElementById('statusBox');
@@ -270,7 +275,7 @@
       statusBox.style.display = 'block';
       statusBox.className = 'status-loading';
       
-      if(actionType === 'generate') statusBox.innerHTML = 'Đang khởi tạo Sổ Hội Họp lên Google Docs...';
+      if(actionType === 'generate') statusBox.innerHTML = 'Đang nạp dữ liệu ghi nối tiếp vào Sổ Hội Họp...';
       else statusBox.innerHTML = 'Trợ lý AI đang đọc và xử lý văn bản...';
 
       try {
@@ -285,7 +290,7 @@
 
         if(result.status === 'success_doc') {
           statusBox.className = 'status-success';
-          statusBox.innerHTML = `${result.message} <br><br> <a href="${result.url}" target="_blank" style="color:#166534; text-decoration:underline;">Mở File Trực Tuyến</a>`;
+          statusBox.innerHTML = `${result.message} <br><br> <a href="${result.url}" target="_blank" style="color:#166534; text-decoration:underline;">Mở Sổ Trực Tuyến</a>`;
         } else if (result.status === 'success_text') {
           statusBox.className = 'status-success';
           statusBox.innerHTML = 'AI đã xử lý xong. Vui lòng kiểm tra lại trên ô nội dung.';
@@ -303,14 +308,13 @@
       }
     }
 
-    // Nâng cấp: Bắt sự kiện phím Enter khi gõ tìm kiếm
     function handleSearchEnter(event) {
       if (event.key === "Enter") {
         searchMeetingData();
       }
     }
 
-    // Nâng cấp: Hàm xử lý luồng Tra cứu
+    // Nâng cấp: Hàm tải dữ liệu đã bóc tách từ Doc về và hiển thị danh sách
     async function searchMeetingData() {
       const keyword = document.getElementById('searchKeyword').value;
       const resultList = document.getElementById('searchResults');
@@ -320,7 +324,7 @@
         return;
       }
 
-      resultList.innerHTML = '<li class="result-item" style="justify-content:center; color:var(--primary);">Đang quét dữ liệu trong kho lưu trữ...</li>';
+      resultList.innerHTML = '<li class="result-item" style="justify-content:center; color:var(--primary);">Đang quét nội dung Sổ Hội Họp...</li>';
       toggleButtons(true);
 
       const payload = { action: 'search', keyword: keyword };
@@ -338,14 +342,17 @@
         if(result.status === 'success_search') {
           resultList.innerHTML = '';
           if(result.data.length === 0) {
-            resultList.innerHTML = '<li class="result-item" style="justify-content:center; color:var(--secondary);">Không tìm thấy biên bản nào phù hợp.</li>';
+            resultList.innerHTML = '<li class="result-item" style="justify-content:center; color:var(--secondary);">Không tìm thấy nội dung phù hợp trong Sổ.</li>';
           } else {
-            result.data.forEach(item => {
+            // Nạp dữ liệu vào biến toàn cục để trích xuất khi Click
+            window.searchResultsData = result.data;
+            
+            result.data.forEach((item, index) => {
               const li = document.createElement('li');
               li.className = 'result-item';
               li.innerHTML = `
-                <a href="${item.url}" target="_blank">📄 ${item.name}</a>
-                <span class="result-date">${item.date}</span>
+                <a href="javascript:void(0)" onclick="extractToForm(${index})">🔍 ${item.title}</a>
+                <span class="result-date">${item.date} (Click để nạp)</span>
               `;
               resultList.appendChild(li);
             });
@@ -357,6 +364,24 @@
         resultList.innerHTML = `<li class="result-item" style="color:red;">Lỗi kết nối máy chủ khi tìm kiếm.</li>`;
       } finally {
         toggleButtons(false);
+      }
+    }
+    
+    // Nâng cấp: Hàm trích xuất ngược khối dữ liệu vào khung nhập liệu
+    function extractToForm(index) {
+      if(window.searchResultsData && window.searchResultsData[index]) {
+        const dataBlock = window.searchResultsData[index];
+        
+        // Bơm dữ liệu ngược lên các ô Input tương ứng
+        document.getElementById('rawContent').value = dataBlock.content;
+        
+        const statusBox = document.getElementById('statusBox');
+        statusBox.className = 'status-success';
+        statusBox.innerHTML = 'Đã trích xuất biên bản lên khung nhập thành công!';
+        statusBox.style.display = 'block';
+        
+        // Tự động cuộn trang lên khung nhập liệu
+        document.getElementById('rawContent').scrollIntoView({ behavior: "smooth", block: "center" });
       }
     }
   </script>
