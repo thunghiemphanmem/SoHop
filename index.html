@@ -374,19 +374,40 @@
             }
         }
 
-        function extractToForm(index) {
-            if(window.searchResultsData && window.searchResultsData[index]) {
-                const dataBlock = window.searchResultsData[index];
-                document.getElementById('rawContent').value = dataBlock.content;
-
-                const statusBox = document.getElementById('statusBox');
-                statusBox.className = 'status-success';
-                statusBox.innerHTML = 'Đã trích xuất biên bản lên khung nhập!';
-                statusBox.style.display = 'block';
-
-                document.getElementById('rawContent').scrollIntoView({ behavior: "smooth", block: "center" });
+function extractToForm(index) {
+  if (window.searchResultsData && window.searchResultsData[index]) {
+    const dataBlock = window.searchResultsData[index];
+    
+    // Nâng cấp: Phục hồi dữ liệu vào đúng các trường tương ứng
+    if (dataBlock.title) document.getElementById('meetingTitle').value = dataBlock.title;
+    if (dataBlock.location) document.getElementById('location').value = dataBlock.location;
+    if (dataBlock.attendees) document.getElementById('attendees').value = dataBlock.attendees;
+    if (dataBlock.content) document.getElementById('rawContent').value = dataBlock.content;
+    
+    // Xử lý định dạng ngày tháng tương thích với input type="datetime-local" (YYYY-MM-DDTHH:mm)
+    if (dataBlock.date) {
+        try {
+            let dateStr = dataBlock.date;
+            // Nếu định dạng trả về có dấu cách (VD: 2026-07-15 08:30), chuyển thành chữ T
+            if (dateStr.includes(" ")) {
+                 dateStr = dateStr.replace(" ", "T");
             }
+            // Lấy 16 ký tự đầu để vừa khớp với chuẩn datetime-local
+            document.getElementById('meetingDate').value = dateStr.substring(0, 16);
+        } catch (e) {
+            console.log("Lỗi định dạng ngày:", e);
         }
+    }
+
+    const statusBox = document.getElementById('statusBox');
+    statusBox.className = 'status-success';
+    statusBox.innerHTML = 'Đã trích xuất và phục hồi các trường thông tin biên bản!';
+    statusBox.style.display = 'block';
+    
+    // Cuộn trang lên khu vực đầu form nhập liệu để người dùng dễ quan sát
+    document.getElementById('meetingTitle').scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
     </script>
 </body>
 </html>
