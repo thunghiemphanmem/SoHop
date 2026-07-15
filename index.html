@@ -66,7 +66,7 @@
         
         .content-group { margin-bottom: 5px; }
         textarea {
-            height: calc(100vh - 300px); min-height: 250px;
+            height: calc(100vh - 340px); min-height: 250px;
             resize: vertical; font-size: 0.95rem; line-height: 1.4;
         }
         
@@ -126,6 +126,11 @@
             </div>
         </div>
 
+        <div class="form-group" style="margin-bottom: 8px;">
+            <label style="color:#8b5cf6; font-size:0.9rem;">📌 Ghi chú trọng tâm cho AI (Không bắt buộc):</label>
+            <input type="text" id="focusNote" placeholder="Ví dụ: Nhấn mạnh công tác chuyên môn, kiểm tra hồ sơ...">
+        </div>
+
         <div class="content-group">
             <label style="color:var(--primary); font-size:1rem;">Nội dung diễn biến (Khung nhập thô):</label>
             <textarea id="rawContent" placeholder="Ghi chép nhanh các ý kiến thảo luận tại đây..."></textarea>
@@ -176,6 +181,7 @@
                 document.getElementById('meetingTitle').value = '';
                 document.getElementById('location').value = '';
                 document.getElementById('attendees').value = '';
+                document.getElementById('focusNote').value = ''; // Làm sạch ô trọng tâm
                 document.getElementById('rawContent').value = '';
                 document.getElementById('recordId').value = ''; 
                 document.getElementById('statusBox').style.display = 'none';
@@ -217,6 +223,7 @@
         async function processAction(actionType) {
             const rawContentField = document.getElementById('rawContent');
             const statusBox = document.getElementById('statusBox');
+            const focusNoteField = document.getElementById('focusNote');
             
             const payload = {
                 action: actionType,
@@ -225,6 +232,7 @@
                 date: document.getElementById('meetingDate').value,
                 location: document.getElementById('location').value,
                 attendees: document.getElementById('attendees').value,
+                focusNote: focusNoteField ? focusNoteField.value : "", // Đẩy dữ liệu ô trọng tâm lên máy chủ
                 rawContent: rawContentField.value,
                 appName: KET_NOI.TIEU_DE_PHAN_MEM,
                 orgName: KET_NOI.TEN_TO_CHUC,
