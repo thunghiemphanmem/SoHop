@@ -108,27 +108,27 @@
         <input type="hidden" id="recordId" value="">
 
         <div class="compact-header-grid">
-            <div class="form-group">
-                <label style="white-space: nowrap;">1. Chủ đề / Tên cuộc họp:</label>
+           <div style="background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid var(--border);">
+            <div class="form-row">
+                <label>1. Chủ đề / Tên cuộc họp:</label>
                 <input type="text" id="meetingTitle" placeholder="Ví dụ: Giao ban chuyên môn..." required>
             </div>
-            <div class="form-group">
-                <label style="white-space: nowrap;>2. Thời gian:</label>
+            <div class="form-row">
+                <label>2. Thời gian:</label>
                 <input type="datetime-local" id="meetingDate" required>
             </div>
-            <div class="form-group">
-               <label style="white-space: nowrap;>3. Địa điểm:</label>
+            <div class="form-row">
+                <label>3. Địa điểm:</label>
                 <input type="text" id="location" placeholder="Phòng hội đồng..." required>
             </div>
-            <div class="form-group">
-                <label style="white-space: nowrap;>4. Thành phần tham dự:</label>
+            <div class="form-row">
+                <label>4. Thành phần tham dự:</label>
                 <input type="text" id="attendees" placeholder="BGH, Giáo viên..." required>
             </div>
-        </div>
-
-        <div class="form-group" style="margin-bottom: 8px;">
-            <label style="color:#8b5cf6; font-size:0.9rem;">📌 Ghi chú trọng tâm cho AI (Không bắt buộc):</label>
-            <input type="text" id="focusNote" placeholder="Ví dụ: Nhấn mạnh công tác chuyên môn, kiểm tra hồ sơ...">
+            <div class="form-row">
+                <label style="color:#8b5cf6;">📌 Ghi chú trọng tâm:</label>
+                <input type="text" id="focusNote" placeholder="Nội dung đặc biệt cần AI quan tâm...">
+            </div>
         </div>
 
         <div class="content-group">
