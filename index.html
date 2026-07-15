@@ -229,15 +229,13 @@ async function processAction(actionType) {
             
             const payload = {
                 action: actionType,
+                isDraft: (actionType === 'save_draft'),
                 recordId: document.getElementById('recordId').value, 
                 title: document.getElementById('meetingTitle').value,
                 date: document.getElementById('meetingDate').value,
                 location: document.getElementById('location').value,
                 attendees: document.getElementById('attendees').value,
-                
-                // SỬA LỖI: Đóng gói dữ liệu trọng tâm để gửi lên máy chủ AI
-                focusNote: focusNoteField ? focusNoteField.value : "", 
-                
+                focusNote: document.getElementById('focusNote').value, // Đã có biến focusNote
                 rawContent: rawContentField.value,
                 appName: KET_NOI.TIEU_DE_PHAN_MEM,
                 orgName: KET_NOI.TEN_TO_CHUC,
