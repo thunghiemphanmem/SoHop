@@ -54,7 +54,7 @@
         }
         .header h2 { display: none; }
         
-        /* NÂNG CẤP 1: Lưới hiển thị siêu gọn cho 4 trường thông tin đầu tiên */
+        /* Lưới hiển thị siêu gọn cho 4 trường thông tin đầu tiên */
         .compact-header-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -85,7 +85,7 @@
             font-family: inherit;
         }
         
-        /* NÂNG CẤP 1: Khung nội dung chính lấy lại được chiều cao tối đa */
+        /* Khung nội dung chính lấy lại được chiều cao tối đa */
         .content-group {
             margin-bottom: 5px;
         }
@@ -106,7 +106,7 @@
         }
         .action-grid-full {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr; /* Nâng cấp thành 3 cột để chứa nút Dự thảo */
+            grid-template-columns: 1fr 1fr 1fr; /* 3 cột chứa nút Dự thảo */
             gap: 8px;
             margin-top: 8px;
         }
@@ -121,7 +121,7 @@
         }
         .btn-reformat { background: #3b82f6; }
         .btn-draft { background: #8b5cf6; }
-        .btn-save-draft { background: #f59e0b; color: #fff; } /* Nút Lưu Dự Thảo */
+        .btn-save-draft { background: #f59e0b; color: #fff; } 
         .btn-generate { background: #10b981; }
         .btn-reset { background: #ef4444; }
         .btn-search { background: var(--primary); }
@@ -227,7 +227,7 @@
                 document.getElementById('location').value = '';
                 document.getElementById('attendees').value = '';
                 document.getElementById('rawContent').value = '';
-                document.getElementById('recordId').value = ''; /* Xóa ID định danh */
+                document.getElementById('recordId').value = ''; 
                 document.getElementById('statusBox').style.display = 'none';
                 setNow();
             }
@@ -248,7 +248,7 @@
             
             const payload = {
                 action: actionType,
-                recordId: document.getElementById('recordId').value, /* NÂNG CẤP 3: Gửi kèm ID để backend biết có cần ghi đè hay không */
+                recordId: document.getElementById('recordId').value, 
                 title: document.getElementById('meetingTitle').value,
                 date: document.getElementById('meetingDate').value,
                 location: document.getElementById('location').value,
@@ -293,7 +293,6 @@
                 if(result.status === 'success_doc') {
                     statusBox.className = 'status-success';
                     statusBox.innerHTML = `${result.message} <br><br> <a href="${result.url}" target="_blank" style="color:#166534; text-decoration:underline;">Mở Sổ Trực Tuyến</a>`;
-                    /* NÂNG CẤP: Nếu backend trả về ID mới sau khi lưu dự thảo, gán vào recordId để khi ấn tiếp nó sẽ ghi đè */
                     if(result.recordId) {
                         document.getElementById('recordId').value = result.recordId;
                     }
@@ -370,7 +369,7 @@
             }
         }
 
-        /* NÂNG CẤP 2: Bóc tách tự động dữ liệu vào đúng vị trí 4 ô, lọc trả lại nội dung sạch cho Textarea */
+        /* NÂNG CẤP CHUẨN HÓA: Bóc tách tự động dữ liệu sử dụng chuỗi RegExp an toàn chống giãn chữ */
         function extractToForm(index) {
             if(window.searchResultsData && window.searchResultsData[index]) {
                 const dataBlock = window.searchResultsData[index];
@@ -378,32 +377,58 @@
                 // 1. Phục hồi Title cơ bản
                 document.getElementById('meetingTitle').value = dataBlock.title || '';
                 
-                // 2. Thu thập văn bản gộp (nếu backend đẩy nguyên khối Document về)
+                // 2. Thu thập văn bản gộp
                 let fullContent = dataBlock.content || '';
                 let extLocation = dataBlock.location || '';
                 let extAttendees = dataBlock.attendees || '';
                 
-                // Dùng Regex quét các tham số bị dính trong văn bản (Dựa trên cấu trúc lưu từ Code.gs của đồng chí)
-                const locMatch = fullContent.match(/2\.\s*Địa\s*điểm:\s*(.*)/i);
+                // Sử dụng hàm khởi tạo RegExp an toàn bằng String tránh lỗi nén mã nguồn tự thêm khoảng cách chữ
+                const locRegex = new RegExp("2\\.\\s*Địa\\s*điểm:\\s*(.*)", "i");
+                const locMatch = fullContent.match(locRegex);
                 if (locMatch && !extLocation) extLocation = locMatch[1].trim();
                 
-                const attMatch = fullContent.match(/3\.\s*Thành\s*phần\s*tham\s*dự:\s*(.*)/i);
+                const attRegex = new RegExp("3\\.\\s*Thành\\s*phần\\s*tham\\s*dự:\\s*(.*)", "i");
+                const attMatch = fullContent.match(attRegex);
                 if (attMatch && !extAttendees) extAttendees = attMatch[1].trim();
                 
-                // 3. Cắt bỏ râu ria phần Header (từ đoạn "NỘI DUNG VÀ KẾT LUẬN" trở đi) để đưa lại nội dung gốc vào khung
-                let pureContent = fullContent;
-                const bodyParts = fullContent.split(/---\s*NỘI DUNG VÀ KẾT LUẬN\s*---/i);
-                if (bodyParts.length > 1) {
-                    pureContent = bodyParts[1].trim();
+                // Quét tìm lại mã định danh (cờ ghi đè) 
+                const idRegex = new RegExp("\\[Mã\\s*hồ\\s*sơ:\\s*(.*?)\\]", "i");
+                const idMatch = fullContent.match(idRegex);
+                if (idMatch) {
+                    document.getElementById('recordId').value = idMatch[1].trim();
+                } else {
+                    document.getElementById('recordId').value = dataBlock.id || index;
                 }
 
-                // 4. Đổ dữ liệu về đúng vị trí
+                // 3. Cắt bỏ hoàn toàn phần râu ria tiêu đề chính (tách từ dải phân cách "NỘI DUNG VÀ KẾT LUẬN" trở đi)
+                let pureContent = fullContent;
+                const dividerRegex = new RegExp("---" + "\\s*" + "NỘI DUNG VÀ KẾT LUẬN" + "\\s*" + "---", "i");
+                const bodyParts = fullContent.split(dividerRegex);
+                
+                if (bodyParts.length > 1) {
+                    pureContent = bodyParts[1].trim();
+                } else {
+                    // Cơ chế dự phòng nếu không tìm thấy dải phân cách có dấu gạch ngang
+                    const backupRegex = new RegExp("NỘI DUNG VÀ KẾT LUẬN", "i");
+                    const backupParts = fullContent.split(backupRegex);
+                    if (backupParts.length > 1) {
+                        // Loại bỏ các ký tự phân tách phụ nếu còn thừa ở đầu chuỗi con
+                        pureContent = backupParts[1].replace(/^[\s\-=\*_]+/g, '').trim();
+                    }
+                }
+
+                // 4. Đổ dữ liệu chuẩn hóa về đúng vị trí các ô
                 document.getElementById('location').value = extLocation;
                 document.getElementById('attendees').value = extAttendees;
                 document.getElementById('rawContent').value = pureContent;
                 
-                // 5. Nạp Record ID (nếu backend có gửi kèm index/id) để sẵn sàng tính năng GHI ĐÈ
-                document.getElementById('recordId').value = dataBlock.id || index;
+                if (dataBlock.date) {
+                    try {
+                        let dateStr = dataBlock.date;
+                        if (dateStr.includes(" ")) dateStr = dateStr.replace(" ", "T");
+                        document.getElementById('meetingDate').value = dateStr.substring(0, 16);
+                    } catch (e) {}
+                }
 
                 const statusBox = document.getElementById('statusBox');
                 statusBox.className = 'status-success';
