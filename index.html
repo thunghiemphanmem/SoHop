@@ -57,16 +57,16 @@
             border-radius: 6px;
             border: 1px solid var(--border);
         }
-        .form-group { display: flex; flex-direction: row; margin-bottom: 0; }
+        .form-group { display: flex; flex-direction: column; margin-bottom: 0; }
         label { font-weight: 600; font-size: 0.85rem; margin-bottom: 2px; color: #334155; }
         input, textarea {
-            width: 90%; padding: 0.4rem; border: 1px solid var(--border);
+            width: 100%; padding: 0.4rem; border: 1px solid var(--border);
             border-radius: 4px; box-sizing: border-box; font-family: inherit;
         }
         
         .content-group { margin-bottom: 5px; }
         textarea {
-            height: calc(100vh - 240px); min-height: 250px;
+            height: calc(100vh - 340px); min-height: 250px;
             resize: vertical; font-size: 0.95rem; line-height: 1.4;
         }
         
@@ -108,27 +108,27 @@
         <input type="hidden" id="recordId" value="">
 
         <div class="compact-header-grid">
-           <div style="background: #f8fafc; padding: 15px; border-radius: 6px; border: 1px solid var(--border);">
-            <div class="form-row">
+            <div class="form-group">
                 <label>1. Chủ đề / Tên cuộc họp:</label>
                 <input type="text" id="meetingTitle" placeholder="Ví dụ: Giao ban chuyên môn..." required>
             </div>
-            <div class="form-row">
+            <div class="form-group">
                 <label>2. Thời gian:</label>
                 <input type="datetime-local" id="meetingDate" required>
             </div>
-            <div class="form-row">
+            <div class="form-group">
                 <label>3. Địa điểm:</label>
                 <input type="text" id="location" placeholder="Phòng hội đồng..." required>
             </div>
-            <div class="form-row">
+            <div class="form-group">
                 <label>4. Thành phần tham dự:</label>
                 <input type="text" id="attendees" placeholder="BGH, Giáo viên..." required>
             </div>
-            <div class="form-row">
-                <label style="color:#8b5cf6;">📌 Ghi chú trọng tâm:</label>
-                <input type="text" id="focusNote" placeholder="Nội dung đặc biệt cần AI quan tâm...">
-            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 8px;">
+            <label style="color:#8b5cf6; font-size:0.9rem;">📌 Ghi chú trọng tâm cho AI (Không bắt buộc):</label>
+            <input type="text" id="focusNote" placeholder="Ví dụ: Nhấn mạnh công tác chuyên môn, kiểm tra hồ sơ...">
         </div>
 
         <div class="content-group">
