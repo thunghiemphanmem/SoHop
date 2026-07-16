@@ -33,6 +33,7 @@
             box-sizing: border-box;
         }
         
+        /* CẬP NHẬT: Giữ logo bên trái, Tiêu đề ở chính giữa */
         .header {
             position: sticky;
             top: 0;
@@ -41,20 +42,28 @@
             backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
-            justify-content: flex-start;
-            gap: 12px;
-            padding: 4px 10px;
+            justify-content: center; /* Căn giữa tuyệt đối cho thẻ h1 */
+            padding: 8px 10px;
             margin-bottom: 5px;
             border-bottom: 2px solid var(--primary);
+            min-height: 40px;
         }
-        .header img { width: 38px; height: auto; }
-        .header-title-container {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
+        .header img { 
+            position: absolute; /* Đưa logo ra khỏi luồng căn giữa */
+            left: 10px; /* Neo chặt bên trái */
+            width: 38px; 
+            height: auto; 
+            display: block; 
         }
-        .header h1 { margin: 0; color: var(--primary); font-size: 1.15rem; font-weight: 700; line-height: 1.2; }
-        .header h2 { margin: 0; color: var(--secondary); font-size: 0.85rem; font-weight: 500; display: block; line-height: 1.2; }
+        .header h1 { 
+            margin: 0; 
+            color: var(--primary); 
+            font-size: 1.25rem; 
+            font-weight: 700; 
+            line-height: 1.2; 
+            text-transform: uppercase; 
+            text-align: center;
+        }
         
         .compact-header-grid {
             display: grid;
@@ -162,7 +171,6 @@
             text-transform: uppercase;
         }
 
-        /* KHỐI CSS MỚI: CHO GIAO DIỆN PREVIEW MODAL */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.8); z-index: 2000;
@@ -188,7 +196,7 @@
         .preview-a4 {
             background: white; 
             width: 21cm; min-height: 29.7cm; 
-            padding: 2cm 2cm 2cm 3cm; /* Căn lề chuẩn: Top 2, Bottom 2, Right 2, Left 3 */
+            padding: 2cm 2cm 2cm 3cm;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); 
             box-sizing: border-box;
             font-family: 'Times New Roman', Times, serif; font-size: 14pt; line-height: 1.5; color: black;
@@ -196,7 +204,7 @@
 
         @media screen and (max-width: 800px) {
             .all-actions-row { grid-template-columns: repeat(3, 1fr); }
-            .preview-a4 { width: 100%; padding: 1.5cm; } /* Thu nhỏ lề trên mobile */
+            .preview-a4 { width: 100%; padding: 1.5cm; }
         }
         @media screen and (max-width: 600px) {
             .compact-header-grid { grid-template-columns: 1fr; }
@@ -207,6 +215,8 @@
             .modal-header { flex-direction: column; gap: 10px; align-items: flex-start; }
             .modal-actions { width: 100%; }
             .modal-actions button { flex: 1; }
+            /* Điều chỉnh tiêu đề khi ở màn hình nhỏ để không đè lên logo */
+            .header h1 { font-size: 1.1rem; margin-left: 40px; } 
         }
     </style>
 </head>
@@ -293,7 +303,7 @@
         <div id="statusBox" style="display:none;"></div>
     </div>
 
-    <!-- KHỐI MỚI: GIAO DIỆN MODAL XEM TRƯỚC VĂN BẢN -->
+    <!-- KHỐI GIAO DIỆN MODAL XEM TRƯỚC VĂN BẢN -->
     <div id="previewModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -311,15 +321,12 @@
 
     <script>
         window.searchResultsData = [];
-        window.previewDataCache = null; // Biến lưu trữ dữ liệu để chuyển từ preview sang download
+        window.previewDataCache = null;
         
         window.onload = function() {
             document.getElementById('headerArea').innerHTML = `
                 <img src="${KET_NOI.LOGO_TRUONG || ''}" alt="Logo" onerror="this.style.display='none'">
-                <div class="header-title-container">
-                    <h2>${KET_NOI.TEN_TO_CHUC || 'TỔ CHỨC'}</h2>
-                    <h1>${KET_NOI.TIEU_DE_PHAN_MEM || 'SỔ HỘI HỌP'}</h1>
-                </div>
+                <h1>${KET_NOI.TIEU_DE_PHAN_MEM || 'SỔ HỘI HỌP'}</h1>
             `;
             setNow();
         };
@@ -609,7 +616,6 @@
             }
         }
 
-        // CẬP NHẬT: CHỨC NĂNG 1 - MỞ KHUNG PREVIEW MÔ PHỎNG A4 TRƯỚC KHI XUẤT
         function previewWordDocument() {
             const orgParent = document.getElementById('orgParent').value.trim() || 'CƠ QUAN CHỦ QUẢN';
             const orgName = document.getElementById('orgName').value.trim() || 'TÊN ĐƠN VỊ';
@@ -645,12 +651,10 @@
                 displayTime = `${hours} giờ ${minutes} phút, ngày ${day}/${month}/${year}`;
             }
 
-            // Lưu dữ liệu vào biến toàn cục để dùng cho hàm Tải
             window.previewDataCache = {
                 orgParent, orgName, docNumber, docPlace, title, rawContent, location, attendees, displayTime, exportDateText
             };
 
-            // HTML hiển thị ngay trên web (mô phỏng A4)
             const webFormattedContent = rawContent.split('\n').map(line => {
                 if(line.trim() === '') return '<p style="margin-top:0; margin-bottom: 6pt;">&nbsp;</p>';
                 return `<p style="margin-top:0; margin-bottom: 6pt; text-align: justify;">${line}</p>`;
@@ -696,7 +700,6 @@
             document.getElementById('previewModal').style.display = 'none';
         }
 
-        // CẬP NHẬT: CHỨC NĂNG 2 - NÚT TẢI XUỐNG KHI ĐANG Ở MÀN HÌNH PREVIEW
         function downloadWordFile() {
             if(!window.previewDataCache) return;
             const data = window.previewDataCache;
