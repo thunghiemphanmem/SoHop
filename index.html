@@ -270,10 +270,19 @@
             <input type="text" id="focusNote" placeholder="Ví dụ: Nhấn mạnh công tác chuyên môn, kiểm tra hồ sơ...">
         </div>
 
-        <div class="form-group search-row-container" style="margin-bottom: 6px; background: #f0fdf4; padding: 4px; border-radius: 4px; border: 1px solid #bbf7d0;">
-            <label style="color:#16a34a; font-size:0.9rem;">🔍 Tìm cuộc họp:</label>
-            <input type="text" id="searchKeyword" placeholder="Nhập từ khóa tìm biên bản (hoặc Dự thảo)..." onkeypress="handleSearchEnter(event)">
-            <button id="btnSearch" class="btn-search" onclick="searchMeetingData()">Tìm kiếm</button>
+        <!-- Khối Tìm Kiếm & Hỏi AI -->
+        <div class="form-group search-row-container" style="margin-bottom: 6px; background: #f0fdf4; padding: 4px; border-radius: 4px; border: 1px solid #bbf7d0; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: center; flex: 1; min-width: 250px;">
+                <label style="color:#16a34a; font-size:0.9rem;">🔍 Tìm Sổ:</label>
+                <input type="text" id="searchKeyword" placeholder="Từ khóa tìm biên bản..." onkeypress="handleSearchEnter(event)">
+                <button id="btnSearch" class="btn-search" style="margin-left: 4px;" onclick="searchMeetingData()">Tìm</button>
+            </div>
+            
+            <div style="display: flex; align-items: center; flex: 2; min-width: 350px;">
+                <label style="color:#8b5cf6; font-size:0.9rem;">🤖 Tổng hợp:</label>
+                <input type="text" id="aiSearchQuery" placeholder="VD: Liệt kê các tổ chuyên môn được nhắc nhở trong 5 cuộc họp gần nhất..." onkeypress="handleAiSearchEnter(event)">
+                <button id="btnAiSearch" class="btn-draft" style="margin-left: 4px;" onclick="searchMeetingAI()">Hỏi AI</button>
+            </div>
         </div>
 
         <div id="searchResultsSection" style="display:none; margin-bottom: 8px; background: #fafafa; border: 1px solid var(--border); border-radius: 6px; padding: 6px;">
@@ -439,7 +448,8 @@
                     if(result.recordId) { document.getElementById('recordId').value = result.recordId; }
                 } else if (result.status === 'success_text') {
                     statusBox.className = 'status-success';
-                    statusBox.innerHTML = 'AI đã xử lý xong. Vui lòng kiểm tra lại.';
+                   
+            statusBox.innerHTML = 'Trợ lý AI đang quét sổ và trích xuất dữ liệu phân tích theo yêu cầu...';
                     
                     let cleanText = result.text;
                     
