@@ -72,11 +72,11 @@
         }
         .header h2 { display: none; }
         
-        /* KHỐI NHẬP LIỆU PHẦN ĐẦU - Đã chỉnh sửa cùng 1 dòng */
+        /* KHỐI NHẬP LIỆU PHẦN ĐẦU - Giữ nguyên 2 dòng (Tên trên, ô dưới) */
         .compact-header-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px 30px; /* Tăng khoảng cách 2 cột */
+            gap: 15px 30px; 
             margin-bottom: 15px;
             background: #ffffff;
             padding: 20px;
@@ -85,24 +85,18 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
         
-        /* Cấu trúc Flex Row ép Tên và Ô nhập trên 1 dòng */
         .compact-header-grid .form-group { 
             display: flex; 
-            flex-direction: row; 
-            align-items: center; 
+            flex-direction: column; 
             margin-bottom: 0; 
-            gap: 12px;
         }
         .compact-header-grid .form-group label {
             font-weight: 600;
             font-size: 0.9rem;
-            margin-bottom: 0; 
+            margin-bottom: 6px; 
             color: #1e293b;
-            white-space: nowrap; /* Không cho chữ rớt dòng */
-            min-width: 180px; /* Cố định độ rộng nhãn để các ô input thẳng cột */
         }
         .compact-header-grid .form-group input {
-            flex: 1; /* Cho ô input co giãn chiếm toàn bộ phần còn lại */
             width: 100%;
             padding: 0.65rem 0.8rem;
             border: 1px solid var(--border);
@@ -185,37 +179,45 @@
             box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
         }
         
-        /* KHỐI NÚT CHỨC NĂNG - Đã đưa về 1 hàng duy nhất */
+        /* ========================================================= */
+        /* KHỐI NÚT CHỨC NĂNG - ÉP 1 HÀNG KHÔNG VƯỢT KHUNG */
+        /* ========================================================= */
         .action-container {
             display: flex;
             flex-direction: row;
-            flex-wrap: nowrap; /* Ép buộc 1 hàng ngang */
-            justify-content: center;
+            flex-wrap: nowrap; /* Bắt buộc 1 hàng ngang */
+            justify-content: space-between;
             align-items: stretch;
-            gap: 12px;
+            gap: 8px; /* Thu hẹp khoảng cách giữa các nút */
             margin-top: 20px;
             margin-bottom: 15px;
             width: 100%;
-            overflow-x: auto; /* Hiển thị thanh cuộn ngang nếu màn hình nhỏ */
-            padding-bottom: 8px;
+            box-sizing: border-box; /* Đảm bảo padding không cộng dồn làm vượt khung */
         }
         
         .btn-action {
-            flex: 1; /* Các nút tự động chia đều độ rộng */
-            padding: 0.8rem 0.5rem;
-            font-size: 0.9rem;
+            flex: 1; /* Tự động chia đều chiều rộng 5 phần bằng nhau */
+            padding: 0.6rem 0.2rem; /* Giảm khoảng lề bên trong nút */
+            font-size: 0.8rem; /* Cỡ chữ vừa phải */
             font-weight: 700;
             cursor: pointer;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             color: white;
             text-shadow: 0 1px 1px rgba(0,0,0,0.2);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             transition: all 0.25s ease;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            white-space: nowrap; /* Không rớt dòng chữ trong nút */
+            
+            /* Tinh chỉnh cho phép text bọc lại thành 2 dòng ở trong lòng nút nếu màn hình nhỏ, tuyệt đối không xé toạc khung */
+            white-space: normal; 
+            line-height: 1.3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
         }
+        
         .btn-action:hover {
             transform: translateY(-2px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
@@ -252,18 +254,20 @@
         .result-item { padding: 10px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; background: #ffffff; border-radius: 4px; margin-bottom: 5px; }
         .result-item a { text-decoration: none; font-weight: 600; color: var(--primary); font-size: 1rem; margin-bottom: 4px; }
         
-        /* ĐÁP ỨNG TRÊN DI ĐỘNG */
+        /* ĐÁP ỨNG TRÊN DI ĐỘNG & IPAD */
         @media screen and (max-width: 1100px) {
-            .compact-header-grid { grid-template-columns: 1fr; gap: 15px; }
-            .action-container { justify-content: flex-start; } /* Hỗ trợ trượt ngang mượt hơn trên iPad */
+            .compact-header-grid { gap: 15px; }
         }
         @media screen and (max-width: 768px) {
             .container { max-width: 100%; padding: 0 10px 15px 10px; }
             .header h1 { font-size: 1.2rem; margin-left: 45px; }
             .header img { width: 40px; }
-            .compact-header-grid .form-group { flex-direction: column; align-items: flex-start; gap: 6px; }
-            .compact-header-grid .form-group label { min-width: auto; }
+            .compact-header-grid { grid-template-columns: 1fr; }
             .focus-note-wrapper { flex-direction: column; align-items: flex-start; gap: 6px; }
+            
+            /* Ép nhỏ hơn nữa để giữ 5 nút trên 1 dòng ở ĐTDĐ */
+            .action-container { gap: 4px; }
+            .btn-action { font-size: 0.6rem; padding: 0.4rem 0.1rem; }
         }
     </style>
 </head>
