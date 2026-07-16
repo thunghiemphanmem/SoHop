@@ -33,7 +33,6 @@
             box-sizing: border-box;
         }
         
-        /* CẬP NHẬT: Logo sang bên trái cùng 1 hàng với tên */
         .header {
             position: sticky;
             top: 0;
@@ -57,7 +56,7 @@
         .header h1 { margin: 0; color: var(--primary); font-size: 1.15rem; font-weight: 700; line-height: 1.2; }
         .header h2 { margin: 0; color: var(--secondary); font-size: 0.85rem; font-weight: 500; display: block; line-height: 1.2; }
         
-        /* CẬP NHẬT: Lưới 2 cột, 2 dòng cho khối đầu, thu hẹp khoảng đệm tối đa = 0 */
+        /* Cấu trúc lưới linh hoạt */
         .compact-header-grid {
             display: grid;
             grid-template-columns: 60% 40%; 
@@ -96,19 +95,14 @@
             font-family: inherit;
         }
         
-        /* CẬP NHẬT: Cấu trúc hiển thị ô và nút tìm kiếm lên khối trên */
         .search-row-container {
             display: flex;
             flex-direction: row;
             align-items: center;
             gap: 4px;
         }
-        .search-row-container label {
-            margin-right: 4px;
-        }
-        .search-row-container input {
-            flex: 1;
-        }
+        .search-row-container label { margin-right: 4px; }
+        .search-row-container input { flex: 1; }
         .search-row-container button {
             padding: 0.4rem 0.8rem;
             white-space: nowrap;
@@ -118,14 +112,14 @@
 
         .content-group { margin-bottom: 5px; }
         textarea {
-            height: calc(100vh - 340px); min-height: 250px;
+            height: calc(100vh - 380px); min-height: 250px;
             resize: vertical; font-size: 0.95rem; line-height: 1.4;
         }
         
-        /* CẬP NHẬT: Khối nút chức năng bên dưới chỉ 1 hàng */
+        /* CẬP NHẬT: Hàng chứa 6 nút chức năng */
         .all-actions-row {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(6, 1fr);
             gap: 4px;
             margin-top: 6px;
         }
@@ -145,6 +139,7 @@
         .btn-draft { background: #8b5cf6; }
         .btn-save-draft { background: #f59e0b; color: #fff; } 
         .btn-generate { background: #10b981; }
+        .btn-export { background: #0ea5e9; } /* Nút xuất word */
         .btn-reset { background: #ef4444; }
         .btn-search { background: var(--primary); }
         button:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -159,10 +154,21 @@
         .result-item { padding: 8px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; }
         .result-item a { text-decoration: none; font-weight: 600; color: var(--primary); }
         
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--secondary);
+            margin-bottom: 2px;
+            text-transform: uppercase;
+        }
+
+        @media screen and (max-width: 800px) {
+            .all-actions-row { grid-template-columns: repeat(3, 1fr); }
+        }
         @media screen and (max-width: 600px) {
             .compact-header-grid { grid-template-columns: 1fr; }
             .form-group { flex-direction: column; align-items: flex-start; }
-            .all-actions-row { grid-template-columns: 1fr; }
+            .all-actions-row { grid-template-columns: repeat(2, 1fr); }
             .search-row-container { flex-direction: column; align-items: flex-start; }
             .search-row-container button { width: 100%; margin-top: 4px; }
         }
@@ -173,6 +179,27 @@
         <div class="header" id="headerArea"></div>
         <input type="hidden" id="recordId" value="">
 
+        <div class="section-title">Thông tin thể thức (Nghị định 30)</div>
+        <div class="compact-header-grid" style="background: #fff; border-color: #94a3b8;">
+            <div class="form-group">
+                <label>CQ Chủ quản:</label>
+                <input type="text" id="orgParent" value="UBND XÃ HỢP THÀNH" placeholder="Cơ quan cấp trên...">
+            </div>
+            <div class="form-group">
+                <label>Nơi ban hành:</label>
+                <input type="text" id="docPlace" value="Hợp Thành" placeholder="Địa danh...">
+            </div>
+            <div class="form-group">
+                <label>Cơ quan/Đơn vị:</label>
+                <input type="text" id="orgName" value="TRƯỜNG TH&THCS HỢP THÀNH" placeholder="Tên đơn vị...">
+            </div>
+            <div class="form-group">
+                <label>Số văn bản:</label>
+                <input type="text" id="docNumber" value="/ BB-THHT" placeholder="Ví dụ: 12/BB-THHT">
+            </div>
+        </div>
+
+        <div class="section-title">Thông tin cuộc họp</div>
         <div class="compact-header-grid">
             <div class="form-group">
                 <label>1. Chủ đề:</label>
@@ -182,7 +209,6 @@
                 <label>2. Thời gian:</label>
                 <input type="datetime-local" id="meetingDate" required>
             </div>
-            
             <div class="form-group">
                 <label>4. Tham dự:</label>
                 <input type="text" id="attendees" placeholder="BGH, Giáo viên..." required>
@@ -219,11 +245,12 @@
             </div>
 
             <div class="all-actions-row">
-                <button id="btnReformat" class="btn-reformat" onclick="processAction('reformat')">Tạo lại bố cục bằng AI</button>
-                <button id="btnDraft" class="btn-draft" onclick="processAction('draft')">AI Dự thảo Kết luận</button>
+                <button id="btnReformat" class="btn-reformat" onclick="processAction('reformat')">Bố cục bằng AI</button>
+                <button id="btnDraft" class="btn-draft" onclick="processAction('draft')">AI Dự thảo</button>
                 <button id="btnSaveDraft" class="btn-save-draft" onclick="processAction('save_draft')">Lưu Dự Thảo</button>
-                <button id="btnGenerate" class="btn-generate" onclick="processAction('generate')">Hoàn Thành & Ghi Sổ</button>
-                <button id="btnReset" class="btn-reset" onclick="resetMeeting()">Chuyển cuộc họp mới</button>
+                <button id="btnGenerate" class="btn-generate" onclick="processAction('generate')">Hoàn Thành Ghi Sổ</button>
+                <button id="btnExportWord" class="btn-export" onclick="exportToWord()">Xuất File Word</button>
+                <button id="btnReset" class="btn-reset" onclick="resetMeeting()">Tạo mới</button>
             </div>
         </div>
 
@@ -235,10 +262,10 @@
         
         window.onload = function() {
             document.getElementById('headerArea').innerHTML = `
-                <img src="${KET_NOI.LOGO_TRUONG}" alt="Logo">
+                <img src="${KET_NOI.LOGO_TRUONG || ''}" alt="Logo" onerror="this.style.display='none'">
                 <div class="header-title-container">
-                    <h2>${KET_NOI.TEN_TO_CHUC}</h2>
-                    <h1>${KET_NOI.TIEU_DE_PHAN_MEM}</h1>
+                    <h2>${KET_NOI.TEN_TO_CHUC || 'TỔ CHỨC'}</h2>
+                    <h1>${KET_NOI.TIEU_DE_PHAN_MEM || 'SỔ HỘI HỌP'}</h1>
                 </div>
             `;
             setNow();
@@ -259,6 +286,7 @@
                 document.getElementById('rawContent').value = '';
                 document.getElementById('recordId').value = ''; 
                 document.getElementById('statusBox').style.display = 'none';
+                // Không reset thông tin thể thức để dùng lại cho tiện
                 setNow();
             }
         }
@@ -268,6 +296,7 @@
             document.getElementById('btnDraft').disabled = state;
             document.getElementById('btnSaveDraft').disabled = state;
             document.getElementById('btnGenerate').disabled = state;
+            document.getElementById('btnExportWord').disabled = state;
             document.getElementById('btnReset').disabled = state;
             document.getElementById('btnSearch').disabled = state;
         }
@@ -294,7 +323,6 @@
             return dateStr;
         }
 
-        // CẬP NHẬT: Đóng thủ công danh mục kết quả tìm kiếm và hiển thị lại nội dung họp
         function closeSearchResults() {
             document.getElementById('searchResultsSection').style.display = 'none';
             document.getElementById('meetingContentSection').style.display = 'block';
@@ -303,8 +331,6 @@
         async function processAction(actionType) {
             const rawContentField = document.getElementById('rawContent');
             const statusBox = document.getElementById('statusBox');
-            
-            const focusNoteField = document.getElementById('focusNote'); 
             
             const payload = {
                 action: actionType,
@@ -397,7 +423,6 @@
             if (event.key === "Enter") searchMeetingData();
         }
 
-        // CẬP NHẬT: Khi tìm kiếm, tự động ẩn khung nhập nội dung cuộc họp để nhường không gian cho kết quả hiển thị
         async function searchMeetingData() {
             const keyword = document.getElementById('searchKeyword').value;
             const resultList = document.getElementById('searchResults');
@@ -450,7 +475,6 @@
             }
         }
 
-        // CẬP NHẬT: Khi chọn một cuộc họp từ danh sách tìm kiếm, ẩn danh sách kết quả và hiển thị lại nội dung họp
         function extractToForm(index) {
             if(window.searchResultsData && window.searchResultsData[index]) {
                 const dataBlock = window.searchResultsData[index];
@@ -531,6 +555,160 @@
                 
                 document.getElementById('rawContent').scrollIntoView({ behavior: "smooth", block: "center" });
             }
+        }
+
+        // TÍNH NĂNG XUẤT RA FILE WORD (DOC) CHUẨN NGHỊ ĐỊNH 30
+        function exportToWord() {
+            // 1. Lấy dữ liệu
+            const orgParent = document.getElementById('orgParent').value.trim() || 'CƠ QUAN CHỦ QUẢN';
+            const orgName = document.getElementById('orgName').value.trim() || 'TÊN ĐƠN VỊ';
+            let docNumber = document.getElementById('docNumber').value.trim() || '';
+            if(docNumber !== '' && !docNumber.toLowerCase().startsWith('số')) {
+                docNumber = 'Số: ' + docNumber;
+            }
+            const docPlace = document.getElementById('docPlace').value.trim() || '.........';
+            
+            const title = document.getElementById('meetingTitle').value.trim() || 'NỘI DUNG CUỘC HỌP';
+            const rawContent = document.getElementById('rawContent').value.trim();
+            const location = document.getElementById('location').value.trim();
+            const attendees = document.getElementById('attendees').value.trim();
+            
+            if(!rawContent) {
+                alert("Không có nội dung cuộc họp để xuất ra Word!");
+                return;
+            }
+
+            // Xử lý ngày tháng
+            const rawDate = document.getElementById('meetingDate').value;
+            let displayTime = '';
+            let exportDateText = `ngày ..... tháng ..... năm 20...`;
+            
+            if (rawDate) {
+                const d = new Date(rawDate);
+                const day = d.getDate().toString().padStart(2, '0');
+                const month = (d.getMonth() + 1).toString().padStart(2, '0');
+                const year = d.getFullYear();
+                const hours = d.getHours().toString().padStart(2, '0');
+                const minutes = d.getMinutes().toString().padStart(2, '0');
+                
+                exportDateText = `ngày ${day} tháng ${month} năm ${year}`;
+                displayTime = `${hours} giờ ${minutes} phút, ngày ${day}/${month}/${year}`;
+            }
+
+            // Chuyển đổi xuống dòng thành <br> cho nội dung
+            const formattedContent = rawContent.replace(/\n/g, '<br>');
+
+            // 2. Tạo cấu trúc HTML chuẩn Word (sử dụng MSO style)
+            const htmlContent = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head>
+                <meta charset='utf-8'>
+                <title>Export Doc</title>
+                <style>
+                    @page {
+                        size: 21cm 29.7cm; /* Khổ A4 */
+                        margin: 2cm 2cm 2cm 3cm; /* Lề chuẩn NĐ 30: Trái 3, Phải 2, Trên 2, Dưới 2 */
+                        mso-page-orientation: portrait;
+                    }
+                    body {
+                        font-family: 'Times New Roman', serif;
+                        font-size: 14pt;
+                        line-height: 1.5;
+                    }
+                    .header-table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        border: none;
+                        margin-bottom: 20px;
+                    }
+                    .header-table td {
+                        vertical-align: top;
+                        text-align: center;
+                        padding: 0;
+                        border: none;
+                    }
+                    .td-left { width: 40%; }
+                    .td-right { width: 60%; }
+                    
+                    .org-parent { font-size: 13pt; text-transform: uppercase; }
+                    .org-name { font-size: 13pt; font-weight: bold; text-transform: uppercase; }
+                    .line-org { border-top: 1px solid black; width: 40%; margin: 0 auto; margin-top: 2px; margin-bottom: 5px; }
+                    
+                    .nation { font-size: 13pt; font-weight: bold; text-transform: uppercase; }
+                    .motto { font-size: 14pt; font-weight: bold; }
+                    .line-motto { border-top: 1px solid black; width: 50%; margin: 0 auto; margin-top: 2px; margin-bottom: 5px; }
+                    
+                    .doc-date { font-size: 14pt; font-style: italic; margin-top: 5px;}
+                    .doc-num { font-size: 13pt; margin-top: 5px; }
+
+                    .main-title { text-align: center; font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-top: 20px; margin-bottom: 5px;}
+                    .sub-title { text-align: center; font-size: 14pt; font-weight: bold; margin-bottom: 20px; }
+                    
+                    .section { margin-bottom: 10px; text-align: justify; }
+                    
+                    .signature-table { width: 100%; margin-top: 30px; border: none; }
+                    .signature-table td { width: 50%; text-align: center; vertical-align: top; border: none; font-weight: bold;}
+                </style>
+            </head>
+            <body>
+                <table class="header-table">
+                    <tr>
+                        <td class="td-left">
+                            <div class="org-parent">${orgParent}</div>
+                            <div class="org-name">${orgName}</div>
+                            <div class="line-org"></div>
+                            <div class="doc-num">${docNumber}</div>
+                        </td>
+                        <td class="td-right">
+                            <div class="nation">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                            <div class="motto">Độc lập – Tự do – Hạnh phúc</div>
+                            <div class="line-motto"></div>
+                            <div class="doc-date"><i>${docPlace}, ${exportDateText}</i></div>
+                        </td>
+                    </tr>
+                </table>
+
+                <div class="main-title">BIÊN BẢN</div>
+                <div class="sub-title">${title}</div>
+
+                <div class="section"><b>1. Thời gian bắt đầu:</b> ${displayTime}</div>
+                <div class="section"><b>2. Địa điểm:</b> ${location}</div>
+                <div class="section"><b>3. Thành phần tham dự:</b> ${attendees}</div>
+                <div class="section"><b>4. Nội dung diễn biến cuộc họp:</b><br><br>${formattedContent}</div>
+
+                <table class="signature-table">
+                    <tr>
+                        <td>THƯ KÝ</td>
+                        <td>CHỦ TỌA</td>
+                    </tr>
+                    <tr>
+                        <td style="height: 80px;"></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><i>(Ký, ghi rõ họ tên)</i></td>
+                        <td><i>(Ký, ghi rõ họ tên)</i></td>
+                    </tr>
+                </table>
+            </body>
+            </html>
+            `;
+
+            // 3. Tạo Blob và tải xuống
+            const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `BienBan_${title.replace(/\s+/g, '_')}.doc`; // Dùng chuẩn .doc để tương thích Microsoft Word
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            const statusBox = document.getElementById('statusBox');
+            statusBox.style.display = 'block';
+            statusBox.className = 'status-success';
+            statusBox.innerHTML = 'Đã tải xuống thành công file Word chuẩn Nghị định 30!';
         }
     </script>
 </body>
