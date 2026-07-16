@@ -8,17 +8,12 @@
     <style>
         :root {
             --primary: #0284c7;
+            --primary-hover: #0369a1;
             --secondary: #475569;
-            --bg: #e2e8f0;
+            --bg: #f1f5f9;
             --card: #ffffff;
             --text: #1e293b;
             --border: #cbd5e1;
-            /* Màu các nút chức năng */
-            --btn-blue: #3b82f6;
-            --btn-purple: #8b5cf6;
-            --btn-orange: #f59e0b;
-            --btn-green: #10b981;
-            --btn-red: #ef4444;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -30,136 +25,212 @@
             justify-content: center;
         }
         
-        /* Đã thu hẹp khung 10% (từ 98% xuống 88%) */
+        /* KHUNG CHÍNH - Thu hẹp 10% (88%) */
         .container {
             background: var(--card);
             width: 100%;
-            max-width: 88%; 
+            max-width: 88%;
             min-height: 100vh;
-            padding: 0 15px 20px 15px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            padding: 0 20px 25px 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
             box-sizing: border-box;
+            border-radius: 0 0 12px 12px;
         }
-        
-        /* HEADER: Tiêu đề ở giữa, Logo góc trái */
+
+        /* HEADER - Logo trái, Tiêu đề giữa */
         .header {
             position: sticky;
             top: 0;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(8px);
-            padding: 12px 15px;
-            margin-bottom: 10px;
-            border-bottom: 2px solid var(--primary);
-            
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid var(--primary);
             display: flex;
             align-items: center;
-            justify-content: center; /* Căn giữa tiêu đề */
-            position: relative; /* Làm mốc tọa độ cho Logo */
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border-radius: 0 0 8px 8px;
         }
-        
-        /* Neo Logo cố định bên trái */
         .header img {
-            width: 45px;
+            width: 50px;
             height: auto;
             position: absolute;
-            left: 15px;
+            left: 20px; /* Neo logo góc trái */
         }
-        
         .header h1 {
             margin: 0;
             color: var(--primary);
-            font-size: 1.4rem;
-            font-weight: 700;
+            font-size: 1.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             text-align: center;
-            white-space: nowrap;
         }
-        
         .header h2 { display: none; }
         
+        /* KHỐI NHẬP LIỆU - 2 Cột chuẩn ảnh mẫu */
         .compact-header-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 5px 10px;
-            margin-bottom: 8px;
-            background: #f8fafc;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
+            gap: 15px 20px;
+            margin-bottom: 15px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
         .form-group { display: flex; flex-direction: column; margin-bottom: 0; }
-        label { font-weight: 600; font-size: 0.85rem; margin-bottom: 2px; color: #334155; }
-        input, textarea {
-            width: 100%; padding: 0.4rem; border: 1px solid var(--border);
-            border-radius: 4px; box-sizing: border-box; font-family: inherit;
-        }
-        
-        .content-group { margin-bottom: 5px; }
-        textarea {
-            height: calc(100vh - 360px); 
-            min-height: 250px;
-            resize: vertical; font-size: 0.95rem; line-height: 1.4;
-        }
-        
-        /* Cấu trúc các nút chức năng */
-        button {
-            padding: 0.6rem 0.8rem;
-            font-size: 0.85rem;
+        .form-group label {
             font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            color: #1e293b;
+        }
+        .form-group input {
+            padding: 0.65rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            background-color: #f8fafc;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        }
+
+        /* KHỐI GHI CHÚ TRỌNG TÂM */
+        .focus-note-wrapper {
+            margin-bottom: 15px;
+            background: #fdf4ff;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px dashed #d8b4fe;
+        }
+        .focus-note-wrapper label { color: #7e22ce; font-weight: 700; }
+        .focus-note-wrapper input { background-color: #ffffff; border-color: #e9d5ff; }
+        .focus-note-wrapper input:focus { border-color: #a855f7; box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15); }
+
+        /* KHỐI NỘI DUNG DIỄN BIẾN */
+        .content-group { margin-bottom: 15px; }
+        .content-group label {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.05rem;
+            display: block;
+            margin-bottom: 8px;
+        }
+        textarea {
+            width: 100%;
+            height: calc(100vh - 420px); 
+            min-height: 250px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            resize: vertical; 
+            font-size: 1rem; 
+            line-height: 1.6;
+            box-sizing: border-box;
+            font-family: inherit;
+            background-color: #ffffff;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            transition: border-color 0.2s;
+        }
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+        }
+        
+        /* KHỐI NÚT CHỨC NĂNG - Xếp 2 Dòng */
+        .action-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
+        .action-row-1 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        .action-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .btn-action {
+            padding: 0.8rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 700;
             cursor: pointer;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
             color: white;
-            white-space: nowrap; 
-            transition: opacity 0.2s;
+            text-shadow: 0 1px 1px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.25s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        button:hover { opacity: 0.85; }
-        button:disabled { opacity: 0.6; cursor: not-allowed; }
-        
-        /* ÉP BUỘC CÁC NÚT TRÊN 1 DÒNG VÀ CĂN GIỮA */
-        .centered-action-container {
-            display: flex;
-            flex-wrap: nowrap; /* Không cho phép xuống dòng */
-            justify-content: center; /* Căn giữa */
-            align-items: center; 
-            gap: 10px; 
-            margin-top: 15px; 
-            margin-bottom: 10px; 
-            padding: 5px 0;
-            width: 100%;
-            overflow-x: auto; /* Hiển thị thanh trượt ngang nếu xem trên điện thoại quá nhỏ */
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            filter: brightness(105%);
         }
+        .btn-action:active { transform: translateY(0); }
+        .btn-action:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         
-        .btn-blue-rect { background: var(--btn-blue); flex: 1; }
-        .btn-purple-rect { background: var(--btn-purple); flex: 1; }
-        .btn-orange-rect { background: var(--btn-orange); color: #fff; flex: 1; } 
-        .btn-green-rect { background: var(--btn-green); flex: 1; }
-        .btn-red-rect { background: var(--btn-red); flex: 1; }
+        /* Gradient theo hình ảnh cung cấp */
+        .btn-reformat { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .btn-draft { background: linear-gradient(135deg, #a855f7, #7e22ce); }
+        .btn-save-draft { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .btn-generate { background: linear-gradient(135deg, #10b981, #059669); }
+        .btn-reset { background: linear-gradient(135deg, #ef4444, #dc2626); }
         
-        .btn-search { background: var(--primary); padding: 0.4rem 1rem; }
+        /* THANH TÌM KIẾM & TRẠNG THÁI */
+        .btn-search { 
+            background: var(--primary); padding: 0.6rem 1.2rem; font-weight: 600; 
+            border: none; border-radius: 6px; color: white; cursor: pointer;
+        }
+        .btn-search:hover { background: var(--primary-hover); }
         
-        #statusBox { margin-top: 8px; padding: 0.5rem; border-radius: 4px; font-size: 0.9rem; text-align: center; }
-        .status-loading { background: #e0f2fe; color: #0284c7; }
-        .status-success { background: #dcfce7; color: #166534; }
-        .status-error { background: #fee2e2; color: #991b1b; }
+        #statusBox { margin-top: 10px; padding: 0.8rem; border-radius: 6px; font-size: 0.95rem; text-align: center; font-weight: 600; }
+        .status-loading { background: #e0f2fe; color: #0284c7; border: 1px solid #bae6fd; }
+        .status-success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .status-error { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         
-        .divider { margin: 10px 0; border-top: 1px dashed var(--border); }
-        .search-flex { display: flex; gap: 5px; align-items: center; justify-content: flex-end; }
-        #searchKeyword { width: auto; flex-grow: 1; max-width: 300px; }
-        .search-results { max-height: 150px; overflow-y: auto; padding: 0; list-style: none; margin-top: 5px; }
-        .result-item { padding: 8px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; }
-        .result-item a { text-decoration: none; font-weight: 600; color: var(--primary); }
+        .divider { margin: 15px 0; border-top: 1px dashed var(--border); }
+        .search-flex { display: flex; gap: 8px; }
+        .search-flex input {
+            flex-grow: 1; padding: 0.6rem 0.8rem; border: 1px solid var(--border);
+            border-radius: 6px; font-size: 0.95rem; font-family: inherit;
+        }
+        .search-results { max-height: 200px; overflow-y: auto; padding: 0; list-style: none; margin-top: 10px; }
+        .result-item { padding: 10px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; background: #ffffff; border-radius: 4px; margin-bottom: 5px; }
+        .result-item a { text-decoration: none; font-weight: 600; color: var(--primary); font-size: 1rem; margin-bottom: 4px; }
         
+        /* ĐÁP ỨNG TRÊN DI ĐỘNG */
         @media screen and (max-width: 768px) {
-            .container { max-width: 100%; }
-            .header h1 { font-size: 1.1rem; padding-left: 40px; }
-            .compact-header-grid { grid-template-columns: 1fr; }
+            .container { max-width: 100%; padding: 0 10px 15px 10px; }
+            .header h1 { font-size: 1.2rem; margin-left: 45px; }
+            .header img { width: 40px; }
+            .compact-header-grid { grid-template-columns: 1fr; gap: 10px; padding: 15px; }
+            .action-row-1, .action-row-2 { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- HEADER nạp động LOGO và TIÊU ĐỀ -->
         <div class="header" id="headerArea"></div>
         <input type="hidden" id="recordId" value="">
 
@@ -182,23 +253,26 @@
             </div>
         </div>
 
-        <div class="form-group" style="margin-bottom: 8px;">
-            <label style="color:var(--btn-purple); font-size:0.9rem;">📌 Ghi chú trọng tâm cho AI (Không bắt buộc):</label>
+        <div class="form-group focus-note-wrapper">
+            <label>📌 Ghi chú trọng tâm cho AI (Không bắt buộc):</label>
             <input type="text" id="focusNote" placeholder="Ví dụ: Nhấn mạnh công tác chuyên môn, kiểm tra hồ sơ...">
         </div>
 
         <div class="content-group">
-            <label style="color:var(--primary); font-size:1rem;">Nội dung diễn biến (Khung nhập thô):</label>
+            <label>Nội dung diễn biến (Khung nhập thô):</label>
             <textarea id="rawContent" placeholder="Ghi chép nhanh các ý kiến thảo luận tại đây..."></textarea>
         </div>
 
-        <!-- KHỐI CÁC NÚT CHỨC NĂNG - ÉP 1 DÒNG GIỮA -->
-        <div class="centered-action-container">
-            <button id="btnReformat" class="btn-blue-rect" onclick="processAction('reformat')">Tạo lại bố cục bằng AI</button>
-            <button id="btnDraft" class="btn-purple-rect" onclick="processAction('draft')">AI Dự thảo Kết luận</button>
-            <button id="btnSaveDraft" class="btn-orange-rect" onclick="processAction('save_draft')">Lưu Dự Thảo</button>
-            <button id="btnGenerate" class="btn-green-rect" onclick="processAction('generate')">Hoàn Thành & Ghi Sổ</button>
-            <button id="btnReset" class="btn-red-rect" onclick="resetMeeting()">Chuyển cuộc họp mới</button>
+        <div class="action-container">
+            <div class="action-row-1">
+                <button id="btnReformat" class="btn-action btn-reformat" onclick="processAction('reformat')">Tạo lại bố cục bằng AI</button>
+                <button id="btnDraft" class="btn-action btn-draft" onclick="processAction('draft')">AI Dự thảo Kết luận</button>
+            </div>
+            <div class="action-row-2">
+                <button id="btnSaveDraft" class="btn-action btn-save-draft" onclick="processAction('save_draft')">Lưu Dự Thảo</button>
+                <button id="btnGenerate" class="btn-action btn-generate" onclick="processAction('generate')">Hoàn Thành & Ghi Sổ</button>
+                <button id="btnReset" class="btn-action btn-reset" onclick="resetMeeting()">Chuyển cuộc họp mới</button>
+            </div>
         </div>
 
         <div id="statusBox" style="display:none;"></div>
@@ -216,9 +290,9 @@
         window.searchResultsData = [];
         
         window.onload = function() {
-            // Nạp cấu trúc: Logo và thẻ H1
             document.getElementById('headerArea').innerHTML = `
                 <img src="${KET_NOI.LOGO_TRUONG}" alt="Logo">
+                <h2>${KET_NOI.TEN_TO_CHUC}</h2>
                 <h1>${KET_NOI.TIEU_DE_PHAN_MEM}</h1>
             `;
             setNow();
@@ -277,6 +351,8 @@
         async function processAction(actionType) {
             const rawContentField = document.getElementById('rawContent');
             const statusBox = document.getElementById('statusBox');
+            const focusNoteField = document.getElementById('focusNote'); 
+            
             const payload = {
                 action: actionType,
                 isDraft: (actionType === 'save_draft'),
@@ -285,7 +361,7 @@
                 date: document.getElementById('meetingDate').value,
                 location: document.getElementById('location').value,
                 attendees: document.getElementById('attendees').value,
-                focusNote: document.getElementById('focusNote').value, 
+                focusNote: focusNoteField.value, 
                 rawContent: rawContentField.value,
                 appName: KET_NOI.TIEU_DE_PHAN_MEM,
                 orgName: KET_NOI.TEN_TO_CHUC,
@@ -328,6 +404,7 @@
                     statusBox.innerHTML = 'AI đã xử lý xong. Vui lòng kiểm tra lại.';
                     
                     let cleanText = result.text;
+                    
                     const matchPattern = /(?:NỘI DUNG CUỘC HỌP|NỘI DUNG VÀ KẾT LUẬN|NỘI DUNG CHÍNH)/i;
                     const markerMatch = cleanText.match(matchPattern);
                     if (markerMatch) {
@@ -343,6 +420,7 @@
                     cleanText = cleanText.replace(/Thành phần tham dự:[\s\S]*?(?=Chủ trì:|Thư ký:|I\.|1\.)/ig, '');
                     cleanText = cleanText.replace(/Chủ trì:.*?\n/ig, '');
                     cleanText = cleanText.replace(/Thư ký:.*?\n/ig, '');
+                    
                     cleanText = cleanText.replace(/^[\s\-=\*_]+/g, '').trim();
 
                     if(actionType === 'reformat') {
@@ -416,6 +494,7 @@
         function extractToForm(index) {
             if(window.searchResultsData && window.searchResultsData[index]) {
                 const dataBlock = window.searchResultsData[index];
+                
                 document.getElementById('meetingTitle').value = dataBlock.title || '';
                 
                 let fullContent = dataBlock.content || '';
@@ -444,6 +523,7 @@
                 }
 
                 let pureContent = fullContent;
+                
                 const splitMarkers = [
                     "--- NỘI DUNG VÀ KẾT LUẬN ---",
                     "**NỘI DUNG CUỘC HỌP**",
@@ -468,6 +548,7 @@
                 pureContent = pureContent.replace(/Thành phần tham dự:[\s\S]*?(?=Chủ trì:|Thư ký:|I\.|1\.)/ig, '');
                 pureContent = pureContent.replace(/Chủ trì:.*?\n/ig, '');
                 pureContent = pureContent.replace(/Thư ký:.*?\n/ig, '');
+                
                 pureContent = pureContent.replace(/^[\s\-=\*_]+/g, '').trim();
 
                 document.getElementById('location').value = extLocation;
@@ -484,6 +565,7 @@
                 statusBox.className = 'status-success';
                 statusBox.innerHTML = 'Đã bóc tách Biên bản vào các trường. Sẵn sàng chỉnh sửa & Ghi đè!';
                 statusBox.style.display = 'block';
+                
                 document.getElementById('rawContent').scrollIntoView({ behavior: "smooth", block: "center" });
             }
         }
