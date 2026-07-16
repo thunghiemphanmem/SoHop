@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -11,7 +10,7 @@
             --primary: #0284c7;
             --primary-hover: #0369a1;
             --secondary: #475569;
-            --bg: #f8fafc;
+            --bg: #f1f5f9;
             --card: #ffffff;
             --text: #1e293b;
             --border: #cbd5e1;
@@ -47,7 +46,7 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
             padding: 12px 20px;
-            margin-bottom: 15px; 
+            margin-bottom: 20px; 
             border-bottom: 3px solid var(--primary);
             display: flex;
             align-items: center;
@@ -75,29 +74,32 @@
         .header h2 { display: none; }
         
         /* ========================================================= */
-        /* KHỐI 1: NHẬP LIỆU PHẦN ĐẦU - BỐ CỤC SO LE THỰC TẾ         */
+        /* KHỐI 1: FORM NHẬP LIỆU - CHUẨN MỰC, GIÓNG HÀNG TUYỆT ĐỐI  */
         /* ========================================================= */
-        .header-rows {
-            display: flex;
-            flex-direction: column;
-            gap: 12px; 
-            margin-bottom: 12px;
+        .compact-header-grid {
+            display: grid;
+            /* Chia 2 cột thẳng tắp: Cột trái 1.3 phần, cột phải 1 phần */
+            grid-template-columns: 1.3fr 1fr; 
+            gap: 16px 24px; /* Khoảng cách giữa các hàng và cột */
+            margin-bottom: 16px;
             background: #ffffff;
-            padding: 16px 20px;
-            border-radius: 10px;
+            padding: 20px;
+            border-radius: 8px;
             border: 1px solid #e2e8f0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
         
-        .form-row {
+        /* Khối Flexbox chứa Nhãn và Ô nhập nằm ngang sát nhau */
+        .form-group-inline {
             display: flex;
             flex-direction: row;
             align-items: center; 
-            gap: 12px; /* Khoảng cách sát sạt giữa chữ và ô nhập */
+            gap: 10px; /* Khoảng cách cực nhỏ giữa chữ và ô nhập để lấp khoảng trống */
             width: 100%;
         }
         
-        .form-row label {
+        .form-group-inline label {
+            flex-shrink: 0; /* Không cho phép nhãn bị ép méo chữ */
             font-weight: 600;
             font-size: 0.95rem;
             color: #334155;
@@ -105,10 +107,9 @@
             margin: 0;
         }
         
-        /* Cố định Nhãn 1 và 3 bằng nhau để các ô nhập bắt đầu từ một đường thẳng */
-        .label-col-1 { min-width: 175px; }
-        
-        .form-row input {
+        .form-group-inline input {
+            flex: 1; /* TỰ ĐỘNG GIÃN CĂNG 100% để lấp đầy ô lưới */
+            min-width: 0; /* Chống phá vỡ khung */
             padding: 0.65rem 0.9rem;
             border: 1px solid var(--border);
             border-radius: 6px;
@@ -117,50 +118,42 @@
             color: #0f172a;
             transition: all 0.25s ease;
             font-family: inherit;
-            min-width: 0; 
         }
         
-        .form-row input:hover { border-color: #94a3b8; }
-        .form-row input:focus {
+        .form-group-inline input:hover { border-color: #94a3b8; }
+        .form-group-inline input:focus {
             outline: none;
             border-color: var(--primary);
             background-color: #ffffff;
             box-shadow: 0 0 0 3px var(--focus-ring);
         }
-        
-        /* LỚP CO GIÃN SO LE THEO ĐÚNG YÊU CẦU */
-        .input-long { flex: 2.2; }  /* Ô dài để nhập Chủ đề, Thành phần */
-        .input-short { flex: 1; }   /* Ô ngắn để nhập Thời gian, Địa điểm */
 
-        /* ========================================================= */
         /* KHỐI 2: GHI CHÚ TRỌNG TÂM */
-        /* ========================================================= */
         .focus-note-wrapper {
-            margin-bottom: 12px; 
-            background: #f5f3ff; 
-            padding: 12px 20px;
+            margin-bottom: 16px; 
+            background: #fdf4ff; 
+            padding: 16px 20px;
             border-radius: 8px;
-            border: 1px dashed #c084fc;
+            border: 1px dashed #d8b4fe;
             display: flex; 
             flex-direction: row;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
         .focus-note-wrapper label { 
-            color: #6b21a8; 
+            flex-shrink: 0;
+            color: #7e22ce; 
             font-weight: 700; 
             font-size: 0.95rem;
             white-space: nowrap;
             margin: 0;
-            display: flex;
-            align-items: center;
         }
         .focus-note-wrapper input { 
             flex: 1; 
             min-width: 0;
             padding: 0.65rem 0.9rem;
             border-radius: 6px;
-            border: 1px solid #d8b4fe;
+            border: 1px solid #e9d5ff;
             font-size: 0.95rem;
             background-color: #ffffff; 
             color: #3b0764;
@@ -169,8 +162,8 @@
         }
         .focus-note-wrapper input:focus { 
             outline: none;
-            border-color: #9333ea; 
-            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.15); 
+            border-color: #a855f7; 
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15); 
         }
 
         /* KHỐI 3: NỘI DUNG DIỄN BIẾN */
@@ -180,7 +173,7 @@
             color: var(--primary);
             font-size: 1.05rem;
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
         textarea {
             width: 100%;
@@ -281,15 +274,15 @@
         .result-item a { text-decoration: none; font-weight: 600; color: var(--primary); font-size: 1.05rem; margin-bottom: 4px; }
         
         /* ĐÁP ỨNG TRÊN DI ĐỘNG & IPAD */
-        @media screen and (max-width: 900px) {
-            .form-row { flex-direction: column; align-items: flex-start; gap: 6px; }
-            .form-row input { width: 100%; }
-            .label-col-1 { min-width: auto; }
+        @media screen and (max-width: 992px) {
+            .compact-header-grid { grid-template-columns: 1fr; gap: 12px; }
         }
         @media screen and (max-width: 768px) {
             .container { max-width: 100%; padding: 0 12px 20px 12px; }
             .header h1 { font-size: 1.25rem; margin-left: 50px; }
             .header img { width: 45px; }
+            .form-group-inline { flex-direction: column; align-items: flex-start; gap: 6px; }
+            .focus-note-wrapper { flex-direction: column; align-items: flex-start; gap: 6px; }
             .action-container { gap: 6px; }
             .btn-action { font-size: 0.65rem; padding: 0.5rem 0.2rem; }
         }
@@ -300,21 +293,25 @@
         <div class="header" id="headerArea"></div>
         <input type="hidden" id="recordId" value="">
 
-        <div class="header-rows">
-            <div class="form-row">
-                <label for="meetingTitle" class="label-col-1">1. Chủ đề / Tên cuộc họp:</label>
-                <input type="text" id="meetingTitle" class="input-long" placeholder="Ví dụ: Giao ban chuyên môn..." required>
-                
-                <label for="meetingDate">2. Thời gian:</label>
-                <input type="datetime-local" id="meetingDate" class="input-short" required>
+        <div class="compact-header-grid">
+            <div class="form-group-inline">
+                <label for="meetingTitle">1. Chủ đề / Tên cuộc họp:</label>
+                <input type="text" id="meetingTitle" placeholder="Ví dụ: Giao ban chuyên môn..." required>
             </div>
             
-            <div class="form-row">
-                <label for="location" class="label-col-1">3. Địa điểm:</label>
-                <input type="text" id="location" class="input-short" placeholder="Phòng hội đồng..." required>
-                
+            <div class="form-group-inline">
+                <label for="meetingDate">2. Thời gian:</label>
+                <input type="datetime-local" id="meetingDate" required>
+            </div>
+            
+            <div class="form-group-inline">
+                <label for="location">3. Địa điểm:</label>
+                <input type="text" id="location" placeholder="Phòng hội đồng..." required>
+            </div>
+            
+            <div class="form-group-inline">
                 <label for="attendees">4. Thành phần tham dự:</label>
-                <input type="text" id="attendees" class="input-long" placeholder="BGH, Giáo viên..." required>
+                <input type="text" id="attendees" placeholder="BGH, Giáo viên..." required>
             </div>
         </div>
 
