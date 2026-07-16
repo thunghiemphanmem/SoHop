@@ -13,6 +13,12 @@
             --card: #ffffff;
             --text: #1e293b;
             --border: #cbd5e1;
+            /* Màu các nút chức năng */
+            --btn-blue: #3b82f6;
+            --btn-purple: #8b5cf6;
+            --btn-orange: #f59e0b;
+            --btn-green: #10b981;
+            --btn-red: #ef4444;
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -23,28 +29,52 @@
             display: flex;
             justify-content: center;
         }
+        
+        /* Đã thu hẹp khung 10% (từ 98% xuống 88%) */
         .container {
             background: var(--card);
             width: 100%;
-            max-width: 98%;
+            max-width: 88%; 
             min-height: 100vh;
-            padding: 0 10px 20px 10px;
+            padding: 0 15px 20px 15px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
             box-sizing: border-box;
         }
+        
+        /* HEADER: Tiêu đề ở giữa, Logo góc trái */
         .header {
             position: sticky;
             top: 0;
             z-index: 1000;
             background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(8px);
-            text-align: center;
-            padding: 5px 0;
-            margin-bottom: 5px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
             border-bottom: 2px solid var(--primary);
+            
+            display: flex;
+            align-items: center;
+            justify-content: center; /* Căn giữa tiêu đề */
+            position: relative; /* Làm mốc tọa độ cho Logo */
         }
-        .header img { width: 40px; height: auto; }
-        .header h1 { margin: 0; color: var(--primary); font-size: 1.2rem; }
+        
+        /* Neo Logo cố định bên trái */
+        .header img {
+            width: 45px;
+            height: auto;
+            position: absolute;
+            left: 15px;
+        }
+        
+        .header h1 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 1.4rem;
+            font-weight: 700;
+            text-align: center;
+            white-space: nowrap;
+        }
+        
         .header h2 { display: none; }
         
         .compact-header-grid {
@@ -66,24 +96,47 @@
         
         .content-group { margin-bottom: 5px; }
         textarea {
-            height: calc(100vh - 340px); min-height: 250px;
+            height: calc(100vh - 360px); 
+            min-height: 250px;
             resize: vertical; font-size: 0.95rem; line-height: 1.4;
         }
         
-        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 5px; }
-        .action-grid-full { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-top: 8px; }
-        
+        /* Cấu trúc các nút chức năng */
         button {
-            padding: 0.6rem; font-size: 0.85rem; font-weight: 600; cursor: pointer;
-            border: none; border-radius: 4px; color: white;
+            padding: 0.6rem 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            white-space: nowrap; 
+            transition: opacity 0.2s;
         }
-        .btn-reformat { background: #3b82f6; }
-        .btn-draft { background: #8b5cf6; }
-        .btn-save-draft { background: #f59e0b; color: #fff; } 
-        .btn-generate { background: #10b981; }
-        .btn-reset { background: #ef4444; }
-        .btn-search { background: var(--primary); }
+        button:hover { opacity: 0.85; }
         button:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        /* ÉP BUỘC CÁC NÚT TRÊN 1 DÒNG VÀ CĂN GIỮA */
+        .centered-action-container {
+            display: flex;
+            flex-wrap: nowrap; /* Không cho phép xuống dòng */
+            justify-content: center; /* Căn giữa */
+            align-items: center; 
+            gap: 10px; 
+            margin-top: 15px; 
+            margin-bottom: 10px; 
+            padding: 5px 0;
+            width: 100%;
+            overflow-x: auto; /* Hiển thị thanh trượt ngang nếu xem trên điện thoại quá nhỏ */
+        }
+        
+        .btn-blue-rect { background: var(--btn-blue); flex: 1; }
+        .btn-purple-rect { background: var(--btn-purple); flex: 1; }
+        .btn-orange-rect { background: var(--btn-orange); color: #fff; flex: 1; } 
+        .btn-green-rect { background: var(--btn-green); flex: 1; }
+        .btn-red-rect { background: var(--btn-red); flex: 1; }
+        
+        .btn-search { background: var(--primary); padding: 0.4rem 1rem; }
         
         #statusBox { margin-top: 8px; padding: 0.5rem; border-radius: 4px; font-size: 0.9rem; text-align: center; }
         .status-loading { background: #e0f2fe; color: #0284c7; }
@@ -91,19 +144,22 @@
         .status-error { background: #fee2e2; color: #991b1b; }
         
         .divider { margin: 10px 0; border-top: 1px dashed var(--border); }
-        .search-flex { display: flex; gap: 5px; }
+        .search-flex { display: flex; gap: 5px; align-items: center; justify-content: flex-end; }
+        #searchKeyword { width: auto; flex-grow: 1; max-width: 300px; }
         .search-results { max-height: 150px; overflow-y: auto; padding: 0; list-style: none; margin-top: 5px; }
         .result-item { padding: 8px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; }
         .result-item a { text-decoration: none; font-weight: 600; color: var(--primary); }
         
-        @media screen and (max-width: 600px) {
+        @media screen and (max-width: 768px) {
+            .container { max-width: 100%; }
+            .header h1 { font-size: 1.1rem; padding-left: 40px; }
             .compact-header-grid { grid-template-columns: 1fr; }
-            .action-grid-full { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- HEADER nạp động LOGO và TIÊU ĐỀ -->
         <div class="header" id="headerArea"></div>
         <input type="hidden" id="recordId" value="">
 
@@ -127,7 +183,7 @@
         </div>
 
         <div class="form-group" style="margin-bottom: 8px;">
-            <label style="color:#8b5cf6; font-size:0.9rem;">📌 Ghi chú trọng tâm cho AI (Không bắt buộc):</label>
+            <label style="color:var(--btn-purple); font-size:0.9rem;">📌 Ghi chú trọng tâm cho AI (Không bắt buộc):</label>
             <input type="text" id="focusNote" placeholder="Ví dụ: Nhấn mạnh công tác chuyên môn, kiểm tra hồ sơ...">
         </div>
 
@@ -136,15 +192,13 @@
             <textarea id="rawContent" placeholder="Ghi chép nhanh các ý kiến thảo luận tại đây..."></textarea>
         </div>
 
-        <div class="action-grid">
-            <button id="btnReformat" class="btn-reformat" onclick="processAction('reformat')">Tạo lại bố cục bằng AI</button>
-            <button id="btnDraft" class="btn-draft" onclick="processAction('draft')">AI Dự thảo Kết luận</button>
-        </div>
-
-        <div class="action-grid-full">
-            <button id="btnSaveDraft" class="btn-save-draft" onclick="processAction('save_draft')">Lưu Dự Thảo</button>
-            <button id="btnGenerate" class="btn-generate" onclick="processAction('generate')">Hoàn Thành & Ghi Sổ</button>
-            <button id="btnReset" class="btn-reset" onclick="resetMeeting()">Chuyển cuộc họp mới</button>
+        <!-- KHỐI CÁC NÚT CHỨC NĂNG - ÉP 1 DÒNG GIỮA -->
+        <div class="centered-action-container">
+            <button id="btnReformat" class="btn-blue-rect" onclick="processAction('reformat')">Tạo lại bố cục bằng AI</button>
+            <button id="btnDraft" class="btn-purple-rect" onclick="processAction('draft')">AI Dự thảo Kết luận</button>
+            <button id="btnSaveDraft" class="btn-orange-rect" onclick="processAction('save_draft')">Lưu Dự Thảo</button>
+            <button id="btnGenerate" class="btn-green-rect" onclick="processAction('generate')">Hoàn Thành & Ghi Sổ</button>
+            <button id="btnReset" class="btn-red-rect" onclick="resetMeeting()">Chuyển cuộc họp mới</button>
         </div>
 
         <div id="statusBox" style="display:none;"></div>
@@ -162,9 +216,9 @@
         window.searchResultsData = [];
         
         window.onload = function() {
+            // Nạp cấu trúc: Logo và thẻ H1
             document.getElementById('headerArea').innerHTML = `
                 <img src="${KET_NOI.LOGO_TRUONG}" alt="Logo">
-                <h2>${KET_NOI.TEN_TO_CHUC}</h2>
                 <h1>${KET_NOI.TIEU_DE_PHAN_MEM}</h1>
             `;
             setNow();
@@ -181,7 +235,7 @@
                 document.getElementById('meetingTitle').value = '';
                 document.getElementById('location').value = '';
                 document.getElementById('attendees').value = '';
-                document.getElementById('focusNote').value = ''; // Làm sạch ô trọng tâm
+                document.getElementById('focusNote').value = ''; 
                 document.getElementById('rawContent').value = '';
                 document.getElementById('recordId').value = ''; 
                 document.getElementById('statusBox').style.display = 'none';
@@ -220,13 +274,9 @@
             return dateStr;
         }
 
-async function processAction(actionType) {
+        async function processAction(actionType) {
             const rawContentField = document.getElementById('rawContent');
             const statusBox = document.getElementById('statusBox');
-            
-            // SỬA LỖI: Bắt thẻ input chứa Ghi chú trọng tâm
-            const focusNoteField = document.getElementById('focusNote'); 
-            
             const payload = {
                 action: actionType,
                 isDraft: (actionType === 'save_draft'),
@@ -235,7 +285,7 @@ async function processAction(actionType) {
                 date: document.getElementById('meetingDate').value,
                 location: document.getElementById('location').value,
                 attendees: document.getElementById('attendees').value,
-                focusNote: document.getElementById('focusNote').value, // Đã có biến focusNote
+                focusNote: document.getElementById('focusNote').value, 
                 rawContent: rawContentField.value,
                 appName: KET_NOI.TIEU_DE_PHAN_MEM,
                 orgName: KET_NOI.TEN_TO_CHUC,
@@ -278,7 +328,6 @@ async function processAction(actionType) {
                     statusBox.innerHTML = 'AI đã xử lý xong. Vui lòng kiểm tra lại.';
                     
                     let cleanText = result.text;
-                    
                     const matchPattern = /(?:NỘI DUNG CUỘC HỌP|NỘI DUNG VÀ KẾT LUẬN|NỘI DUNG CHÍNH)/i;
                     const markerMatch = cleanText.match(matchPattern);
                     if (markerMatch) {
@@ -294,7 +343,6 @@ async function processAction(actionType) {
                     cleanText = cleanText.replace(/Thành phần tham dự:[\s\S]*?(?=Chủ trì:|Thư ký:|I\.|1\.)/ig, '');
                     cleanText = cleanText.replace(/Chủ trì:.*?\n/ig, '');
                     cleanText = cleanText.replace(/Thư ký:.*?\n/ig, '');
-                    
                     cleanText = cleanText.replace(/^[\s\-=\*_]+/g, '').trim();
 
                     if(actionType === 'reformat') {
@@ -368,7 +416,6 @@ async function processAction(actionType) {
         function extractToForm(index) {
             if(window.searchResultsData && window.searchResultsData[index]) {
                 const dataBlock = window.searchResultsData[index];
-                
                 document.getElementById('meetingTitle').value = dataBlock.title || '';
                 
                 let fullContent = dataBlock.content || '';
@@ -397,7 +444,6 @@ async function processAction(actionType) {
                 }
 
                 let pureContent = fullContent;
-                
                 const splitMarkers = [
                     "--- NỘI DUNG VÀ KẾT LUẬN ---",
                     "**NỘI DUNG CUỘC HỌP**",
@@ -422,7 +468,6 @@ async function processAction(actionType) {
                 pureContent = pureContent.replace(/Thành phần tham dự:[\s\S]*?(?=Chủ trì:|Thư ký:|I\.|1\.)/ig, '');
                 pureContent = pureContent.replace(/Chủ trì:.*?\n/ig, '');
                 pureContent = pureContent.replace(/Thư ký:.*?\n/ig, '');
-                
                 pureContent = pureContent.replace(/^[\s\-=\*_]+/g, '').trim();
 
                 document.getElementById('location').value = extLocation;
@@ -439,7 +484,6 @@ async function processAction(actionType) {
                 statusBox.className = 'status-success';
                 statusBox.innerHTML = 'Đã bóc tách Biên bản vào các trường. Sẵn sàng chỉnh sửa & Ghi đè!';
                 statusBox.style.display = 'block';
-                
                 document.getElementById('rawContent').scrollIntoView({ behavior: "smooth", block: "center" });
             }
         }
