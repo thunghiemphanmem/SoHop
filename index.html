@@ -693,7 +693,7 @@
             }
         }
         
-        function previewWordDocument() {
+function previewWordDocument() {
             const orgParent = document.getElementById('orgParent').value.trim() || 'CƠ QUAN CHỦ QUẢN';
             const orgName = document.getElementById('orgName').value.trim() || 'TÊN ĐƠN VỊ';
             let docNumber = document.getElementById('docNumber').value.trim() || '';
@@ -732,9 +732,11 @@
                 orgParent, orgName, docNumber, docPlace, title, rawContent, location, attendees, displayTime, exportDateText
             };
 
+            // CHUẨN HÓA ĐỊNH DẠNG XEM TRƯỚC THEO THÔNG SỐ PARAGRAPH
+            // Before: 6pt, After: 0pt, Line-height: Single (1.0), First-line indent: 1cm, Align: Justify
             const webFormattedContent = rawContent.split('\n').map(line => {
-                if(line.trim() === '') return '<p style="margin-top:0; margin-bottom: 6pt;">&nbsp;</p>';
-                return `<p style="margin-top:0; margin-bottom: 6pt; text-align: justify;">${line}</p>`;
+                if(line.trim() === '') return '<p style="margin-top: 6pt; margin-bottom: 0pt;">&nbsp;</p>';
+                return `<p style="margin-top: 6pt; margin-bottom: 0pt; text-align: justify; text-indent: 1cm; line-height: 1.0;">${line}</p>`;
             }).join('');
 
             const previewHTML = `
@@ -777,7 +779,7 @@
             document.getElementById('previewModal').style.display = 'none';
         }
 
-        function downloadWordFile() {
+function downloadWordFile() {
             if(!window.previewDataCache) return;
             const data = window.previewDataCache;
 
@@ -786,6 +788,7 @@
                 return `<p class="content-line">${line}</p>`;
             }).join('');
 
+            // CSS XUẤT FILE ĐÃ CHUẨN HÓA
             const htmlContent = `
             <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
             <head>
@@ -802,12 +805,8 @@
                         font-size: 14pt;
                         line-height: 1.5;
                     }
-                    .header-table {
-                        width: 100%; border-collapse: collapse; border: none; margin-bottom: 20px;
-                    }
-                    .header-table td {
-                        vertical-align: top; text-align: center; padding: 0; border: none;
-                    }
+                    .header-table { width: 100%; border-collapse: collapse; border: none; margin-bottom: 20px; }
+                    .header-table td { vertical-align: top; text-align: center; padding: 0; border: none; }
                     .td-left { width: 40%; }
                     .td-right { width: 60%; }
                     .org-parent { font-size: 13pt; text-transform: uppercase; }
@@ -821,7 +820,16 @@
                     .main-title { text-align: center; font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-top: 20px; margin-bottom: 5px;}
                     .sub-title { text-align: center; font-size: 14pt; font-weight: bold; margin-bottom: 20px; }
                     .section { margin-bottom: 10px; text-align: justify; }
-                    .content-line { margin-top: 0; margin-bottom: 6pt; text-align: justify; }
+                    
+                    /* ĐỊNH DẠNG PARAGRAPH CHUẨN MS WORD NHƯ ẢNH MINH HỌA */
+                    .content-line { 
+                        margin-top: 6pt; 
+                        margin-bottom: 0pt; 
+                        text-align: justify; 
+                        text-indent: 1cm; 
+                        line-height: 1.0; 
+                    }
+                    
                     .signature-table { width: 100%; margin-top: 30px; border: none; }
                     .signature-table td { width: 50%; text-align: center; vertical-align: top; border: none; font-weight: bold;}
                 </style>
@@ -878,7 +886,7 @@
             const statusBox = document.getElementById('statusBox');
             statusBox.style.display = 'block';
             statusBox.className = 'status-success';
-            statusBox.innerHTML = 'Đã tải xuống thành công file Word!';
+            statusBox.innerHTML = 'Đã tải xuống thành công file Word đúng định dạng!';
         }
     </script>
 </body>
