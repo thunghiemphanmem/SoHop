@@ -56,7 +56,6 @@
         .header h1 { margin: 0; color: var(--primary); font-size: 1.15rem; font-weight: 700; line-height: 1.2; }
         .header h2 { margin: 0; color: var(--secondary); font-size: 0.85rem; font-weight: 500; display: block; line-height: 1.2; }
         
-        /* Cấu trúc lưới linh hoạt */
         .compact-header-grid {
             display: grid;
             grid-template-columns: 60% 40%; 
@@ -116,7 +115,6 @@
             resize: vertical; font-size: 0.95rem; line-height: 1.4;
         }
         
-        /* CẬP NHẬT: Hàng chứa 6 nút chức năng */
         .all-actions-row {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -139,7 +137,7 @@
         .btn-draft { background: #8b5cf6; }
         .btn-save-draft { background: #f59e0b; color: #fff; } 
         .btn-generate { background: #10b981; }
-        .btn-export { background: #0ea5e9; } /* Nút xuất word */
+        .btn-export { background: #0ea5e9; }
         .btn-reset { background: #ef4444; }
         .btn-search { background: var(--primary); }
         button:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -286,7 +284,6 @@
                 document.getElementById('rawContent').value = '';
                 document.getElementById('recordId').value = ''; 
                 document.getElementById('statusBox').style.display = 'none';
-                // Không reset thông tin thể thức để dùng lại cho tiện
                 setNow();
             }
         }
@@ -557,9 +554,8 @@
             }
         }
 
-        // TÍNH NĂNG XUẤT RA FILE WORD (DOC) CHUẨN NGHỊ ĐỊNH 30
+        // CẬP NHẬT: THUẬT TOÁN ĐỊNH DẠNG ĐOẠN VĂN (PARAGRAPH) KHẮC PHỤC LỖI GIÃN CHỮ
         function exportToWord() {
-            // 1. Lấy dữ liệu
             const orgParent = document.getElementById('orgParent').value.trim() || 'CƠ QUAN CHỦ QUẢN';
             const orgName = document.getElementById('orgName').value.trim() || 'TÊN ĐƠN VỊ';
             let docNumber = document.getElementById('docNumber').value.trim() || '';
@@ -578,7 +574,6 @@
                 return;
             }
 
-            // Xử lý ngày tháng
             const rawDate = document.getElementById('meetingDate').value;
             let displayTime = '';
             let exportDateText = `ngày ..... tháng ..... năm 20...`;
@@ -595,10 +590,12 @@
                 displayTime = `${hours} giờ ${minutes} phút, ngày ${day}/${month}/${year}`;
             }
 
-            // Chuyển đổi xuống dòng thành <br> cho nội dung
-            const formattedContent = rawContent.replace(/\n/g, '<br>');
+            // MỚI: Bọc từng dòng văn bản bằng thẻ <p> để ngắt đoạn cứng, triệt tiêu lỗi ép giãn chữ (Shift+Enter)
+            const formattedContent = rawContent.split('\n').map(line => {
+                if(line.trim() === '') return '<p class="content-line">&nbsp;</p>';
+                return `<p class="content-line">${line}</p>`;
+            }).join('');
 
-            // 2. Tạo cấu trúc HTML chuẩn Word (sử dụng MSO style)
             const htmlContent = `
             <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
             <head>
@@ -606,8 +603,8 @@
                 <title>Export Doc</title>
                 <style>
                     @page {
-                        size: 21cm 29.7cm; /* Khổ A4 */
-                        margin: 2cm 2cm 2cm 3cm; /* Lề chuẩn NĐ 30: Trái 3, Phải 2, Trên 2, Dưới 2 */
+                        size: 21cm 29.7cm;
+                        margin: 2cm 2cm 2cm 3cm; 
                         mso-page-orientation: portrait;
                     }
                     body {
@@ -644,7 +641,14 @@
                     .main-title { text-align: center; font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-top: 20px; margin-bottom: 5px;}
                     .sub-title { text-align: center; font-size: 14pt; font-weight: bold; margin-bottom: 20px; }
                     
+                    /* Cấu trúc mới hỗ trợ <p> */
                     .section { margin-bottom: 10px; text-align: justify; }
+                    
+                    .content-line {
+                        margin-top: 0;
+                        margin-bottom: 6pt;
+                        text-align: justify;
+                    }
                     
                     .signature-table { width: 100%; margin-top: 30px; border: none; }
                     .signature-table td { width: 50%; text-align: center; vertical-align: top; border: none; font-weight: bold;}
@@ -674,7 +678,8 @@
                 <div class="section"><b>1. Thời gian bắt đầu:</b> ${displayTime}</div>
                 <div class="section"><b>2. Địa điểm:</b> ${location}</div>
                 <div class="section"><b>3. Thành phần tham dự:</b> ${attendees}</div>
-                <div class="section"><b>4. Nội dung diễn biến cuộc họp:</b><br><br>${formattedContent}</div>
+                <div class="section"><b>4. Nội dung diễn biến cuộc họp:</b></div>
+                <div class="section">${formattedContent}</div>
 
                 <table class="signature-table">
                     <tr>
@@ -694,12 +699,11 @@
             </html>
             `;
 
-            // 3. Tạo Blob và tải xuống
             const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `BienBan_${title.replace(/\s+/g, '_')}.doc`; // Dùng chuẩn .doc để tương thích Microsoft Word
+            a.download = `BienBan_${title.replace(/\s+/g, '_')}.doc`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -708,7 +712,7 @@
             const statusBox = document.getElementById('statusBox');
             statusBox.style.display = 'block';
             statusBox.className = 'status-success';
-            statusBox.innerHTML = 'Đã tải xuống thành công file Word chuẩn Nghị định 30!';
+            statusBox.innerHTML = 'Đã tải xuống thành công file Word. Lỗi giãn chữ đã được khắc phục!';
         }
     </script>
 </body>
