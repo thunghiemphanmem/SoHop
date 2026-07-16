@@ -25,7 +25,7 @@
             justify-content: center;
         }
         
-        /* KHUNG CHÍNH - Thu hẹp 10% (88%) */
+        /* KHUNG CHÍNH */
         .container {
             background: var(--card);
             width: 100%;
@@ -37,7 +37,7 @@
             border-radius: 0 0 12px 12px;
         }
 
-        /* HEADER - Logo trái, Tiêu đề giữa */
+        /* HEADER */
         .header {
             position: sticky;
             top: 0;
@@ -58,7 +58,7 @@
             width: 50px;
             height: auto;
             position: absolute;
-            left: 20px; /* Neo logo góc trái */
+            left: 20px; 
         }
         .header h1 {
             margin: 0;
@@ -68,14 +68,15 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             text-align: center;
+            white-space: nowrap;
         }
         .header h2 { display: none; }
         
-        /* KHỐI NHẬP LIỆU - 2 Cột chuẩn ảnh mẫu */
+        /* KHỐI NHẬP LIỆU PHẦN ĐẦU - Đã chỉnh sửa cùng 1 dòng */
         .compact-header-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px 20px;
+            gap: 15px 30px; /* Tăng khoảng cách 2 cột */
             margin-bottom: 15px;
             background: #ffffff;
             padding: 20px;
@@ -83,14 +84,26 @@
             border: 1px solid #e2e8f0;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
-        .form-group { display: flex; flex-direction: column; margin-bottom: 0; }
-        .form-group label {
+        
+        /* Cấu trúc Flex Row ép Tên và Ô nhập trên 1 dòng */
+        .compact-header-grid .form-group { 
+            display: flex; 
+            flex-direction: row; 
+            align-items: center; 
+            margin-bottom: 0; 
+            gap: 12px;
+        }
+        .compact-header-grid .form-group label {
             font-weight: 600;
             font-size: 0.9rem;
-            margin-bottom: 6px;
+            margin-bottom: 0; 
             color: #1e293b;
+            white-space: nowrap; /* Không cho chữ rớt dòng */
+            min-width: 180px; /* Cố định độ rộng nhãn để các ô input thẳng cột */
         }
-        .form-group input {
+        .compact-header-grid .form-group input {
+            flex: 1; /* Cho ô input co giãn chiếm toàn bộ phần còn lại */
+            width: 100%;
             padding: 0.65rem 0.8rem;
             border: 1px solid var(--border);
             border-radius: 6px;
@@ -98,8 +111,9 @@
             background-color: #f8fafc;
             transition: all 0.2s ease;
             font-family: inherit;
+            box-sizing: border-box;
         }
-        .form-group input:focus {
+        .compact-header-grid .form-group input:focus {
             outline: none;
             border-color: var(--primary);
             background-color: #ffffff;
@@ -113,10 +127,32 @@
             padding: 15px;
             border-radius: 8px;
             border: 1px dashed #d8b4fe;
+            display: flex; 
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
         }
-        .focus-note-wrapper label { color: #7e22ce; font-weight: 700; }
-        .focus-note-wrapper input { background-color: #ffffff; border-color: #e9d5ff; }
-        .focus-note-wrapper input:focus { border-color: #a855f7; box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15); }
+        .focus-note-wrapper label { 
+            color: #7e22ce; 
+            font-weight: 700; 
+            font-size: 0.9rem;
+            white-space: nowrap;
+            margin-bottom: 0;
+        }
+        .focus-note-wrapper input { 
+            flex: 1;
+            padding: 0.65rem 0.8rem;
+            border-radius: 6px;
+            border: 1px solid #e9d5ff;
+            font-size: 0.95rem;
+            background-color: #ffffff; 
+            font-family: inherit;
+        }
+        .focus-note-wrapper input:focus { 
+            outline: none;
+            border-color: #a855f7; 
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15); 
+        }
 
         /* KHỐI NỘI DUNG DIỄN BIẾN */
         .content-group { margin-bottom: 15px; }
@@ -149,27 +185,24 @@
             box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
         }
         
-        /* KHỐI NÚT CHỨC NĂNG - Xếp 2 Dòng */
+        /* KHỐI NÚT CHỨC NĂNG - Đã đưa về 1 hàng duy nhất */
         .action-container {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
+            flex-wrap: nowrap; /* Ép buộc 1 hàng ngang */
+            justify-content: center;
+            align-items: stretch;
             gap: 12px;
             margin-top: 20px;
             margin-bottom: 15px;
-        }
-        .action-row-1 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        .action-row-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 12px;
+            width: 100%;
+            overflow-x: auto; /* Hiển thị thanh cuộn ngang nếu màn hình nhỏ */
+            padding-bottom: 8px;
         }
         
         .btn-action {
-            padding: 0.8rem 1rem;
+            flex: 1; /* Các nút tự động chia đều độ rộng */
+            padding: 0.8rem 0.5rem;
             font-size: 0.9rem;
             font-weight: 700;
             cursor: pointer;
@@ -181,6 +214,7 @@
             transition: all 0.25s ease;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            white-space: nowrap; /* Không rớt dòng chữ trong nút */
         }
         .btn-action:hover {
             transform: translateY(-2px);
@@ -190,7 +224,6 @@
         .btn-action:active { transform: translateY(0); }
         .btn-action:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
         
-        /* Gradient theo hình ảnh cung cấp */
         .btn-reformat { background: linear-gradient(135deg, #3b82f6, #2563eb); }
         .btn-draft { background: linear-gradient(135deg, #a855f7, #7e22ce); }
         .btn-save-draft { background: linear-gradient(135deg, #f59e0b, #d97706); }
@@ -220,12 +253,17 @@
         .result-item a { text-decoration: none; font-weight: 600; color: var(--primary); font-size: 1rem; margin-bottom: 4px; }
         
         /* ĐÁP ỨNG TRÊN DI ĐỘNG */
+        @media screen and (max-width: 1100px) {
+            .compact-header-grid { grid-template-columns: 1fr; gap: 15px; }
+            .action-container { justify-content: flex-start; } /* Hỗ trợ trượt ngang mượt hơn trên iPad */
+        }
         @media screen and (max-width: 768px) {
             .container { max-width: 100%; padding: 0 10px 15px 10px; }
             .header h1 { font-size: 1.2rem; margin-left: 45px; }
             .header img { width: 40px; }
-            .compact-header-grid { grid-template-columns: 1fr; gap: 10px; padding: 15px; }
-            .action-row-1, .action-row-2 { grid-template-columns: 1fr; }
+            .compact-header-grid .form-group { flex-direction: column; align-items: flex-start; gap: 6px; }
+            .compact-header-grid .form-group label { min-width: auto; }
+            .focus-note-wrapper { flex-direction: column; align-items: flex-start; gap: 6px; }
         }
     </style>
 </head>
@@ -253,7 +291,7 @@
             </div>
         </div>
 
-        <div class="form-group focus-note-wrapper">
+        <div class="focus-note-wrapper">
             <label>📌 Ghi chú trọng tâm cho AI (Không bắt buộc):</label>
             <input type="text" id="focusNote" placeholder="Ví dụ: Nhấn mạnh công tác chuyên môn, kiểm tra hồ sơ...">
         </div>
@@ -264,15 +302,11 @@
         </div>
 
         <div class="action-container">
-            <div class="action-row-1">
-                <button id="btnReformat" class="btn-action btn-reformat" onclick="processAction('reformat')">Tạo lại bố cục bằng AI</button>
-                <button id="btnDraft" class="btn-action btn-draft" onclick="processAction('draft')">AI Dự thảo Kết luận</button>
-            </div>
-            <div class="action-row-2">
-                <button id="btnSaveDraft" class="btn-action btn-save-draft" onclick="processAction('save_draft')">Lưu Dự Thảo</button>
-                <button id="btnGenerate" class="btn-action btn-generate" onclick="processAction('generate')">Hoàn Thành & Ghi Sổ</button>
-                <button id="btnReset" class="btn-action btn-reset" onclick="resetMeeting()">Chuyển cuộc họp mới</button>
-            </div>
+            <button id="btnReformat" class="btn-action btn-reformat" onclick="processAction('reformat')">Tạo lại bố cục bằng AI</button>
+            <button id="btnDraft" class="btn-action btn-draft" onclick="processAction('draft')">AI Dự thảo Kết luận</button>
+            <button id="btnSaveDraft" class="btn-action btn-save-draft" onclick="processAction('save_draft')">Lưu Dự Thảo</button>
+            <button id="btnGenerate" class="btn-action btn-generate" onclick="processAction('generate')">Hoàn Thành & Ghi Sổ</button>
+            <button id="btnReset" class="btn-action btn-reset" onclick="resetMeeting()">Chuyển cuộc họp mới</button>
         </div>
 
         <div id="statusBox" style="display:none;"></div>
