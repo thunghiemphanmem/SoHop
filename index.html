@@ -626,6 +626,73 @@
             }
         }
 
+        // ============================================================
+        // HÀM XỬ LÝ GIAO DIỆN TỔNG HỢP VÀ HỎI AI ĐỘNG (BỔ SUNG)
+        // ============================================================
+        function handleAiSearchEnter(event) {
+            if (event.key === "Enter") searchMeetingAI();
+        }
+
+        async function searchMeetingAI() {
+            const aiQuery = document.getElementById('aiSearchQuery').value;
+            const rawContentField = document.getElementById('rawContent');
+            const statusBox = document.getElementById('statusBox');
+            
+            if(!aiQuery.trim()) { 
+                alert('Vui lòng nhập nội dung yêu cầu AI tổng hợp!'); 
+                return; 
+            }
+            
+            // Ẩn danh sách tìm kiếm cũ nếu đang mở để hiển thị khu vực nội dung
+            document.getElementById('searchResultsSection').style.display = 'none';
+            document.getElementById('meetingContentSection').style.display = 'block';
+            
+            toggleButtons(true);
+            document.getElementById('btnAiSearch').disabled = true;
+            
+            statusBox.style.display = 'block';
+            statusBox.className = 'status-loading';
+            statusBox.innerHTML = 'Trợ lý AI đang quét sổ và trích xuất dữ liệu phân tích theo yêu cầu...';
+            
+            const payload = { 
+                action: 'ai_search', 
+                keyword: aiQuery 
+            };
+            
+            try {
+                const response = await fetch(KET_NOI.URL_API_BACKEND, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload)
+                });
+                
+                const result = await response.json();
+                
+                if(result.status === 'success_text') {
+                    statusBox.className = 'status-success';
+                    statusBox.innerHTML = 'AI đã phân tích xong. Dữ liệu đã được nạp vào khung Nội dung diễn biến.';
+                    
+                    // Nếu khung nội dung đang trống thì ghi đè, nếu có chữ sẵn thì nối tiếp xuống dưới
+                    if (rawContentField.value.trim() === '') {
+                        rawContentField.value = result.text.trim();
+                    } else {
+                        rawContentField.value += "\n\n" + result.text.trim();
+                    }
+                    rawContentField.scrollIntoView({ behavior: "smooth", block: "center" });
+                } else {
+                    statusBox.className = 'status-error';
+                    statusBox.innerHTML = `Lỗi từ AI: ${result.message}`;
+                }
+            } catch (error) {
+                statusBox.className = 'status-error';
+                statusBox.innerHTML = `Lỗi đường truyền máy chủ. Chi tiết: ${error}`;
+            } finally {
+                toggleButtons(false);
+                document.getElementById('btnAiSearch').disabled = false;
+            }
+        }
+        
         function previewWordDocument() {
             const orgParent = document.getElementById('orgParent').value.trim() || 'CƠ QUAN CHỦ QUẢN';
             const orgName = document.getElementById('orgName').value.trim() || 'TÊN ĐƠN VỊ';
