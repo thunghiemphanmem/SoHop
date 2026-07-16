@@ -132,7 +132,9 @@
         button {
             padding: 0.5rem; font-size: 0.85rem; font-weight: 600; cursor: pointer;
             border: none; border-radius: 4px; color: white;
+            transition: all 0.2s;
         }
+        button:hover { opacity: 0.9; }
         .btn-reformat { background: #3b82f6; }
         .btn-draft { background: #8b5cf6; }
         .btn-save-draft { background: #f59e0b; color: #fff; } 
@@ -160,8 +162,41 @@
             text-transform: uppercase;
         }
 
+        /* KHỐI CSS MỚI: CHO GIAO DIỆN PREVIEW MODAL */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.8); z-index: 2000;
+            display: none; justify-content: center; align-items: flex-start;
+            overflow-y: auto; padding: 30px 10px; box-sizing: border-box;
+            backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background: #cbd5e1; width: 100%; max-width: 900px;
+            border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column; position: relative;
+        }
+        .modal-header {
+            background: #fff; padding: 15px 20px; border-radius: 8px 8px 0 0;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 3px solid var(--primary); position: sticky; top: 0; z-index: 10;
+        }
+        .modal-header h3 { margin: 0; color: var(--primary); font-size: 1.2rem; }
+        .modal-actions { display: flex; gap: 10px; }
+        .preview-area-container {
+            padding: 20px; display: flex; justify-content: center; overflow-x: auto;
+        }
+        .preview-a4 {
+            background: white; 
+            width: 21cm; min-height: 29.7cm; 
+            padding: 2cm 2cm 2cm 3cm; /* Căn lề chuẩn: Top 2, Bottom 2, Right 2, Left 3 */
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); 
+            box-sizing: border-box;
+            font-family: 'Times New Roman', Times, serif; font-size: 14pt; line-height: 1.5; color: black;
+        }
+
         @media screen and (max-width: 800px) {
             .all-actions-row { grid-template-columns: repeat(3, 1fr); }
+            .preview-a4 { width: 100%; padding: 1.5cm; } /* Thu nhỏ lề trên mobile */
         }
         @media screen and (max-width: 600px) {
             .compact-header-grid { grid-template-columns: 1fr; }
@@ -169,6 +204,9 @@
             .all-actions-row { grid-template-columns: repeat(2, 1fr); }
             .search-row-container { flex-direction: column; align-items: flex-start; }
             .search-row-container button { width: 100%; margin-top: 4px; }
+            .modal-header { flex-direction: column; gap: 10px; align-items: flex-start; }
+            .modal-actions { width: 100%; }
+            .modal-actions button { flex: 1; }
         }
     </style>
 </head>
@@ -247,7 +285,7 @@
                 <button id="btnDraft" class="btn-draft" onclick="processAction('draft')">AI Dự thảo</button>
                 <button id="btnSaveDraft" class="btn-save-draft" onclick="processAction('save_draft')">Lưu Dự Thảo</button>
                 <button id="btnGenerate" class="btn-generate" onclick="processAction('generate')">Hoàn Thành Ghi Sổ</button>
-                <button id="btnExportWord" class="btn-export" onclick="exportToWord()">Xuất File Word</button>
+                <button id="btnPreviewExport" class="btn-export" onclick="previewWordDocument()">Xuất File Word</button>
                 <button id="btnReset" class="btn-reset" onclick="resetMeeting()">Tạo mới</button>
             </div>
         </div>
@@ -255,8 +293,25 @@
         <div id="statusBox" style="display:none;"></div>
     </div>
 
+    <!-- KHỐI MỚI: GIAO DIỆN MODAL XEM TRƯỚC VĂN BẢN -->
+    <div id="previewModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>XEM TRƯỚC VĂN BẢN (Chuẩn NĐ 30)</h3>
+                <div class="modal-actions">
+                    <button class="btn-export" style="background:#10b981;" onclick="downloadWordFile()">Tải Xuống File Word</button>
+                    <button class="btn-reset" onclick="closePreviewModal()">Đóng Xem Trước</button>
+                </div>
+            </div>
+            <div class="preview-area-container">
+                <div id="previewArea" class="preview-a4"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
         window.searchResultsData = [];
+        window.previewDataCache = null; // Biến lưu trữ dữ liệu để chuyển từ preview sang download
         
         window.onload = function() {
             document.getElementById('headerArea').innerHTML = `
@@ -293,7 +348,7 @@
             document.getElementById('btnDraft').disabled = state;
             document.getElementById('btnSaveDraft').disabled = state;
             document.getElementById('btnGenerate').disabled = state;
-            document.getElementById('btnExportWord').disabled = state;
+            document.getElementById('btnPreviewExport').disabled = state;
             document.getElementById('btnReset').disabled = state;
             document.getElementById('btnSearch').disabled = state;
         }
@@ -554,7 +609,8 @@
             }
         }
 
-        function exportToWord() {
+        // CẬP NHẬT: CHỨC NĂNG 1 - MỞ KHUNG PREVIEW MÔ PHỎNG A4 TRƯỚC KHI XUẤT
+        function previewWordDocument() {
             const orgParent = document.getElementById('orgParent').value.trim() || 'CƠ QUAN CHỦ QUẢN';
             const orgName = document.getElementById('orgName').value.trim() || 'TÊN ĐƠN VỊ';
             let docNumber = document.getElementById('docNumber').value.trim() || '';
@@ -589,7 +645,63 @@
                 displayTime = `${hours} giờ ${minutes} phút, ngày ${day}/${month}/${year}`;
             }
 
-            const formattedContent = rawContent.split('\n').map(line => {
+            // Lưu dữ liệu vào biến toàn cục để dùng cho hàm Tải
+            window.previewDataCache = {
+                orgParent, orgName, docNumber, docPlace, title, rawContent, location, attendees, displayTime, exportDateText
+            };
+
+            // HTML hiển thị ngay trên web (mô phỏng A4)
+            const webFormattedContent = rawContent.split('\n').map(line => {
+                if(line.trim() === '') return '<p style="margin-top:0; margin-bottom: 6pt;">&nbsp;</p>';
+                return `<p style="margin-top:0; margin-bottom: 6pt; text-align: justify;">${line}</p>`;
+            }).join('');
+
+            const previewHTML = `
+                <table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 20px;">
+                    <tr>
+                        <td style="width: 40%; vertical-align: top; text-align: center; padding: 0; border: none;">
+                            <div style="font-size: 13pt; text-transform: uppercase;">${orgParent}</div>
+                            <div style="font-size: 13pt; font-weight: bold; text-transform: uppercase;">${orgName}</div>
+                            <hr style="border-top: 1px solid black; width: 40%; margin: 2px auto 5px auto;">
+                            <div style="font-size: 13pt; margin-top: 5px;">${docNumber}</div>
+                        </td>
+                        <td style="width: 60%; vertical-align: top; text-align: center; padding: 0; border: none;">
+                            <div style="font-size: 13pt; font-weight: bold; text-transform: uppercase;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                            <div style="font-size: 14pt; font-weight: bold;">Độc lập – Tự do – Hạnh phúc</div>
+                            <hr style="border-top: 1px solid black; width: 50%; margin: 2px auto 5px auto;">
+                            <div style="font-size: 14pt; font-style: italic; margin-top: 5px;">${docPlace}, ${exportDateText}</div>
+                        </td>
+                    </tr>
+                </table>
+                <div style="text-align: center; font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-top: 20px; margin-bottom: 5px;">BIÊN BẢN</div>
+                <div style="text-align: center; font-size: 14pt; font-weight: bold; margin-bottom: 20px;">${title}</div>
+                <div style="margin-bottom: 10px; text-align: justify;"><b>1. Thời gian bắt đầu:</b> ${displayTime}</div>
+                <div style="margin-bottom: 10px; text-align: justify;"><b>2. Địa điểm:</b> ${location}</div>
+                <div style="margin-bottom: 10px; text-align: justify;"><b>3. Thành phần tham dự:</b> ${attendees}</div>
+                <div style="margin-bottom: 10px; text-align: justify;"><b>4. Nội dung diễn biến cuộc họp:</b></div>
+                <div style="margin-bottom: 10px; text-align: justify;">${webFormattedContent}</div>
+                <table style="width: 100%; margin-top: 30px; border: none;">
+                    <tr>
+                        <td style="width: 50%; text-align: center; vertical-align: top; border: none; font-weight: bold;">THƯ KÝ<br><span style="font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span></td>
+                        <td style="width: 50%; text-align: center; vertical-align: top; border: none; font-weight: bold;">CHỦ TỌA<br><span style="font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span></td>
+                    </tr>
+                </table>
+            `;
+
+            document.getElementById('previewArea').innerHTML = previewHTML;
+            document.getElementById('previewModal').style.display = 'flex';
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewModal').style.display = 'none';
+        }
+
+        // CẬP NHẬT: CHỨC NĂNG 2 - NÚT TẢI XUỐNG KHI ĐANG Ở MÀN HÌNH PREVIEW
+        function downloadWordFile() {
+            if(!window.previewDataCache) return;
+            const data = window.previewDataCache;
+
+            const wordFormattedContent = data.rawContent.split('\n').map(line => {
                 if(line.trim() === '') return '<p class="content-line">&nbsp;</p>';
                 return `<p class="content-line">${line}</p>`;
             }).join('');
@@ -611,42 +723,25 @@
                         line-height: 1.5;
                     }
                     .header-table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        border: none;
-                        margin-bottom: 20px;
+                        width: 100%; border-collapse: collapse; border: none; margin-bottom: 20px;
                     }
                     .header-table td {
-                        vertical-align: top;
-                        text-align: center;
-                        padding: 0;
-                        border: none;
+                        vertical-align: top; text-align: center; padding: 0; border: none;
                     }
                     .td-left { width: 40%; }
                     .td-right { width: 60%; }
-                    
                     .org-parent { font-size: 13pt; text-transform: uppercase; }
                     .org-name { font-size: 13pt; font-weight: bold; text-transform: uppercase; }
                     .line-org { border-top: 1px solid black; width: 40%; margin: 0 auto; margin-top: 2px; margin-bottom: 5px; }
-                    
                     .nation { font-size: 13pt; font-weight: bold; text-transform: uppercase; }
                     .motto { font-size: 14pt; font-weight: bold; }
                     .line-motto { border-top: 1px solid black; width: 50%; margin: 0 auto; margin-top: 2px; margin-bottom: 5px; }
-                    
                     .doc-date { font-size: 14pt; font-style: italic; margin-top: 5px;}
                     .doc-num { font-size: 13pt; margin-top: 5px; }
-
                     .main-title { text-align: center; font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-top: 20px; margin-bottom: 5px;}
                     .sub-title { text-align: center; font-size: 14pt; font-weight: bold; margin-bottom: 20px; }
-                    
                     .section { margin-bottom: 10px; text-align: justify; }
-                    
-                    .content-line {
-                        margin-top: 0;
-                        margin-bottom: 6pt;
-                        text-align: justify;
-                    }
-                    
+                    .content-line { margin-top: 0; margin-bottom: 6pt; text-align: justify; }
                     .signature-table { width: 100%; margin-top: 30px; border: none; }
                     .signature-table td { width: 50%; text-align: center; vertical-align: top; border: none; font-weight: bold;}
                 </style>
@@ -655,30 +750,26 @@
                 <table class="header-table">
                     <tr>
                         <td class="td-left">
-                            <div class="org-parent">${orgParent}</div>
-                            <div class="org-name">${orgName}</div>
+                            <div class="org-parent">${data.orgParent}</div>
+                            <div class="org-name">${data.orgName}</div>
                             <div class="line-org"></div>
-                            <div class="doc-num">${docNumber}</div>
+                            <div class="doc-num">${data.docNumber}</div>
                         </td>
                         <td class="td-right">
                             <div class="nation">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
                             <div class="motto">Độc lập – Tự do – Hạnh phúc</div>
                             <div class="line-motto"></div>
-                            <div class="doc-date"><i>${docPlace}, ${exportDateText}</i></div>
+                            <div class="doc-date"><i>${data.docPlace}, ${data.exportDateText}</i></div>
                         </td>
                     </tr>
                 </table>
-
                 <div class="main-title">BIÊN BẢN</div>
-                <div class="sub-title">${title}</div>
-
-                <div class="section"><b>1. Thời gian bắt đầu:</b> ${displayTime}</div>
-                <div class="section"><b>2. Địa điểm:</b> ${location}</div>
-                <div class="section"><b>3. Thành phần tham dự:</b> ${attendees}</div>
+                <div class="sub-title">${data.title}</div>
+                <div class="section"><b>1. Thời gian bắt đầu:</b> ${data.displayTime}</div>
+                <div class="section"><b>2. Địa điểm:</b> ${data.location}</div>
+                <div class="section"><b>3. Thành phần tham dự:</b> ${data.attendees}</div>
                 <div class="section"><b>4. Nội dung diễn biến cuộc họp:</b></div>
-                <div class="section">${formattedContent}</div>
-
-                <!-- CẬP NHẬT: Gộp dòng Ký và ghi rõ họ tên sát lên dưới chức danh, để trống khoảng ký bên dưới -->
+                <div class="section">${wordFormattedContent}</div>
                 <table class="signature-table">
                     <tr>
                         <td>THƯ KÝ<br><span style="font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span></td>
@@ -697,16 +788,17 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `BienBan_${title.replace(/\s+/g, '_')}.doc`;
+            a.download = `BienBan_${data.title.replace(/\s+/g, '_')}.doc`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
+            closePreviewModal();
             const statusBox = document.getElementById('statusBox');
             statusBox.style.display = 'block';
             statusBox.className = 'status-success';
-            statusBox.innerHTML = 'Đã tải xuống thành công file Word. Lỗi giãn chữ đã được khắc phục!';
+            statusBox.innerHTML = 'Đã tải xuống thành công file Word!';
         }
     </script>
 </body>
