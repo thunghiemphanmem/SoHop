@@ -72,11 +72,14 @@
         }
         .header h2 { display: none; }
         
-        /* KHỐI NHẬP LIỆU PHẦN ĐẦU - Giữ nguyên 2 dòng (Tên trên, ô dưới) */
+        /* ========================================================= */
+        /* KHỐI NHẬP LIỆU PHẦN ĐẦU (ĐÃ FIX THEO ĐÚNG HÌNH VẼ)      */
+        /* ========================================================= */
         .compact-header-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px 30px; 
+            /* Cột 1 (Tên) chiếm 1.6 phần, Cột 2 (Thời gian) chiếm 1 phần */
+            grid-template-columns: 1.6fr 1fr; 
+            gap: 15px 25px; 
             margin-bottom: 15px;
             background: #ffffff;
             padding: 20px;
@@ -87,17 +90,32 @@
         
         .compact-header-grid .form-group { 
             display: flex; 
-            flex-direction: column; 
+            flex-direction: row; /* Ép Tên và Ô nhập nằm ngang sát nhau */
+            align-items: center; 
             margin-bottom: 0; 
+            gap: 10px;
         }
+        
         .compact-header-grid .form-group label {
             font-weight: 600;
             font-size: 0.9rem;
-            margin-bottom: 6px; 
+            margin-bottom: 0; /* Xóa khoảng trống dưới chân chữ */
             color: #1e293b;
+            white-space: nowrap; /* Cấm chữ rớt dòng */
         }
+        
+        /* Cố định độ rộng Nhãn để các ô Input thẳng hàng dọc tăm tắp */
+        .compact-header-grid .form-group:nth-child(odd) label {
+            min-width: 175px; /* Chiều rộng chữ "1. Chủ đề / Tên cuộc họp:" */
+        }
+        .compact-header-grid .form-group:nth-child(even) label {
+            min-width: 165px; /* Chiều rộng chữ "4. Thành phần tham dự:" */
+        }
+        
         .compact-header-grid .form-group input {
+            flex: 1; /* Cho ô nhập liệu bung hết phần không gian còn lại */
             width: 100%;
+            min-width: 0; /* Chống tràn flexbox */
             padding: 0.65rem 0.8rem;
             border: 1px solid var(--border);
             border-radius: 6px;
@@ -179,26 +197,24 @@
             box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
         }
         
-        /* ========================================================= */
-        /* KHỐI NÚT CHỨC NĂNG - ÉP 1 HÀNG KHÔNG VƯỢT KHUNG */
-        /* ========================================================= */
+        /* KHỐI NÚT CHỨC NĂNG - GIỮ NGUYÊN 1 HÀNG CHỐNG TRÀN */
         .action-container {
             display: flex;
             flex-direction: row;
-            flex-wrap: nowrap; /* Bắt buộc 1 hàng ngang */
+            flex-wrap: nowrap;
             justify-content: space-between;
             align-items: stretch;
-            gap: 8px; /* Thu hẹp khoảng cách giữa các nút */
+            gap: 8px; 
             margin-top: 20px;
             margin-bottom: 15px;
             width: 100%;
-            box-sizing: border-box; /* Đảm bảo padding không cộng dồn làm vượt khung */
+            box-sizing: border-box; 
         }
         
         .btn-action {
-            flex: 1; /* Tự động chia đều chiều rộng 5 phần bằng nhau */
-            padding: 0.6rem 0.2rem; /* Giảm khoảng lề bên trong nút */
-            font-size: 0.8rem; /* Cỡ chữ vừa phải */
+            flex: 1; 
+            padding: 0.6rem 0.2rem; 
+            font-size: 0.8rem; 
             font-weight: 700;
             cursor: pointer;
             border: none;
@@ -208,8 +224,6 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             transition: all 0.25s ease;
             text-transform: uppercase;
-            
-            /* Tinh chỉnh cho phép text bọc lại thành 2 dòng ở trong lòng nút nếu màn hình nhỏ, tuyệt đối không xé toạc khung */
             white-space: normal; 
             line-height: 1.3;
             display: flex;
@@ -256,16 +270,18 @@
         
         /* ĐÁP ỨNG TRÊN DI ĐỘNG & IPAD */
         @media screen and (max-width: 1100px) {
-            .compact-header-grid { gap: 15px; }
+            .compact-header-grid { grid-template-columns: 1fr 1fr; gap: 15px; }
         }
         @media screen and (max-width: 768px) {
             .container { max-width: 100%; padding: 0 10px 15px 10px; }
             .header h1 { font-size: 1.2rem; margin-left: 45px; }
             .header img { width: 40px; }
+            /* Mobile: Nếu ngang quá chật sẽ tự động thả xuống dưới để người dùng dễ bấm */
             .compact-header-grid { grid-template-columns: 1fr; }
-            .focus-note-wrapper { flex-direction: column; align-items: flex-start; gap: 6px; }
+            .compact-header-grid .form-group { flex-direction: column; align-items: flex-start; gap: 5px; }
+            .compact-header-grid .form-group label { min-width: auto; }
             
-            /* Ép nhỏ hơn nữa để giữ 5 nút trên 1 dòng ở ĐTDĐ */
+            .focus-note-wrapper { flex-direction: column; align-items: flex-start; gap: 6px; }
             .action-container { gap: 4px; }
             .btn-action { font-size: 0.6rem; padding: 0.4rem 0.1rem; }
         }
@@ -273,9 +289,11 @@
 </head>
 <body>
     <div class="container">
+        <!-- HEADER -->
         <div class="header" id="headerArea"></div>
         <input type="hidden" id="recordId" value="">
 
+        <!-- KHỐI 1: THÔNG TIN CUỘC HỌP -->
         <div class="compact-header-grid">
             <div class="form-group">
                 <label>1. Chủ đề / Tên cuộc họp:</label>
@@ -295,16 +313,19 @@
             </div>
         </div>
 
+        <!-- KHỐI 2: CHỈ ĐẠO AI -->
         <div class="focus-note-wrapper">
             <label>📌 Ghi chú trọng tâm cho AI (Không bắt buộc):</label>
             <input type="text" id="focusNote" placeholder="Ví dụ: Nhấn mạnh công tác chuyên môn, kiểm tra hồ sơ...">
         </div>
 
+        <!-- KHỐI 3: NHẬP LIỆU THÔ -->
         <div class="content-group">
             <label>Nội dung diễn biến (Khung nhập thô):</label>
             <textarea id="rawContent" placeholder="Ghi chép nhanh các ý kiến thảo luận tại đây..."></textarea>
         </div>
 
+        <!-- KHỐI 4: NÚT CHỨC NĂNG -->
         <div class="action-container">
             <button id="btnReformat" class="btn-action btn-reformat" onclick="processAction('reformat')">Tạo lại bố cục bằng AI</button>
             <button id="btnDraft" class="btn-action btn-draft" onclick="processAction('draft')">AI Dự thảo Kết luận</button>
@@ -317,6 +338,7 @@
         
         <div class="divider"></div>
         
+        <!-- KHỐI 5: TÌM KIẾM -->
         <div class="search-flex">
             <input type="text" id="searchKeyword" placeholder="Nhập từ khóa tìm biên bản (hoặc Dự thảo)..." onkeypress="handleSearchEnter(event)">
             <button id="btnSearch" class="btn-search" onclick="searchMeetingData()">Tìm kiếm</button>
@@ -324,6 +346,7 @@
         <ul id="searchResults" class="search-results"></ul>
     </div>
 
+    <!-- KHỐI JAVASCRIPT -->
     <script>
         window.searchResultsData = [];
         
