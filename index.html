@@ -271,20 +271,20 @@
         </div>
 
         <!-- Khối Tìm Kiếm & Hỏi AI -->
-        <div class="form-group search-row-container" style="margin-bottom: 6px; background: #f0fdf4; padding: 4px; border-radius: 4px; border: 1px solid #bbf7d0; flex-wrap: wrap; gap: 8px;">
-            <div style="display: flex; align-items: center; flex: 1; min-width: 250px;">
-                <label style="color:#16a34a; font-size:0.9rem;">🔍 Tìm Sổ:</label>
-                <input type="text" id="searchKeyword" placeholder="Từ khóa tìm biên bản..." onkeypress="handleSearchEnter(event)">
-                <button id="btnSearch" class="btn-search" style="margin-left: 4px;" onclick="searchMeetingData()">Tìm</button>
+     <div class="form-group search-row-container" style="margin-bottom: 6px; background: #f0fdf4; padding: 6px; border-radius: 4px; border: 1px solid #bbf7d0; align-items: flex-start; flex-wrap: wrap; gap: 8px;">
+            <div style="display: flex; align-items: flex-start; flex: 1; min-width: 250px;">
+                <label style="color:#16a34a; font-size:0.9rem; margin-top: 8px;">🔍 Tìm Sổ:</label>
+                <textarea id="searchKeyword" rows="2" style="flex: 1; min-height: 40px; resize: vertical; padding: 8px; font-family: inherit; border: 1px solid var(--border); border-radius: 4px;" placeholder="Từ khóa tìm biên bản..." onkeydown="handleSearchEnter(event)"></textarea>
+                <button id="btnSearch" class="btn-search" style="margin-left: 4px; height: 40px; align-self: flex-start;" onclick="searchMeetingData()">Tìm</button>
             </div>
             
-            <div style="display: flex; align-items: center; flex: 2; min-width: 350px;">
-                <label style="color:#8b5cf6; font-size:0.9rem;">🤖 Tổng hợp:</label>
-                <input type="text" id="aiSearchQuery" placeholder="VD: Liệt kê các tổ chuyên môn được nhắc nhở trong 5 cuộc họp gần nhất..." onkeypress="handleAiSearchEnter(event)">
-                <button id="btnAiSearch" class="btn-draft" style="margin-left: 4px;" onclick="searchMeetingAI()">Hỏi AI</button>
+            <div style="display: flex; align-items: flex-start; flex: 2; min-width: 350px;">
+                <label style="color:#8b5cf6; font-size:0.9rem; margin-top: 8px;">🤖 Tổng hợp:</label>
+                <textarea id="aiSearchQuery" rows="2" style="flex: 1; min-height: 40px; resize: vertical; padding: 8px; font-family: inherit; border: 1px solid var(--border); border-radius: 4px;" placeholder="Nhập lệnh AI (Ấn Shift + Enter để xuống dòng)..." onkeydown="handleAiSearchEnter(event)"></textarea>
+                <button id="btnAiSearch" class="btn-draft" style="margin-left: 4px; height: 40px; align-self: flex-start;" onclick="searchMeetingAI()">Hỏi AI</button>
             </div>
         </div>
-
+        
         <div id="searchResultsSection" style="display:none; margin-bottom: 8px; background: #fafafa; border: 1px solid var(--border); border-radius: 6px; padding: 6px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 4px;">
                 <span style="font-weight: 600; color: var(--primary); font-size: 0.9rem;">Danh sách kết quả tìm kiếm:</span>
@@ -488,8 +488,12 @@
             }
         }
 
-        function handleSearchEnter(event) {
-            if (event.key === "Enter") searchMeetingData();
+       function handleSearchEnter(event) {
+            // Nếu ấn Enter mà KHÔNG giữ phím Shift thì thực hiện Tìm kiếm
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault(); // Ngăn chặn con trỏ tạo dòng mới
+                searchMeetingData();
+            }
         }
 
         async function searchMeetingData() {
@@ -629,10 +633,13 @@
         // ============================================================
         // HÀM XỬ LÝ GIAO DIỆN TỔNG HỢP VÀ HỎI AI ĐỘNG (BỔ SUNG)
         // ============================================================
-        function handleAiSearchEnter(event) {
-            if (event.key === "Enter") searchMeetingAI();
+      function handleAiSearchEnter(event) {
+            // Nếu ấn Enter mà KHÔNG giữ phím Shift thì thực hiện Hỏi AI
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault(); // Ngăn chặn con trỏ tạo dòng mới
+                searchMeetingAI();
+            }
         }
-
         async function searchMeetingAI() {
             const aiQuery = document.getElementById('aiSearchQuery').value;
             const rawContentField = document.getElementById('rawContent');
