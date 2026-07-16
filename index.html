@@ -10,7 +10,7 @@
             --primary: #0284c7;
             --primary-hover: #0369a1;
             --secondary: #475569;
-            --bg: #f8fafc; /* Nền xám xanh cực nhạt, thanh lịch */
+            --bg: #f8fafc;
             --card: #ffffff;
             --text: #1e293b;
             --border: #cbd5e1;
@@ -27,27 +27,26 @@
             justify-content: center;
         }
         
-        /* KHUNG CHÍNH - Thu hẹp tinh tế */
         .container {
             background: var(--card);
             width: 100%;
             max-width: 88%;
             min-height: 100vh;
-            padding: 0 24px 30px 24px;
+            padding: 0 24px 20px 24px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05), 0 4px 6px rgba(0, 0, 0, 0.03);
             box-sizing: border-box;
             border-radius: 0 0 12px 12px;
         }
 
-        /* HEADER - Cố định, mờ ảo (Glassmorphism) */
+        /* HEADER */
         .header {
             position: sticky;
             top: 0;
             z-index: 1000;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
-            padding: 16px 20px;
-            margin-bottom: 24px;
+            padding: 12px 20px;
+            margin-bottom: 15px; /* Đã thu hẹp theo gạch đỏ */
             border-bottom: 3px solid var(--primary);
             display: flex;
             align-items: center;
@@ -56,7 +55,7 @@
             border-radius: 0 0 8px 8px;
         }
         .header img {
-            width: 55px;
+            width: 50px;
             height: auto;
             position: absolute;
             left: 20px; 
@@ -65,7 +64,7 @@
         .header h1 {
             margin: 0;
             color: var(--primary);
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -75,84 +74,85 @@
         .header h2 { display: none; }
         
         /* ========================================================= */
-        /* KHỐI NHẬP LIỆU PHẦN ĐẦU - BỐ TRÍ THÔNG MINH (SMART GRID)  */
+        /* KHỐI 1: NHẬP LIỆU PHẦN ĐẦU - ĐÃ GIÃN LẤP CHỖ GẠCH ĐỎ    */
         /* ========================================================= */
         .compact-header-grid {
             display: grid;
-            /* TUYỆT CHIÊU THIẾT KẾ: 
-               Cột 1 (Nhãn 1): Vừa nội dung chữ
-               Cột 2 (Ô nhập 1): Rộng (2 phần)
-               Cột 3 (Nhãn 2): Vừa nội dung chữ
-               Cột 4 (Ô nhập 2): Hẹp hơn (1.2 phần) */
-            grid-template-columns: max-content 2fr max-content 1.2fr; 
-            gap: 16px 24px; 
-            align-items: center; /* Căn giữa theo chiều dọc */
-            margin-bottom: 20px;
+            grid-template-columns: 1.5fr 1fr; /* Trục trái to hơn trục phải */
+            gap: 12px 20px; /* Thu hẹp khoảng cách giữa các hàng và cột */
+            margin-bottom: 12px; /* Thu hẹp khoảng cách với khối dưới */
             background: #ffffff;
-            padding: 24px;
-            border-radius: 12px;
+            padding: 16px 20px;
+            border-radius: 10px;
             border: 1px solid #e2e8f0;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
         }
         
-        .compact-header-grid label {
+        .form-group {
+            display: flex;
+            flex-direction: row;
+            align-items: center; /* Căn giữa theo chiều dọc */
+            gap: 8px; /* Khoảng cách siêu nhỏ để ô nhập sát vào chữ (lấp gạch ngang) */
+            width: 100%;
+        }
+        
+        .form-group label {
             font-weight: 600;
             font-size: 0.95rem;
             color: #334155;
-            white-space: nowrap;
+            white-space: nowrap; /* Không rớt dòng */
             margin: 0;
         }
         
-        .compact-header-grid input {
-            width: 100%;
-            padding: 0.7rem 1rem;
+        .form-group input {
+            flex: 1; /* Nối tiếp chữ, tự động giãn lấp toàn bộ khoảng trống */
+            min-width: 0; /* Tránh vỡ khung */
+            padding: 0.65rem 0.9rem;
             border: 1px solid var(--border);
-            border-radius: 8px; /* Bo góc mềm mại hơn */
+            border-radius: 6px;
             font-size: 0.95rem;
             background-color: #f8fafc;
             color: #0f172a;
             transition: all 0.25s ease;
             font-family: inherit;
-            box-sizing: border-box;
         }
         
-        .compact-header-grid input:hover {
-            border-color: #94a3b8;
-        }
-        
-        .compact-header-grid input:focus {
+        .form-group input:hover { border-color: #94a3b8; }
+        .form-group input:focus {
             outline: none;
             border-color: var(--primary);
             background-color: #ffffff;
-            box-shadow: 0 0 0 4px var(--focus-ring);
+            box-shadow: 0 0 0 3px var(--focus-ring);
         }
 
-        /* KHỐI GHI CHÚ TRỌNG TÂM - Callout chuyên nghiệp */
+        /* ========================================================= */
+        /* KHỐI 2: GHI CHÚ TRỌNG TÂM - ĐÃ THU HẸP KHOẢNG CÁCH DỌC  */
+        /* ========================================================= */
         .focus-note-wrapper {
-            margin-bottom: 20px;
-            background: #f5f3ff; /* Tím pastel cực nhạt */
-            padding: 16px 24px;
-            border-radius: 10px;
+            margin-bottom: 12px; /* Thu hẹp khoảng cách với khối dưới */
+            background: #f5f3ff; 
+            padding: 12px 20px;
+            border-radius: 8px;
             border: 1px dashed #c084fc;
             display: flex; 
             flex-direction: row;
             align-items: center;
-            gap: 16px;
+            gap: 10px;
         }
         .focus-note-wrapper label { 
             color: #6b21a8; 
             font-weight: 700; 
             font-size: 0.95rem;
             white-space: nowrap;
-            margin-bottom: 0;
+            margin: 0;
             display: flex;
             align-items: center;
-            gap: 8px;
         }
         .focus-note-wrapper input { 
-            flex: 1;
-            padding: 0.7rem 1rem;
-            border-radius: 8px;
+            flex: 1; /* Giãn lấp khoảng trống */
+            min-width: 0;
+            padding: 0.65rem 0.9rem;
+            border-radius: 6px;
             border: 1px solid #d8b4fe;
             font-size: 0.95rem;
             background-color: #ffffff; 
@@ -163,25 +163,25 @@
         .focus-note-wrapper input:focus { 
             outline: none;
             border-color: #9333ea; 
-            box-shadow: 0 0 0 4px rgba(147, 51, 234, 0.15); 
+            box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.15); 
         }
 
-        /* KHỐI NỘI DUNG DIỄN BIẾN */
-        .content-group { margin-bottom: 20px; }
+        /* KHỐI 3: NỘI DUNG DIỄN BIẾN */
+        .content-group { margin-bottom: 15px; }
         .content-group label {
             font-weight: 700;
             color: var(--primary);
             font-size: 1.05rem;
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
         }
         textarea {
             width: 100%;
-            height: calc(100vh - 420px); 
-            min-height: 280px;
-            padding: 16px;
+            height: calc(100vh - 380px); /* Đã tinh chỉnh lại chiều cao để vừa màn hình */
+            min-height: 250px;
+            padding: 14px;
             border: 1px solid var(--border);
-            border-radius: 10px;
+            border-radius: 8px;
             resize: vertical; 
             font-size: 1.05rem; 
             line-height: 1.6;
@@ -194,12 +194,10 @@
         textarea:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: 0 0 0 4px var(--focus-ring);
+            box-shadow: 0 0 0 3px var(--focus-ring);
         }
         
-        /* ========================================================= */
-        /* KHỐI NÚT CHỨC NĂNG - 1 HÀNG, ĐỀU NHAU, KHÔNG TRÀN       */
-        /* ========================================================= */
+        /* KHỐI 4: NÚT CHỨC NĂNG - 1 HÀNG, ĐỀU NHAU, KHÔNG TRÀN */
         .action-container {
             display: flex;
             flex-direction: row;
@@ -207,8 +205,8 @@
             justify-content: space-between;
             align-items: stretch;
             gap: 10px; 
-            margin-top: 24px;
-            margin-bottom: 20px;
+            margin-top: 15px;
+            margin-bottom: 15px;
             width: 100%;
             box-sizing: border-box; 
         }
@@ -220,15 +218,13 @@
             font-weight: 700;
             cursor: pointer;
             border: none;
-            border-radius: 8px; /* Bo góc chuẩn UI hiện đại */
+            border-radius: 8px; 
             color: white;
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             text-transform: uppercase;
             letter-spacing: 0.3px;
-            
-            /* Tự động ngắt dòng thông minh bên trong nút nếu màn hình hẹp */
             white-space: normal; 
             line-height: 1.4;
             display: flex;
@@ -264,7 +260,7 @@
         .status-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
         .status-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
         
-        .divider { margin: 24px 0; border-top: 2px dashed #e2e8f0; }
+        .divider { margin: 20px 0; border-top: 2px dashed #e2e8f0; }
         .search-flex { display: flex; gap: 10px; }
         .search-flex input {
             flex-grow: 1; padding: 0.7rem 1rem; border: 1px solid var(--border);
@@ -278,25 +274,14 @@
         .result-item a { text-decoration: none; font-weight: 600; color: var(--primary); font-size: 1.05rem; margin-bottom: 4px; }
         
         /* ĐÁP ỨNG TRÊN DI ĐỘNG & IPAD */
-        @media screen and (max-width: 1200px) {
-            /* Giảm bớt sự chênh lệch cột trên màn hình vừa */
-            .compact-header-grid { grid-template-columns: max-content 1.5fr max-content 1fr; }
-        }
-        @media screen and (max-width: 992px) {
-            /* Xuống dòng thông minh cho iPad dọc: 2 Nhãn-Input trên 1 dòng */
-            .compact-header-grid { grid-template-columns: max-content 1fr; gap: 16px; }
+        @media screen and (max-width: 1100px) {
+            .compact-header-grid { grid-template-columns: 1.2fr 1fr; }
         }
         @media screen and (max-width: 768px) {
             .container { max-width: 100%; padding: 0 12px 20px 12px; }
             .header h1 { font-size: 1.25rem; margin-left: 50px; }
             .header img { width: 45px; }
-            
-            /* Mobile: Xếp dọc toàn bộ */
-            .compact-header-grid { display: flex; flex-direction: column; gap: 12px; padding: 16px; }
-            .compact-header-grid label { margin-bottom: 4px; }
-            
-            .focus-note-wrapper { flex-direction: column; align-items: flex-start; gap: 10px; padding: 16px; }
-            
+            .compact-header-grid { grid-template-columns: 1fr; gap: 12px; padding: 16px; }
             .action-container { gap: 6px; }
             .btn-action { font-size: 0.65rem; padding: 0.5rem 0.2rem; }
         }
@@ -308,17 +293,25 @@
         <input type="hidden" id="recordId" value="">
 
         <div class="compact-header-grid">
-            <label for="meetingTitle">1. Chủ đề / Tên cuộc họp:</label>
-            <input type="text" id="meetingTitle" placeholder="Ví dụ: Giao ban chuyên môn..." required>
-
-            <label for="meetingDate">2. Thời gian:</label>
-            <input type="datetime-local" id="meetingDate" required>
-
-            <label for="location">3. Địa điểm:</label>
-            <input type="text" id="location" placeholder="Phòng hội đồng..." required>
-
-            <label for="attendees">4. Thành phần tham dự:</label>
-            <input type="text" id="attendees" placeholder="BGH, Giáo viên..." required>
+            <div class="form-group">
+                <label for="meetingTitle">1. Chủ đề / Tên cuộc họp:</label>
+                <input type="text" id="meetingTitle" placeholder="Ví dụ: Giao ban chuyên môn..." required>
+            </div>
+            
+            <div class="form-group">
+                <label for="meetingDate">2. Thời gian:</label>
+                <input type="datetime-local" id="meetingDate" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="location">3. Địa điểm:</label>
+                <input type="text" id="location" placeholder="Phòng hội đồng..." required>
+            </div>
+            
+            <div class="form-group">
+                <label for="attendees">4. Thành phần tham dự:</label>
+                <input type="text" id="attendees" placeholder="BGH, Giáo viên..." required>
+            </div>
         </div>
 
         <div class="focus-note-wrapper">
