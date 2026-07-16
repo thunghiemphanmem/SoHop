@@ -554,7 +554,6 @@
             }
         }
 
-        // CẬP NHẬT: THUẬT TOÁN ĐỊNH DẠNG ĐOẠN VĂN (PARAGRAPH) KHẮC PHỤC LỖI GIÃN CHỮ
         function exportToWord() {
             const orgParent = document.getElementById('orgParent').value.trim() || 'CƠ QUAN CHỦ QUẢN';
             const orgName = document.getElementById('orgName').value.trim() || 'TÊN ĐƠN VỊ';
@@ -590,7 +589,6 @@
                 displayTime = `${hours} giờ ${minutes} phút, ngày ${day}/${month}/${year}`;
             }
 
-            // MỚI: Bọc từng dòng văn bản bằng thẻ <p> để ngắt đoạn cứng, triệt tiêu lỗi ép giãn chữ (Shift+Enter)
             const formattedContent = rawContent.split('\n').map(line => {
                 if(line.trim() === '') return '<p class="content-line">&nbsp;</p>';
                 return `<p class="content-line">${line}</p>`;
@@ -641,7 +639,6 @@
                     .main-title { text-align: center; font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-top: 20px; margin-bottom: 5px;}
                     .sub-title { text-align: center; font-size: 14pt; font-weight: bold; margin-bottom: 20px; }
                     
-                    /* Cấu trúc mới hỗ trợ <p> */
                     .section { margin-bottom: 10px; text-align: justify; }
                     
                     .content-line {
@@ -681,18 +678,15 @@
                 <div class="section"><b>4. Nội dung diễn biến cuộc họp:</b></div>
                 <div class="section">${formattedContent}</div>
 
+                <!-- CẬP NHẬT: Gộp dòng Ký và ghi rõ họ tên sát lên dưới chức danh, để trống khoảng ký bên dưới -->
                 <table class="signature-table">
                     <tr>
-                        <td>THƯ KÝ</td>
-                        <td>CHỦ TỌA</td>
+                        <td>THƯ KÝ<br><span style="font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span></td>
+                        <td>CHỦ TỌA<br><span style="font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span></td>
                     </tr>
                     <tr>
-                        <td style="height: 80px;"></td>
+                        <td style="height: 100px;"></td>
                         <td></td>
-                    </tr>
-                    <tr>
-                        <td><i>(Ký, ghi rõ họ tên)</i></td>
-                        <td><i>(Ký, ghi rõ họ tên)</i></td>
                     </tr>
                 </table>
             </body>
