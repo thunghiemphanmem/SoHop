@@ -381,13 +381,19 @@
                 <h1>${KET_NOI.TIEU_DE_PHAN_MEM || ''}</h1>
             `;
             
-            try {
-                const response = await fetch(KET_NOI.URL_API_BACKEND, {
-                    method: 'POST',
-                    redirect: 'follow', // Đã bổ sung tham số bắt buộc cho GAS
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify({ action: 'check_account' })
-                });
+           // Gọi trực tiếp hàm setupAccountInfo ở backend (Mã.gs)
+            google.script.run
+                .withSuccessHandler(function(result) {
+                    if(result.status === 'success') {
+                        document.getElementById('accountModal').style.display = 'none';
+                        unlockApplication();
+                    }
+                })
+                .withFailureHandler(function(error) {
+                    statusDiv.style.color = "#dc2626";
+                    statusDiv.innerText = "Lỗi hệ thống: " + error.message;
+                })
+                .setupAccountInfo(keyInput);
                 const result = await response.json();
                 
                 if (result.isReady) {
