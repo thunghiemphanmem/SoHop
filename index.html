@@ -31,8 +31,30 @@
             padding: 0 10px 20px 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
             box-sizing: border-box;
+            transition: opacity 0.3s ease;
         }
         
+        /* CSS MỚI CHO MODAL HIỆU ỨNG GLASSMORPHISM */
+        .glass-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.85); z-index: 3000;
+            display: none; justify-content: center; align-items: center;
+            backdrop-filter: blur(10px);
+        }
+        .glass-box {
+            background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 12px;
+            width: 90%; max-width: 450px; text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeIn 0.4s ease-out;
+        }
+        .glass-box h2 { color: var(--primary); margin-top: 0; }
+        .glass-box input { width: 100%; padding: 12px; margin: 15px 0; border: 2px solid var(--border); border-radius: 6px; font-size: 1rem; box-sizing: border-box; }
+        .glass-box button { width: 100%; padding: 12px; background: var(--primary); color: white; font-weight: bold; font-size: 1.1rem; border-radius: 6px; border: none; cursor: pointer; transition: 0.3s; }
+        .glass-box button:hover { background: #0369a1; }
+        .glass-box a { color: #8b5cf6; font-weight: bold; text-decoration: none; display: block; margin-top: 15px; font-size: 0.9rem; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
         .header {
             position: sticky;
             top: 0;
@@ -123,19 +145,17 @@
             resize: vertical; font-size: 0.95rem; line-height: 1.4;
         }
         
-      .all-actions-row {
+        .all-actions-row {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             gap: 4px;
-            
-            /* TỐI ƯU GIAO DIỆN: Cố định dính chặt vào đáy màn hình khi cuộn/zoom */
             position: sticky;
             bottom: 0;
-            background-color: var(--card); /* Phủ nền che văn bản cuộn bên dưới */
+            background-color: var(--card);
             padding: 12px 0 10px 0;
             margin-top: 5px;
             z-index: 1000;
-            border-top: 1px dashed var(--border); /* Viền ngăn cách với khu vực gõ văn bản */
+            border-top: 1px dashed var(--border);
         }
         .all-actions-row button {
             padding: 0.5rem 0.2rem;
@@ -227,7 +247,21 @@
     </style>
 </head>
 <body>
-    <div class="container">
+
+    <!-- KHỐI MODAL XÁC THỰC API TÀI KHOẢN -->
+    <div id="accountModal" class="glass-modal">
+        <div class="glass-box">
+            <h2>Kích hoạt Trợ lý AI</h2>
+            <p style="color: var(--secondary); font-size: 0.9rem;">Tài khoản của đồng chí chưa được thiết lập mã khóa AI nội bộ. Vui lòng kết nối để khởi tạo không gian lưu trữ riêng.</p>
+            <input type="password" id="inputApiKey" placeholder="Nhập API Key cá nhân...">
+            <button onclick="saveAccountSetup()">Kích hoạt & Bắt đầu</button>
+            <a href="https://aistudio.google.com/app/apikey" target="_blank">Chưa có API? Lấy mã miễn phí tại Google AI Studio</a>
+            <div id="setupStatus" style="margin-top: 10px; font-size: 0.85rem; color: #dc2626; display: none;"></div>
+        </div>
+    </div>
+
+    <!-- KHỐI GIAO DIỆN CHÍNH -->
+    <div class="container" id="mainApp" style="opacity: 0.3; pointer-events: none;">
         <div class="header" id="headerArea"></div>
         <input type="hidden" id="recordId" value="">
 
@@ -305,7 +339,6 @@
                 <textarea id="rawContent" placeholder="Ghi chép nhanh các ý kiến thảo luận tại đây..."></textarea>
             </div>
 
-            <!-- CHUYỂN HỘP THÔNG BÁO LÊN ĐÂY: Tránh bị hàng nút cố định che khuất -->
             <div id="statusBox" style="display:none; margin-bottom: 8px;"></div>
 
             <div class="all-actions-row">
@@ -317,10 +350,7 @@
                 <button id="btnReset" class="btn-reset" onclick="resetMeeting()">Tạo mới</button>
             </div>
         </div>
-    </div> <!-- Thẻ đóng của class="container" -->
-
-        <div id="statusBox" style="display:none;"></div>
-    </div>
+    </div> 
 
     <!-- KHỐI GIAO DIỆN MODAL XEM TRƯỚC VĂN BẢN -->
     <div id="previewModal" class="modal-overlay">
@@ -342,14 +372,74 @@
         window.searchResultsData = [];
         window.previewDataCache = null;
         
-        window.onload = function() {
+        // ============================================
+        // LOGIC KHỞI ĐỘNG VÀ QUẢN LÝ ACCOUNT
+        // ============================================
+        window.onload = async function() {
             document.getElementById('headerArea').innerHTML = `
                 <img src="${KET_NOI.LOGO_TRUONG || ''}" alt="Logo" onerror="this.style.display='none'">
                 <h1>${KET_NOI.TIEU_DE_PHAN_MEM || ''}</h1>
             `;
-            setNow();
+            
+            try {
+                const response = await fetch(KET_NOI.URL_API_BACKEND, {
+                    method: 'POST',
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: 'check_account' })
+                });
+                const result = await response.json();
+                
+                if (result.isReady) {
+                    unlockApplication();
+                } else {
+                    document.getElementById('accountModal').style.display = 'flex';
+                }
+            } catch (error) {
+                console.error("Lỗi xác thực hệ thống:", error);
+            }
         };
 
+        async function saveAccountSetup() {
+            const keyInput = document.getElementById('inputApiKey').value;
+            const statusDiv = document.getElementById('setupStatus');
+            
+            if(!keyInput) {
+                statusDiv.innerText = "Vui lòng nhập API Key hợp lệ!";
+                statusDiv.style.display = "block";
+                return;
+            }
+            
+            statusDiv.style.color = "#0284c7";
+            statusDiv.innerText = "Đang cấu hình không gian làm việc...";
+            statusDiv.style.display = "block";
+            
+            try {
+                const response = await fetch(KET_NOI.URL_API_BACKEND, {
+                    method: 'POST',
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify({ action: 'setup_account', apiKey: keyInput })
+                });
+                const result = await response.json();
+                if(result.status === 'success') {
+                    document.getElementById('accountModal').style.display = 'none';
+                    unlockApplication();
+                }
+            } catch (error) {
+                statusDiv.style.color = "#dc2626";
+                statusDiv.innerText = "Lỗi kết nối máy chủ!";
+            }
+        }
+
+        function unlockApplication() {
+            const app = document.getElementById('mainApp');
+            app.style.opacity = '1';
+            app.style.pointerEvents = 'auto';
+            setNow(); 
+        }
+
+        // ============================================
+        // LOGIC CHỨC NĂNG CỐT LÕI
+        // ============================================
         function setNow() {
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -433,7 +523,7 @@
             statusBox.className = 'status-loading';
             
             if (actionType === 'generate') {
-                statusBox.innerHTML = payload.recordId ? 'Đang cập nhật & GHI ĐÈ dữ liệu vào Sổ...' : 'Đang nạp dữ liệu ghi NỐI TIẾP vào Sổ...';
+                statusBox.innerHTML = payload.recordId ? 'Đang cập nhật & GHI ĐÈ dữ liệu vào Sổ cá nhân...' : 'Đang khởi tạo/nạp dữ liệu vào Sổ cá nhân...';
             } else if (actionType === 'save_draft') {
                 statusBox.innerHTML = 'Đang lưu bản Dự thảo vào Sổ...';
             } else {
@@ -452,11 +542,11 @@
                 
                 if(result.status === 'success_doc') {
                     statusBox.className = 'status-success';
-                    statusBox.innerHTML = `${result.message} <br><br> <a href="${result.url}" target="_blank" style="color:#166534; text-decoration:underline;">Mở Sổ Trực Tuyến</a>`;
+                    statusBox.innerHTML = `${result.message} <br><br> <a href="${result.url}" target="_blank" style="color:#166534; text-decoration:underline;">Mở Sổ Trực Tuyến Của Bạn</a>`;
                     if(result.recordId) { document.getElementById('recordId').value = result.recordId; }
                 } else if (result.status === 'success_text') {
                     statusBox.className = 'status-success';
-                    statusBox.innerHTML = 'Trợ lý AI đang quét sổ và trích xuất dữ liệu phân tích theo yêu cầu...';
+                    statusBox.innerHTML = 'Trợ lý AI đã hoàn thành xử lý...';
                     
                     let cleanText = result.text;
                     
@@ -664,7 +754,7 @@
             
             statusBox.style.display = 'block';
             statusBox.className = 'status-loading';
-            statusBox.innerHTML = 'Trợ lý AI đang quét sổ và trích xuất dữ liệu phân tích theo yêu cầu...';
+            statusBox.innerHTML = 'Trợ lý AI đang quét sổ cá nhân và trích xuất dữ liệu phân tích...';
             
             const payload = { 
                 action: 'ai_search', 
@@ -704,6 +794,9 @@
             }
         }
         
+        // ============================================================
+        // LOGIC XUẤT FILE WORD
+        // ============================================================
         function previewWordDocument() {
             const orgParent = document.getElementById('orgParent').value.trim() || 'CƠ QUAN CHỦ QUẢN';
             const orgName = document.getElementById('orgName').value.trim() || 'TÊN ĐƠN VỊ';
