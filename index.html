@@ -6,48 +6,13 @@
     <title>Sổ Họp Thông Minh</title>
     <script src="ketnoi.js"></script>
     <style>
-        :root {
-            --primary: #0284c7;
-            --secondary: #475569;
-            --bg: #e2e8f0;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #cbd5e1;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-        }
-        .container {
-            background: var(--card);
-            width: 100%;
-            max-width: 98%;
-            min-height: 100vh;
-            padding: 0 10px 20px 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-            box-sizing: border-box;
-            transition: opacity 0.3s ease;
-        }
+        :root { --primary: #0284c7; --secondary: #475569; --bg: #e2e8f0; --card: #ffffff; --text: #1e293b; --border: #cbd5e1; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; display: flex; justify-content: center; }
+        .container { background: var(--card); width: 100%; max-width: 98%; min-height: 100vh; padding: 0 10px 20px 10px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.05); box-sizing: border-box; transition: opacity 0.3s ease; }
         
-        /* CSS MỚI CHO MODAL HIỆU ỨNG GLASSMORPHISM */
-        .glass-modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.85); z-index: 3000;
-            display: none; justify-content: center; align-items: center;
-            backdrop-filter: blur(10px);
-        }
-        .glass-box {
-            background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 12px;
-            width: 90%; max-width: 450px; text-align: center;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            animation: fadeIn 0.4s ease-out;
-        }
+        /* CSS MODAL HIỆU ỨNG GLASSMORPHISM */
+        .glass-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); z-index: 3000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(10px); }
+        .glass-box { background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 12px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.2); animation: fadeIn 0.4s ease-out; }
         .glass-box h2 { color: var(--primary); margin-top: 0; }
         .glass-box input { width: 100%; padding: 12px; margin: 15px 0; border: 2px solid var(--border); border-radius: 6px; font-size: 1rem; box-sizing: border-box; }
         .glass-box button { width: 100%; padding: 12px; background: var(--primary); color: white; font-weight: bold; font-size: 1.1rem; border-radius: 6px; border: none; cursor: pointer; transition: 0.3s; }
@@ -55,195 +20,41 @@
         .glass-box a { color: #8b5cf6; font-weight: bold; text-decoration: none; display: block; margin-top: 15px; font-size: 0.9rem; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8px 10px;
-            margin-bottom: 5px;
-            border-bottom: 2px solid var(--primary);
-            min-height: 40px;
-        }
-        .header img { 
-            position: absolute;
-            left: 10px;
-            width: 38px; 
-            height: auto; 
-            display: block; 
-        }
-        .header h1 { 
-            margin: 0; 
-            color: var(--primary); 
-            font-size: 1.25rem; 
-            font-weight: 700; 
-            line-height: 1.2; 
-            text-transform: uppercase; 
-            text-align: center;
-        }
-        
-        .compact-header-grid {
-            display: grid;
-            grid-template-columns: 60% 40%; 
-            gap: 4px;
-            margin-bottom: 5px;
-            background: #f8fafc;
-            padding: 4px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-        }
-        
-        .form-group { 
-            display: flex; 
-            flex-direction: row; 
-            align-items: center;
-            margin: 0; 
-            padding: 0;
-        }
-        
-        label { 
-            font-weight: 600; 
-            font-size: 0.85rem; 
-            margin-right: 5px; 
-            margin-bottom: 0;
-            color: #334155; 
-            white-space: nowrap;
-        }
-        
-        input, textarea {
-            flex: 1;
-            width: 100%; 
-            padding: 0.3rem; 
-            border: 1px solid var(--border);
-            border-radius: 4px; 
-            box-sizing: border-box; 
-            font-family: inherit;
-        }
-        
-        .search-row-container {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            gap: 4px;
-        }
-        .search-row-container label { margin-right: 4px; }
-        .search-row-container input { flex: 1; }
-        .search-row-container button {
-            padding: 0.4rem 0.8rem;
-            white-space: nowrap;
-            width: auto;
-            flex: 0 0 auto;
-        }
-
+        .header { position: sticky; top: 0; z-index: 1000; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 8px 10px; margin-bottom: 5px; border-bottom: 2px solid var(--primary); min-height: 40px; }
+        .header img { position: absolute; left: 10px; width: 38px; height: auto; display: block; }
+        .header h1 { margin: 0; color: var(--primary); font-size: 1.25rem; font-weight: 700; text-transform: uppercase; text-align: center; }
+        .compact-header-grid { display: grid; grid-template-columns: 60% 40%; gap: 4px; margin-bottom: 5px; background: #f8fafc; padding: 4px; border-radius: 6px; border: 1px solid var(--border); }
+        .form-group { display: flex; flex-direction: row; align-items: center; margin: 0; padding: 0; }
+        label { font-weight: 600; font-size: 0.85rem; margin-right: 5px; color: #334155; white-space: nowrap; }
+        input, textarea { flex: 1; width: 100%; padding: 0.3rem; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-family: inherit; }
+        .search-row-container { display: flex; flex-direction: row; align-items: center; gap: 4px; }
+        .search-row-container button { padding: 0.4rem 0.8rem; white-space: nowrap; width: auto; flex: 0 0 auto; }
         .content-group { margin-bottom: 5px; }
-        textarea {
-            height: calc(100vh - 520px); min-height: 300px;
-            resize: vertical; font-size: 0.95rem; line-height: 1.4;
-        }
-        
-        .all-actions-row {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 4px;
-            position: sticky;
-            bottom: 0;
-            background-color: var(--card);
-            padding: 12px 0 10px 0;
-            margin-top: 5px;
-            z-index: 1000;
-            border-top: 1px dashed var(--border);
-        }
-        .all-actions-row button {
-            padding: 0.5rem 0.2rem;
-            font-size: 0.8rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        button {
-            padding: 0.5rem; font-size: 0.85rem; font-weight: 600; cursor: pointer;
-            border: none; border-radius: 4px; color: white;
-            transition: all 0.2s;
-        }
+        textarea { height: calc(100vh - 520px); min-height: 300px; resize: vertical; font-size: 0.95rem; line-height: 1.4; }
+        .all-actions-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; position: sticky; bottom: 0; background-color: var(--card); padding: 12px 0 10px 0; margin-top: 5px; z-index: 1000; border-top: 1px dashed var(--border); }
+        .all-actions-row button { padding: 0.5rem 0.2rem; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        button { padding: 0.5rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: none; border-radius: 4px; color: white; transition: all 0.2s; }
         button:hover { opacity: 0.9; }
-        .btn-reformat { background: #3b82f6; }
-        .btn-draft { background: #8b5cf6; }
-        .btn-save-draft { background: #f59e0b; color: #fff; } 
-        .btn-generate { background: #10b981; }
-        .btn-export { background: #0ea5e9; }
-        .btn-reset { background: #ef4444; }
-        .btn-search { background: var(--primary); }
+        .btn-reformat { background: #3b82f6; } .btn-draft { background: #8b5cf6; } .btn-save-draft { background: #f59e0b; color: #fff; } 
+        .btn-generate { background: #10b981; } .btn-export { background: #0ea5e9; } .btn-reset { background: #ef4444; } .btn-search { background: var(--primary); }
         button:disabled { opacity: 0.6; cursor: not-allowed; }
-        
         #statusBox { margin-top: 8px; padding: 0.5rem; border-radius: 4px; font-size: 0.9rem; text-align: center; }
-        .status-loading { background: #e0f2fe; color: #0284c7; }
-        .status-success { background: #dcfce7; color: #166534; }
-        .status-error { background: #fee2e2; color: #991b1b; }
-        
-        .divider { margin: 10px 0; border-top: 1px dashed var(--border); }
+        .status-loading { background: #e0f2fe; color: #0284c7; } .status-success { background: #dcfce7; color: #166534; } .status-error { background: #fee2e2; color: #991b1b; }
         .search-results { max-height: 250px; overflow-y: auto; padding: 0; list-style: none; margin-top: 5px; }
         .result-item { padding: 8px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; }
         .result-item a { text-decoration: none; font-weight: 600; color: var(--primary); }
-        
-        .section-title {
-            font-size: 0.85rem;
-            font-weight: bold;
-            color: var(--secondary);
-            margin-bottom: 2px;
-            text-transform: uppercase;
-        }
+        .section-title { font-size: 0.85rem; font-weight: bold; color: var(--secondary); margin-bottom: 2px; text-transform: uppercase; }
 
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.8); z-index: 2000;
-            display: none; justify-content: center; align-items: flex-start;
-            overflow-y: auto; padding: 30px 10px; box-sizing: border-box;
-            backdrop-filter: blur(4px);
-        }
-        .modal-content {
-            background: #cbd5e1; width: 100%; max-width: 900px;
-            border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
-            display: flex; flex-direction: column; position: relative;
-        }
-        .modal-header {
-            background: #fff; padding: 15px 20px; border-radius: 8px 8px 0 0;
-            display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 3px solid var(--primary); position: sticky; top: 0; z-index: 10;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); z-index: 2000; display: none; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 30px 10px; box-sizing: border-box; backdrop-filter: blur(4px); }
+        .modal-content { background: #cbd5e1; width: 100%; max-width: 900px; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); display: flex; flex-direction: column; position: relative; }
+        .modal-header { background: #fff; padding: 15px 20px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); position: sticky; top: 0; z-index: 10; }
         .modal-header h3 { margin: 0; color: var(--primary); font-size: 1.2rem; }
         .modal-actions { display: flex; gap: 10px; }
-        .preview-area-container {
-            padding: 20px; display: flex; justify-content: center; overflow-x: auto;
-        }
-        .preview-a4 {
-            background: white; 
-            width: 21cm; min-height: 29.7cm; 
-            padding: 2cm 2cm 2cm 3cm;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); 
-            box-sizing: border-box;
-            font-family: 'Times New Roman', Times, serif; font-size: 14pt; line-height: 1.5; color: black;
-        }
+        .preview-area-container { padding: 20px; display: flex; justify-content: center; overflow-x: auto; }
+        .preview-a4 { background: white; width: 21cm; min-height: 29.7cm; padding: 2cm 2cm 2cm 3cm; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); box-sizing: border-box; font-family: 'Times New Roman', Times, serif; font-size: 14pt; line-height: 1.5; color: black; }
 
-        @media screen and (max-width: 800px) {
-            .all-actions-row { grid-template-columns: repeat(3, 1fr); }
-            .preview-a4 { width: 100%; padding: 1.5cm; }
-        }
-        @media screen and (max-width: 600px) {
-            .compact-header-grid { grid-template-columns: 1fr; }
-            .form-group { flex-direction: column; align-items: flex-start; }
-            .all-actions-row { grid-template-columns: repeat(2, 1fr); }
-            .search-row-container { flex-direction: column; align-items: flex-start; }
-            .search-row-container button { width: 100%; margin-top: 4px; }
-            .modal-header { flex-direction: column; gap: 10px; align-items: flex-start; }
-            .modal-actions { width: 100%; }
-            .modal-actions button { flex: 1; }
-            .header h1 { font-size: 1.1rem; margin-left: 40px; } 
-        }
+        @media screen and (max-width: 800px) { .all-actions-row { grid-template-columns: repeat(3, 1fr); } .preview-a4 { width: 100%; padding: 1.5cm; } }
+        @media screen and (max-width: 600px) { .compact-header-grid { grid-template-columns: 1fr; } .form-group { flex-direction: column; align-items: flex-start; } .all-actions-row { grid-template-columns: repeat(2, 1fr); } .search-row-container { flex-direction: column; align-items: flex-start; } .search-row-container button { width: 100%; margin-top: 4px; } .modal-header { flex-direction: column; gap: 10px; align-items: flex-start; } .modal-actions { width: 100%; } .modal-actions button { flex: 1; } .header h1 { font-size: 1.1rem; margin-left: 40px; } }
     </style>
 </head>
 <body>
@@ -267,80 +78,52 @@
 
         <div class="section-title">Thông tin thể thức (Nghị định 30)</div>
         <div class="compact-header-grid" style="background: #fff; border-color: #94a3b8;">
-            <div class="form-group">
-                <label>CQ Chủ quản:</label>
-                <input type="text" id="orgParent" value="UBND XÃ HỢP THÀNH" placeholder="Cơ quan cấp trên...">
-            </div>
-            <div class="form-group">
-                <label>Nơi ban hành:</label>
-                <input type="text" id="docPlace" value="Hợp Thành" placeholder="Địa danh...">
-            </div>
-            <div class="form-group">
-                <label>Cơ quan/Đơn vị:</label>
-                <input type="text" id="orgName" value="TRƯỜNG TH&THCS HỢP THÀNH" placeholder="Tên đơn vị...">
-            </div>
-            <div class="form-group">
-                <label>Số văn bản:</label>
-                <input type="text" id="docNumber" value="/ BB-THHT" placeholder="Ví dụ: 12/BB-THHT">
-            </div>
+            <div class="form-group"><label>CQ Chủ quản:</label><input type="text" id="orgParent" value="UBND XÃ HỢP THÀNH"></div>
+            <div class="form-group"><label>Nơi ban hành:</label><input type="text" id="docPlace" value="Hợp Thành"></div>
+            <div class="form-group"><label>Cơ quan/Đơn vị:</label><input type="text" id="orgName" value="TRƯỜNG TH&THCS HỢP THÀNH"></div>
+            <div class="form-group"><label>Số văn bản:</label><input type="text" id="docNumber" value="/ BB-THHT"></div>
         </div>
 
         <div class="section-title">Thông tin cuộc họp</div>
         <div class="compact-header-grid">
-            <div class="form-group">
-                <label>1. Chủ đề:</label>
-                <input type="text" id="meetingTitle" placeholder="Ví dụ: Giao ban chuyên môn..." required>
-            </div>
-            <div class="form-group">
-                <label>2. Thời gian:</label>
-                <input type="datetime-local" id="meetingDate" required>
-            </div>
-            <div class="form-group">
-                <label>4. Tham dự:</label>
-                <input type="text" id="attendees" placeholder="BGH, Giáo viên..." required>
-            </div>
-            <div class="form-group">
-                <label>3. Địa điểm:</label>
-                <input type="text" id="location" placeholder="Phòng hội đồng..." required>
-            </div>
+            <div class="form-group"><label>1. Chủ đề:</label><input type="text" id="meetingTitle" required></div>
+            <div class="form-group"><label>2. Thời gian:</label><input type="datetime-local" id="meetingDate" required></div>
+            <div class="form-group"><label>4. Tham dự:</label><input type="text" id="attendees" required></div>
+            <div class="form-group"><label>3. Địa điểm:</label><input type="text" id="location" required></div>
         </div>
 
         <div class="form-group" style="margin-bottom: 4px; background: #f8fafc; padding: 4px; border-radius: 4px; border: 1px solid var(--border);">
             <label style="color:#8b5cf6; font-size:0.9rem;">📌 Trọng tâm AI:</label>
-            <input type="text" id="focusNote" placeholder="Ví dụ: Nhấn mạnh công tác chuyên môn, kiểm tra hồ sơ...">
+            <input type="text" id="focusNote" placeholder="Ví dụ: Nhấn mạnh công tác chuyên môn...">
         </div>
 
-        <!-- Khối Tìm Kiếm & Hỏi AI -->
         <div class="form-group search-row-container" style="margin-bottom: 6px; background: #f0fdf4; padding: 6px; border-radius: 4px; border: 1px solid #bbf7d0; align-items: center; flex-wrap: wrap; gap: 8px;">
             <div style="display: flex; align-items: center; flex: 1; min-width: 250px;">
                 <label style="color:#16a34a; font-size:0.9rem;">🔍 Tìm Sổ:</label>
                 <textarea id="searchKeyword" rows="1" style="flex: 1; min-height: 28px; height: 28px; resize: vertical; padding: 4px 8px; font-family: inherit; border: 1px solid var(--border); border-radius: 4px; overflow-y: hidden;" placeholder="Từ khóa tìm biên bản..." onkeydown="handleSearchEnter(event)"></textarea>
-                <button id="btnSearch" class="btn-search" style="margin-left: 4px; padding: 0.3rem 0.8rem;" onclick="searchMeetingData()">Tìm</button>
+                <button id="btnSearch" class="btn-search" style="margin-left: 4px;" onclick="searchMeetingData()">Tìm</button>
             </div>
-            
             <div style="display: flex; align-items: center; flex: 2; min-width: 350px;">
                 <label style="color:#8b5cf6; font-size:0.9rem;">🤖 Tổng hợp:</label>
-                <textarea id="aiSearchQuery" rows="1" style="flex: 1; min-height: 28px; height: 28px; resize: vertical; padding: 4px 8px; font-family: inherit; border: 1px solid var(--border); border-radius: 4px; overflow-y: hidden;" placeholder="Nhập lệnh AI (Ấn Shift + Enter để xuống dòng)..." onkeydown="handleAiSearchEnter(event)"></textarea>
-                <button id="btnAiSearch" class="btn-draft" style="margin-left: 4px; padding: 0.3rem 0.8rem;" onclick="searchMeetingAI()">Hỏi AI</button>
+                <textarea id="aiSearchQuery" rows="1" style="flex: 1; min-height: 28px; height: 28px; resize: vertical; padding: 4px 8px; font-family: inherit; border: 1px solid var(--border); border-radius: 4px; overflow-y: hidden;" placeholder="Nhập lệnh AI..." onkeydown="handleAiSearchEnter(event)"></textarea>
+                <button id="btnAiSearch" class="btn-draft" style="margin-left: 4px;" onclick="searchMeetingAI()">Hỏi AI</button>
             </div>
         </div>
         
         <div id="searchResultsSection" style="display:none; margin-bottom: 8px; background: #fafafa; border: 1px solid var(--border); border-radius: 6px; padding: 6px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 4px;">
                 <span style="font-weight: 600; color: var(--primary); font-size: 0.9rem;">Danh sách kết quả tìm kiếm:</span>
-                <button onclick="closeSearchResults()" style="background: var(--secondary); padding: 2px 8px; font-size: 0.75rem; border: none; border-radius: 3px; color: white; cursor: pointer;">Đóng danh mục</button>
+                <button onclick="closeSearchResults()" style="background: var(--secondary); padding: 2px 8px; font-size: 0.75rem; border: none; border-radius: 3px; color: white;">Đóng</button>
             </div>
-            <ul id="searchResults" class="search-results" style="max-height: 250px; overflow-y: auto; padding: 0; margin: 0; list-style: none;"></ul>
+            <ul id="searchResults" class="search-results"></ul>
         </div>
 
         <div id="meetingContentSection">
             <div class="content-group">
                 <label style="color:var(--primary); font-size:1rem; display: block; margin-bottom: 3px;">Nội dung diễn biến (Khung nhập thô):</label>
-                <textarea id="rawContent" placeholder="Ghi chép nhanh các ý kiến thảo luận tại đây..."></textarea>
+                <textarea id="rawContent"></textarea>
             </div>
-
             <div id="statusBox" style="display:none; margin-bottom: 8px;"></div>
-
             <div class="all-actions-row">
                 <button id="btnReformat" class="btn-reformat" onclick="processAction('reformat')">Trình bày văn bản</button>
                 <button id="btnDraft" class="btn-draft" onclick="processAction('draft')">Dự thảo kết luận</button>
@@ -352,7 +135,7 @@
         </div>
     </div> 
 
-    <!-- KHỐI GIAO DIỆN MODAL XEM TRƯỚC VĂN BẢN -->
+    <!-- KHỐI MODAL XEM TRƯỚC -->
     <div id="previewModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -362,9 +145,7 @@
                     <button class="btn-reset" onclick="closePreviewModal()">Đóng Xem Trước</button>
                 </div>
             </div>
-            <div class="preview-area-container">
-                <div id="previewArea" class="preview-a4"></div>
-            </div>
+            <div class="preview-area-container"><div id="previewArea" class="preview-a4"></div></div>
         </div>
     </div>
 
@@ -372,43 +153,38 @@
         window.searchResultsData = [];
         window.previewDataCache = null;
         
-// ============================================
-        // LOGIC KHỞI ĐỘNG VÀ QUẢN LÝ ACCOUNT (ĐÃ SỬA LỖI REDIRECT)
+        // ============================================
+        // HÀM BỌC GIAO TIẾP NỘI BỘ API (KHÔNG DÙNG FETCH NỮA)
+        // ============================================
+        function callBackend(payload) {
+            return new Promise((resolve, reject) => {
+                if (typeof google === 'undefined' || typeof google.script === 'undefined') {
+                    reject("Môi trường không hợp lệ. Vui lòng mở ứng dụng trực tiếp bằng link Web App của Google.");
+                    return;
+                }
+                google.script.run
+                    .withSuccessHandler(function(result) { resolve(result); })
+                    .withFailureHandler(function(error) { reject(error.message || error); })
+                    .processClientRequest(payload);
+            });
+        }
+
+        // ============================================
+        // LOGIC KHỞI ĐỘNG VÀ QUẢN LÝ TÀI KHOẢN
         // ============================================
         window.onload = async function() {
             document.getElementById('headerArea').innerHTML = `
                 <img src="${KET_NOI.LOGO_TRUONG || ''}" alt="Logo" onerror="this.style.display='none'">
                 <h1>${KET_NOI.TIEU_DE_PHAN_MEM || ''}</h1>
             `;
-            
-           // Gọi trực tiếp hàm setupAccountInfo ở backend (Mã.gs)
-            google.script.run
-                .withSuccessHandler(function(result) {
-                    if(result.status === 'success') {
-                        document.getElementById('accountModal').style.display = 'none';
-                        unlockApplication();
-                    }
-                })
-                .withFailureHandler(function(error) {
-                    statusDiv.style.color = "#dc2626";
-                    statusDiv.innerText = "Lỗi hệ thống: " + error.message;
-                })
-                .setupAccountInfo(keyInput);
-                const result = await response.json();
-                
-                if (result.isReady) {
-                    unlockApplication();
-                } else {
-                    document.getElementById('accountModal').style.display = 'flex';
-                }
+            try {
+                const result = await callBackend({ action: 'check_account' });
+                if (result.isReady) unlockApplication();
+                else document.getElementById('accountModal').style.display = 'flex';
             } catch (error) {
-                console.error("Lỗi xác thực hệ thống:", error);
-                // Bổ sung hiển thị bảng báo lỗi nếu đường truyền gặp sự cố
                 const statusDiv = document.getElementById('setupStatus');
-                if (statusDiv) {
-                    statusDiv.innerText = "Lỗi kết nối máy chủ Web App. Vui lòng kiểm tra lại URL Backend!";
-                    statusDiv.style.display = "block";
-                }
+                statusDiv.innerText = "Lỗi kết nối máy chủ Google: " + error;
+                statusDiv.style.display = "block";
                 document.getElementById('accountModal').style.display = 'flex';
             }
         };
@@ -416,32 +192,21 @@
         async function saveAccountSetup() {
             const keyInput = document.getElementById('inputApiKey').value;
             const statusDiv = document.getElementById('setupStatus');
-            
-            if(!keyInput) {
-                statusDiv.innerText = "Vui lòng nhập API Key hợp lệ!";
-                statusDiv.style.display = "block";
-                return;
-            }
+            if(!keyInput) { statusDiv.innerText = "Vui lòng nhập API Key hợp lệ!"; statusDiv.style.display = "block"; return; }
             
             statusDiv.style.color = "#0284c7";
             statusDiv.innerText = "Đang cấu hình không gian làm việc...";
             statusDiv.style.display = "block";
             
             try {
-                const response = await fetch(KET_NOI.URL_API_BACKEND, {
-                    method: 'POST',
-                    redirect: 'follow', // Đã bổ sung tham số bắt buộc cho GAS
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify({ action: 'setup_account', apiKey: keyInput })
-                });
-                const result = await response.json();
+                const result = await callBackend({ action: 'setup_account', apiKey: keyInput });
                 if(result.status === 'success') {
                     document.getElementById('accountModal').style.display = 'none';
                     unlockApplication();
                 }
             } catch (error) {
                 statusDiv.style.color = "#dc2626";
-                statusDiv.innerText = "Lỗi kết nối máy chủ! Chi tiết: " + error.toString();
+                statusDiv.innerText = "Lỗi thiết lập: " + error;
             }
         }
 
@@ -475,32 +240,23 @@
         }
 
         function toggleButtons(state) {
-            const buttons = ['btnReformat', 'btnDraft', 'btnSaveDraft', 'btnGenerate', 'btnPreviewExport', 'btnReset', 'btnSearch'];
-            buttons.forEach(id => {
-                const btn = document.getElementById(id);
-                if (btn) btn.disabled = state;
-            });
+            const buttons = ['btnReformat', 'btnDraft', 'btnSaveDraft', 'btnGenerate', 'btnPreviewExport', 'btnReset', 'btnSearch', 'btnAiSearch'];
+            buttons.forEach(id => { const btn = document.getElementById(id); if (btn) btn.disabled = state; });
         }
 
         function formatDateTimeForDisplay(dateStr) {
             if (!dateStr) return "";
             const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
-            if (match) {
-                return `${match[3]}/${match[2]}/${match[1]} ${match[4]}:${match[5]}`;
-            }
+            if (match) return `${match[3]}/${match[2]}/${match[1]} ${match[4]}:${match[5]}`;
             return dateStr;
         }
 
         function parseFormattedDate(dateStr) {
             if (!dateStr) return "";
             dateStr = dateStr.trim();
-            if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(dateStr)) {
-                return dateStr.substring(0, 16);
-            }
+            if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(dateStr)) return dateStr.substring(0, 16);
             const match = dateStr.match(/^(\d{2})\/(\d{2})\/(\d{4})[\sT](\d{2}):(\d{2})/);
-            if (match) {
-                return `${match[3]}-${match[2]}-${match[1]}T${match[4]}:${match[5]}`;
-            }
+            if (match) return `${match[3]}-${match[2]}-${match[1]}T${match[4]}:${match[5]}`;
             return dateStr;
         }
 
@@ -523,115 +279,61 @@
                 attendees: document.getElementById('attendees').value,
                 focusNote: document.getElementById('focusNote').value, 
                 rawContent: rawContentField.value,
-                appName: KET_NOI.TIEU_DE_PHAN_MEM,
-                orgName: KET_NOI.TEN_TO_CHUC,
                 accountOperator: KET_NOI.CAN_BO_THAO_TAC
             };
 
             if(!payload.rawContent) { alert('Vui lòng nhập nội dung trước khi thực hiện thao tác!'); return; }
             if((actionType === 'generate' || actionType === 'save_draft') && (!payload.title || !payload.location)) {
-                alert('Vui lòng nhập đủ Chủ đề và Địa điểm cuộc họp để lưu!'); return;
+                alert('Vui lòng nhập đủ Chủ đề và Địa điểm để lưu!'); return;
             }
 
             toggleButtons(true);
             statusBox.style.display = 'block';
             statusBox.className = 'status-loading';
             
-            if (actionType === 'generate') {
-                statusBox.innerHTML = payload.recordId ? 'Đang cập nhật & GHI ĐÈ dữ liệu vào Sổ cá nhân...' : 'Đang khởi tạo/nạp dữ liệu vào Sổ cá nhân...';
-            } else if (actionType === 'save_draft') {
-                statusBox.innerHTML = 'Đang lưu bản Dự thảo vào Sổ...';
-            } else {
-                statusBox.innerHTML = 'Trợ lý AI đang xử lý văn bản...';
-            }
+            if (actionType === 'generate') statusBox.innerHTML = payload.recordId ? 'Đang cập nhật dữ liệu...' : 'Đang nạp dữ liệu...';
+            else if (actionType === 'save_draft') statusBox.innerHTML = 'Đang lưu Dự thảo...';
+            else statusBox.innerHTML = 'Trợ lý AI đang xử lý...';
 
             try {
-                const response = await fetch(KET_NOI.URL_API_BACKEND, {
-                    method: 'POST',
-                    redirect: 'follow',
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify(payload)
-                });
-                
-                const result = await response.json();
+                const result = await callBackend(payload);
                 
                 if(result.status === 'success_doc') {
                     statusBox.className = 'status-success';
                     statusBox.innerHTML = `${result.message} <br><br> <a href="${result.url}" target="_blank" style="color:#166534; text-decoration:underline;">Mở Sổ Trực Tuyến Của Bạn</a>`;
-                    if(result.recordId) { document.getElementById('recordId').value = result.recordId; }
+                    if(result.recordId) document.getElementById('recordId').value = result.recordId;
                 } else if (result.status === 'success_text') {
                     statusBox.className = 'status-success';
-                    statusBox.innerHTML = 'Trợ lý AI đã hoàn thành xử lý...';
-                    
-                    let cleanText = result.text;
-                    
-                    const matchPattern = /(?:NỘI DUNG CUỘC HỌP|NỘI DUNG VÀ KẾT LUẬN|NỘI DUNG CHÍNH)/i;
-                    const markerMatch = cleanText.match(matchPattern);
-                    if (markerMatch) {
-                        cleanText = cleanText.substring(cleanText.indexOf(markerMatch[0]) + markerMatch[0].length);
-                    }
-                    
-                    cleanText = cleanText.replace(/Để chuẩn hóa biên bản.*?NĐ-CP.*?\n/ig, '')
-                                         .replace(/\(Tên cơ quan.*?\)\n/ig, '')
-                                         .replace(/\*\*?BIÊN BẢN HỌP\*\*?\n?/ig, '')
-                                         .replace(/Về việc.*?\n/ig, '')
-                                         .replace(/Thời gian:.*?\n/ig, '')
-                                         .replace(/Địa điểm:.*?\n/ig, '')
-                                         .replace(/Thành phần tham dự:[\s\S]*?(?=Chủ trì:|Thư ký:|I\.|1\.)/ig, '')
-                                         .replace(/Chủ trì:.*?\n/ig, '')
-                                         .replace(/Thư ký:.*?\n/ig, '')
-                                         .replace(/^[\s\-=\*_]+/g, '')
-                                         .trim();
-
-                    if(actionType === 'reformat') {
-                        rawContentField.value = cleanText;
-                    } else if (actionType === 'draft') {
-                        rawContentField.value += "\n\n" + cleanText;
-                    }
+                    statusBox.innerHTML = 'Trợ lý AI đã hoàn thành.';
+                    let cleanText = result.text.replace(/Để chuẩn hóa biên bản.*?NĐ-CP.*?\n/ig, '').replace(/\(Tên cơ quan.*?\)\n/ig, '').replace(/\*\*?BIÊN BẢN HỌP\*\*?\n?/ig, '').replace(/Về việc.*?\n/ig, '').replace(/Thời gian:.*?\n/ig, '').replace(/Địa điểm:.*?\n/ig, '').replace(/Thành phần tham dự:[\s\S]*?(?=Chủ trì:|Thư ký:|I\.|1\.)/ig, '').replace(/Chủ trì:.*?\n/ig, '').replace(/Thư ký:.*?\n/ig, '').replace(/^[\s\-=\*_]+/g, '').trim();
+                    if(actionType === 'reformat') rawContentField.value = cleanText;
+                    else if (actionType === 'draft') rawContentField.value += "\n\n" + cleanText;
                 } else {
                     statusBox.className = 'status-error';
-                    statusBox.innerHTML = `Lỗi từ máy chủ: ${result.message}`;
+                    statusBox.innerHTML = `Lỗi hệ thống: ${result.message}`;
                 }
             } catch (error) {
                 statusBox.className = 'status-error';
-                statusBox.innerHTML = `Lỗi kết nối. Chi tiết: ${error}`;
+                statusBox.innerHTML = `Lỗi thực thi nội bộ: ${error}`;
             } finally {
                 toggleButtons(false);
             }
         }
 
-       function handleSearchEnter(event) {
-            if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault();
-                searchMeetingData();
-            }
-        }
+       function handleSearchEnter(event) { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); searchMeetingData(); } }
 
         async function searchMeetingData() {
             const keyword = document.getElementById('searchKeyword').value;
             const resultList = document.getElementById('searchResults');
-            const searchResultsSection = document.getElementById('searchResultsSection');
-            const meetingContentSection = document.getElementById('meetingContentSection');
             
             if(!keyword.trim()) { alert('Vui lòng nhập từ khóa!'); return; }
-            
-            searchResultsSection.style.display = 'block';
-            meetingContentSection.style.display = 'none';
-            
-            resultList.innerHTML = '<li class="result-item" style="justify-content:center; color:var(--primary); text-align:center;">Đang quét nội dung Sổ...</li>';
+            document.getElementById('searchResultsSection').style.display = 'block';
+            document.getElementById('meetingContentSection').style.display = 'none';
+            resultList.innerHTML = '<li class="result-item" style="justify-content:center; color:var(--primary); text-align:center;">Đang quét...</li>';
             toggleButtons(true);
             
-            const payload = { action: 'search', keyword: keyword };
-            
             try {
-                const response = await fetch(KET_NOI.URL_API_BACKEND, {
-                    method: 'POST',
-                    redirect: 'follow',
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify(payload)
-                });
-                
-                const result = await response.json();
+                const result = await callBackend({ action: 'search', keyword: keyword });
                 if(result.status === 'success_search') {
                     resultList.innerHTML = '';
                     if(result.data.length === 0) {
@@ -639,174 +341,63 @@
                     } else {
                         window.searchResultsData = result.data;
                         result.data.forEach((item, index) => {
-                            const li = document.createElement('li');
-                            li.className = 'result-item';
-                            const displayDate = formatDateTimeForDisplay(item.date);
-                            li.innerHTML = `
-                                <a href="javascript:void(0)" onclick="extractToForm(${index})">🔍 ${item.title}</a>
-                                <span style="font-size: 0.85em; color: var(--secondary);">${displayDate} (Click để nạp)</span>
-                            `;
-                            resultList.appendChild(li);
+                            resultList.innerHTML += `<li class="result-item"><a href="javascript:void(0)" onclick="extractToForm(${index})">🔍 ${item.title}</a><span style="font-size: 0.85em; color: var(--secondary);">${formatDateTimeForDisplay(item.date)} (Click nạp)</span></li>`;
                         });
                     }
-                } else {
-                    resultList.innerHTML = `<li class="result-item" style="color:red;">Lỗi: ${result.message}</li>`;
-                }
-            } catch (error) {
-                resultList.innerHTML = `<li class="result-item" style="color:red;">Lỗi kết nối.</li>`;
-            } finally {
-                toggleButtons(false);
-            }
+                } else { resultList.innerHTML = `<li class="result-item" style="color:red;">Lỗi: ${result.message}</li>`; }
+            } catch (error) { resultList.innerHTML = `<li class="result-item" style="color:red;">Lỗi: ${error}</li>`; } finally { toggleButtons(false); }
         }
 
         function extractToForm(index) {
             if(window.searchResultsData && window.searchResultsData[index]) {
                 const dataBlock = window.searchResultsData[index];
-                
                 document.getElementById('searchResultsSection').style.display = 'none';
                 document.getElementById('meetingContentSection').style.display = 'block';
                 
                 document.getElementById('meetingTitle').value = dataBlock.title || '';
+                document.getElementById('location').value = dataBlock.location || '';
+                document.getElementById('attendees').value = dataBlock.attendees || '';
+                document.getElementById('recordId').value = dataBlock.id || index;
                 
-                const fullContent = dataBlock.content || '';
-                let extLocation = dataBlock.location || '';
-                let extAttendees = dataBlock.attendees || '';
-                let extDate = dataBlock.date || '';
-                
-                const dateRegex = /1\.\s*Thời\s*gian:\s*(\d{2}\/\d{2}\/\d{4}\s*\d{2}:\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2})/i;
-                const dateMatch = fullContent.match(dateRegex);
-                if (dateMatch && !extDate) { extDate = dateMatch[1].trim(); }
-
-                const locRegex = /2\.\s*Địa\s*điểm:\s*(.*)/i;
-                const locMatch = fullContent.match(locRegex);
-                if (locMatch && !extLocation) extLocation = locMatch[1].trim();
-                
-                const attRegex = /3\.\s*Thành\s*phần\s*tham\s*dự:\s*(.*)/i;
-                const attMatch = fullContent.match(attRegex);
-                if (attMatch && !extAttendees) extAttendees = attMatch[1].trim();
-                
-                const idRegex = /\[Mã\s*hồ\s*sơ:\s*(.*?)\]/i;
-                const idMatch = fullContent.match(idRegex);
-                if (idMatch) {
-                    document.getElementById('recordId').value = idMatch[1].trim();
-                } else {
-                    document.getElementById('recordId').value = dataBlock.id || index;
-                }
-
-                let pureContent = fullContent;
-                
-                const splitMarkers = [
-                    "--- NỘI DUNG VÀ KẾT LUẬN ---",
-                    "**NỘI DUNG CUỘC HỌP**",
-                    "NỘI DUNG CUỘC HỌP",
-                    "NỘI DUNG CHÍNH"
-                ];
-                
+                let pureContent = dataBlock.content || '';
+                const splitMarkers = ["--- NỘI DUNG VÀ KẾT LUẬN ---", "**NỘI DUNG CUỘC HỌP**", "NỘI DUNG CUỘC HỌP", "NỘI DUNG CHÍNH"];
                 for (let marker of splitMarkers) {
-                    const regex = new RegExp(marker.replace(/\*/g, '\\*'), "i");
-                    const parts = pureContent.split(regex);
-                    if (parts.length > 1) {
-                        pureContent = parts[1];
-                        break; 
-                    }
+                    const parts = pureContent.split(new RegExp(marker.replace(/\*/g, '\\*'), "i"));
+                    if (parts.length > 1) { pureContent = parts[1]; break; }
                 }
 
-                pureContent = pureContent.replace(/Để chuẩn hóa biên bản.*?NĐ-CP.*?\n/ig, '')
-                                         .replace(/\(Tên cơ quan.*?\)\n/ig, '')
-                                         .replace(/Về việc.*?\n/ig, '')
-                                         .replace(/Thời gian:.*?\n/ig, '')
-                                         .replace(/Địa điểm:.*?\n/ig, '')
-                                         .replace(/Thành phần tham dự:[\s\S]*?(?=Chủ trì:|Thư ký:|I\.|1\.)/ig, '')
-                                         .replace(/Chủ trì:.*?\n/ig, '')
-                                         .replace(/Thư ký:.*?\n/ig, '')
-                                         .replace(/^[\s\-=\*_]+/g, '')
-                                         .trim();
-
-                document.getElementById('location').value = extLocation;
-                document.getElementById('attendees').value = extAttendees;
-                document.getElementById('rawContent').value = pureContent;
-                
-                if (extDate) {
-                    try {
-                        document.getElementById('meetingDate').value = parseFormattedDate(extDate);
-                    } catch (e) { console.error("Lỗi đồng bộ ngày tháng:", e); }
-                }
+                document.getElementById('rawContent').value = pureContent.trim();
+                if (dataBlock.date) { try { document.getElementById('meetingDate').value = parseFormattedDate(dataBlock.date); } catch (e) {} }
 
                 const statusBox = document.getElementById('statusBox');
                 statusBox.className = 'status-success';
-                statusBox.innerHTML = 'Đã bóc tách Biên bản vào các trường. Sẵn sàng chỉnh sửa & Ghi đè!';
+                statusBox.innerHTML = 'Đã bóc tách Biên bản vào các trường!';
                 statusBox.style.display = 'block';
-                
                 document.getElementById('rawContent').scrollIntoView({ behavior: "smooth", block: "center" });
             }
         }
 
-        // ============================================================
-        // HÀM XỬ LÝ GIAO DIỆN TỔNG HỢP VÀ HỎI AI ĐỘNG
-        // ============================================================
-        function handleAiSearchEnter(event) {
-            if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault();
-                searchMeetingAI();
-            }
-        }
+        function handleAiSearchEnter(event) { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); searchMeetingAI(); } }
 
         async function searchMeetingAI() {
             const aiQuery = document.getElementById('aiSearchQuery').value;
-            const rawContentField = document.getElementById('rawContent');
             const statusBox = document.getElementById('statusBox');
             
-            if(!aiQuery.trim()) { 
-                alert('Vui lòng nhập nội dung yêu cầu AI tổng hợp!'); 
-                return; 
-            }
-            
+            if(!aiQuery.trim()) { alert('Vui lòng nhập lệnh AI!'); return; }
             document.getElementById('searchResultsSection').style.display = 'none';
             document.getElementById('meetingContentSection').style.display = 'block';
-            
             toggleButtons(true);
-            document.getElementById('btnAiSearch').disabled = true;
-            
-            statusBox.style.display = 'block';
-            statusBox.className = 'status-loading';
-            statusBox.innerHTML = 'Trợ lý AI đang quét sổ cá nhân và trích xuất dữ liệu phân tích...';
-            
-            const payload = { 
-                action: 'ai_search', 
-                keyword: aiQuery 
-            };
+            statusBox.style.display = 'block'; statusBox.className = 'status-loading'; statusBox.innerHTML = 'AI đang quét sổ...';
             
             try {
-                const response = await fetch(KET_NOI.URL_API_BACKEND, {
-                    method: 'POST',
-                    redirect: 'follow',
-                    headers: { "Content-Type": "text/plain;charset=utf-8" },
-                    body: JSON.stringify(payload)
-                });
-                
-                const result = await response.json();
-                
+                const result = await callBackend({ action: 'ai_search', keyword: aiQuery });
                 if(result.status === 'success_text') {
-                    statusBox.className = 'status-success';
-                    statusBox.innerHTML = 'AI đã phân tích xong. Dữ liệu đã được nạp vào khung Nội dung diễn biến.';
-                    
-                    if (rawContentField.value.trim() === '') {
-                        rawContentField.value = result.text.trim();
-                    } else {
-                        rawContentField.value += "\n\n" + result.text.trim();
-                    }
-                    rawContentField.scrollIntoView({ behavior: "smooth", block: "center" });
+                    statusBox.className = 'status-success'; statusBox.innerHTML = 'AI phân tích xong.';
+                    document.getElementById('rawContent').value += (document.getElementById('rawContent').value.trim() === '' ? '' : '\n\n') + result.text.trim();
                 } else {
-                    statusBox.className = 'status-error';
-                    statusBox.innerHTML = `Lỗi từ AI: ${result.message}`;
+                    statusBox.className = 'status-error'; statusBox.innerHTML = `Lỗi AI: ${result.message}`;
                 }
-            } catch (error) {
-                statusBox.className = 'status-error';
-                statusBox.innerHTML = `Lỗi đường truyền máy chủ. Chi tiết: ${error}`;
-            } finally {
-                toggleButtons(false);
-                document.getElementById('btnAiSearch').disabled = false;
-            }
+            } catch (error) { statusBox.className = 'status-error'; statusBox.innerHTML = `Lỗi mạng: ${error}`; } finally { toggleButtons(false); }
         }
         
         // ============================================================
@@ -816,9 +407,7 @@
             const orgParent = document.getElementById('orgParent').value.trim() || 'CƠ QUAN CHỦ QUẢN';
             const orgName = document.getElementById('orgName').value.trim() || 'TÊN ĐƠN VỊ';
             let docNumber = document.getElementById('docNumber').value.trim() || '';
-            if(docNumber !== '' && !docNumber.toLowerCase().startsWith('số')) {
-                docNumber = 'Số: ' + docNumber;
-            }
+            if(docNumber !== '' && !docNumber.toLowerCase().startsWith('số')) docNumber = 'Số: ' + docNumber;
             const docPlace = document.getElementById('docPlace').value.trim() || '.........';
             
             const title = document.getElementById('meetingTitle').value.trim() || 'NỘI DUNG CUỘC HỌP';
@@ -826,37 +415,21 @@
             const location = document.getElementById('location').value.trim();
             const attendees = document.getElementById('attendees').value.trim();
             
-            if(!rawContent) {
-                alert("Không có nội dung cuộc họp để xuất ra Word!");
-                return;
-            }
+            if(!rawContent) { alert("Không có nội dung để xuất Word!"); return; }
 
             const rawDate = document.getElementById('meetingDate').value;
-            let displayTime = '';
-            let exportDateText = `ngày ..... tháng ..... năm 20...`;
-            
+            let displayTime = '', exportDateText = `ngày ..... tháng ..... năm 20...`;
             if (rawDate) {
                 const d = new Date(rawDate);
-                const day = d.getDate().toString().padStart(2, '0');
-                const month = (d.getMonth() + 1).toString().padStart(2, '0');
-                const year = d.getFullYear();
-                const hours = d.getHours().toString().padStart(2, '0');
-                const minutes = d.getMinutes().toString().padStart(2, '0');
-                
-                exportDateText = `ngày ${day} tháng ${month} năm ${year}`;
-                displayTime = `${hours} giờ ${minutes} phút, ngày ${day}/${month}/${year}`;
+                exportDateText = `ngày ${d.getDate().toString().padStart(2, '0')} tháng ${(d.getMonth() + 1).toString().padStart(2, '0')} năm ${d.getFullYear()}`;
+                displayTime = `${d.getHours().toString().padStart(2, '0')} giờ ${d.getMinutes().toString().padStart(2, '0')} phút, ${exportDateText}`;
             }
 
-            window.previewDataCache = {
-                orgParent, orgName, docNumber, docPlace, title, rawContent, location, attendees, displayTime, exportDateText
-            };
+            window.previewDataCache = { orgParent, orgName, docNumber, docPlace, title, rawContent, location, attendees, displayTime, exportDateText };
 
-            const webFormattedContent = rawContent.split('\n').map(line => {
-                if(line.trim() === '') return '<p style="margin-top: 6pt; margin-bottom: 0pt;">&nbsp;</p>';
-                return `<p style="margin-top: 6pt; margin-bottom: 0pt; text-align: justify; text-indent: 1cm; line-height: 1.0;">${line}</p>`;
-            }).join('');
+            const webFormattedContent = rawContent.split('\n').map(line => line.trim() === '' ? '<p style="margin-top: 6pt; margin-bottom: 0pt;">&nbsp;</p>' : `<p style="margin-top: 6pt; margin-bottom: 0pt; text-align: justify; text-indent: 1cm; line-height: 1.0;">${line}</p>`).join('');
 
-            const previewHTML = `
+            document.getElementById('previewArea').innerHTML = `
                 <table style="width: 100%; border-collapse: collapse; border: none; margin-bottom: 20px;">
                     <tr>
                         <td style="width: 40%; vertical-align: top; text-align: center; padding: 0; border: none;">
@@ -887,64 +460,27 @@
                     </tr>
                 </table>
             `;
-
-            document.getElementById('previewArea').innerHTML = previewHTML;
             document.getElementById('previewModal').style.display = 'flex';
         }
 
-        function closePreviewModal() {
-            document.getElementById('previewModal').style.display = 'none';
-        }
+        function closePreviewModal() { document.getElementById('previewModal').style.display = 'none'; }
 
         function downloadWordFile() {
             if(!window.previewDataCache) return;
             const data = window.previewDataCache;
-
-            const wordFormattedContent = data.rawContent.split('\n').map(line => {
-                if(line.trim() === '') return '<p class="content-line">&nbsp;</p>';
-                return `<p class="content-line">${line}</p>`;
-            }).join('');
+            const wordFormattedContent = data.rawContent.split('\n').map(line => line.trim() === '' ? '<p class="content-line">&nbsp;</p>' : `<p class="content-line">${line}</p>`).join('');
 
             const htmlContent = `
             <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-            <head>
-                <meta charset='utf-8'>
-                <title>Export Doc</title>
+            <head><meta charset='utf-8'><title>Export Doc</title>
                 <style>
-                    @page {
-                        size: 21cm 29.7cm;
-                        margin: 2cm 2cm 2cm 3cm; 
-                        mso-page-orientation: portrait;
-                    }
-                    body {
-                        font-family: 'Times New Roman', serif;
-                        font-size: 14pt;
-                        line-height: 1.5;
-                    }
+                    @page { size: 21cm 29.7cm; margin: 2cm 2cm 2cm 3cm; mso-page-orientation: portrait; }
+                    body { font-family: 'Times New Roman', serif; font-size: 14pt; line-height: 1.5; }
                     .header-table { width: 100%; border-collapse: collapse; border: none; margin-bottom: 20px; }
                     .header-table td { vertical-align: top; text-align: center; padding: 0; border: none; }
-                    .td-left { width: 40%; }
-                    .td-right { width: 60%; }
-                    .org-parent { font-size: 13pt; text-transform: uppercase; }
-                    .org-name { font-size: 13pt; font-weight: bold; text-transform: uppercase; }
                     .line-org { border-top: 1px solid black; width: 40%; margin: 0 auto; margin-top: 2px; margin-bottom: 5px; }
-                    .nation { font-size: 13pt; font-weight: bold; text-transform: uppercase; }
-                    .motto { font-size: 14pt; font-weight: bold; }
                     .line-motto { border-top: 1px solid black; width: 50%; margin: 0 auto; margin-top: 2px; margin-bottom: 5px; }
-                    .doc-date { font-size: 14pt; font-style: italic; margin-top: 5px;}
-                    .doc-num { font-size: 13pt; margin-top: 5px; }
-                    .main-title { text-align: center; font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-top: 20px; margin-bottom: 5px;}
-                    .sub-title { text-align: center; font-size: 14pt; font-weight: bold; margin-bottom: 20px; }
-                    .section { margin-bottom: 10px; text-align: justify; }
-                    
-                    .content-line { 
-                        margin-top: 6pt; 
-                        margin-bottom: 0pt; 
-                        text-align: justify; 
-                        text-indent: 1cm; 
-                        line-height: 1.0; 
-                    }
-                    
+                    .content-line { margin-top: 6pt; margin-bottom: 0pt; text-align: justify; text-indent: 1cm; line-height: 1.0; }
                     .signature-table { width: 100%; margin-top: 30px; border: none; }
                     .signature-table td { width: 50%; text-align: center; vertical-align: top; border: none; font-weight: bold;}
                 </style>
@@ -952,56 +488,37 @@
             <body>
                 <table class="header-table">
                     <tr>
-                        <td class="td-left">
-                            <div class="org-parent">${data.orgParent}</div>
-                            <div class="org-name">${data.orgName}</div>
-                            <div class="line-org"></div>
-                            <div class="doc-num">${data.docNumber}</div>
+                        <td style="width: 40%;">
+                            <div style="font-size: 13pt; text-transform: uppercase;">${data.orgParent}</div>
+                            <div style="font-size: 13pt; font-weight: bold; text-transform: uppercase;">${data.orgName}</div>
+                            <div class="line-org"></div><div style="font-size: 13pt; margin-top: 5px;">${data.docNumber}</div>
                         </td>
-                        <td class="td-right">
-                            <div class="nation">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
-                            <div class="motto">Độc lập – Tự do – Hạnh phúc</div>
-                            <div class="line-motto"></div>
-                            <div class="doc-date"><i>${data.docPlace}, ${data.exportDateText}</i></div>
+                        <td style="width: 60%;">
+                            <div style="font-size: 13pt; font-weight: bold; text-transform: uppercase;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                            <div style="font-size: 14pt; font-weight: bold;">Độc lập – Tự do – Hạnh phúc</div>
+                            <div class="line-motto"></div><div style="font-size: 14pt; font-style: italic; margin-top: 5px;"><i>${data.docPlace}, ${data.exportDateText}</i></div>
                         </td>
                     </tr>
                 </table>
-                <div class="main-title">BIÊN BẢN</div>
-                <div class="sub-title">${data.title}</div>
-                <div class="section"><b>1. Thời gian bắt đầu:</b> ${data.displayTime}</div>
-                <div class="section"><b>2. Địa điểm:</b> ${data.location}</div>
-                <div class="section"><b>3. Thành phần tham dự:</b> ${data.attendees}</div>
-                <div class="section"><b>4. Nội dung diễn biến cuộc họp:</b></div>
-                <div class="section">${wordFormattedContent}</div>
-                <table class="signature-table">
-                    <tr>
-                        <td>THƯ KÝ<br><span style="font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span></td>
-                        <td>CHỦ TỌA<br><span style="font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span></td>
-                    </tr>
-                    <tr>
-                        <td style="height: 100px;"></td>
-                        <td></td>
-                    </tr>
-                </table>
+                <div style="text-align: center; font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-top: 20px; margin-bottom: 5px;">BIÊN BẢN</div>
+                <div style="text-align: center; font-size: 14pt; font-weight: bold; margin-bottom: 20px;">${data.title}</div>
+                <div style="margin-bottom: 10px; text-align: justify;"><b>1. Thời gian bắt đầu:</b> ${data.displayTime}</div>
+                <div style="margin-bottom: 10px; text-align: justify;"><b>2. Địa điểm:</b> ${data.location}</div>
+                <div style="margin-bottom: 10px; text-align: justify;"><b>3. Thành phần tham dự:</b> ${data.attendees}</div>
+                <div style="margin-bottom: 10px; text-align: justify;"><b>4. Nội dung diễn biến cuộc họp:</b></div>
+                <div style="margin-bottom: 10px; text-align: justify;">${wordFormattedContent}</div>
+                <table class="signature-table"><tr><td>THƯ KÝ<br><span style="font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span></td><td>CHỦ TỌA<br><span style="font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span></td></tr><tr><td style="height: 100px;"></td><td></td></tr></table>
             </body>
             </html>
             `;
-
             const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url;
-            a.download = `BienBan_${data.title.replace(/\s+/g, '_')}.doc`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            a.href = url; a.download = `BienBan_${data.title.replace(/\s+/g, '_')}.doc`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
             
             closePreviewModal();
-            const statusBox = document.getElementById('statusBox');
-            statusBox.style.display = 'block';
-            statusBox.className = 'status-success';
-            statusBox.innerHTML = 'Đã tải xuống thành công file Word đúng định dạng!';
+            const statusBox = document.getElementById('statusBox'); statusBox.style.display = 'block'; statusBox.className = 'status-success'; statusBox.innerHTML = 'Đã tải xuống thành công!';
         }
     </script>
 </body>
