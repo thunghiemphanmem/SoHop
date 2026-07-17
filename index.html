@@ -33,7 +33,6 @@
             box-sizing: border-box;
         }
         
-        /* CẬP NHẬT: Giữ logo bên trái, Tiêu đề ở chính giữa */
         .header {
             position: sticky;
             top: 0;
@@ -42,15 +41,15 @@
             backdrop-filter: blur(8px);
             display: flex;
             align-items: center;
-            justify-content: center; /* Căn giữa tuyệt đối cho thẻ h1 */
+            justify-content: center;
             padding: 8px 10px;
             margin-bottom: 5px;
             border-bottom: 2px solid var(--primary);
             min-height: 40px;
         }
         .header img { 
-            position: absolute; /* Đưa logo ra khỏi luồng căn giữa */
-            left: 10px; /* Neo chặt bên trái */
+            position: absolute;
+            left: 10px;
             width: 38px; 
             height: auto; 
             display: block; 
@@ -129,14 +128,6 @@
             grid-template-columns: repeat(6, 1fr);
             gap: 4px;
             margin-top: 6px;
-            /* --- BỔ SUNG LỆNH CỐ ĐỊNH DƯỚI ĐÁY MÀN HÌNH --- */
-            position: sticky;
-            bottom: 0px; 
-            z-index: 1000; /* Nổi lên trên mọi thành phần khác */
-            background: rgba(255, 255, 255, 0.95); /* Nền trắng trong suốt */
-            backdrop-filter: blur(8px); /* Hiệu ứng mờ nền chuẩn UI hiện đại */
-            padding: 10px 0; /* Tạo khoảng trống trên dưới cho nút bấm */
-            border-top: 2px solid var(--primary); /* Thanh kẻ nhấn mạnh phân tách nội dung */
         }
         .all-actions-row button {
             padding: 0.5rem 0.2rem;
@@ -223,7 +214,6 @@
             .modal-header { flex-direction: column; gap: 10px; align-items: flex-start; }
             .modal-actions { width: 100%; }
             .modal-actions button { flex: 1; }
-            /* Điều chỉnh tiêu đề khi ở màn hình nhỏ để không đè lên logo */
             .header h1 { font-size: 1.1rem; margin-left: 40px; } 
         }
     </style>
@@ -279,7 +269,7 @@
         </div>
 
         <!-- Khối Tìm Kiếm & Hỏi AI -->
-   <div class="form-group search-row-container" style="margin-bottom: 6px; background: #f0fdf4; padding: 6px; border-radius: 4px; border: 1px solid #bbf7d0; align-items: center; flex-wrap: wrap; gap: 8px;">
+        <div class="form-group search-row-container" style="margin-bottom: 6px; background: #f0fdf4; padding: 6px; border-radius: 4px; border: 1px solid #bbf7d0; align-items: center; flex-wrap: wrap; gap: 8px;">
             <div style="display: flex; align-items: center; flex: 1; min-width: 250px;">
                 <label style="color:#16a34a; font-size:0.9rem;">🔍 Tìm Sổ:</label>
                 <textarea id="searchKeyword" rows="1" style="flex: 1; min-height: 28px; height: 28px; resize: vertical; padding: 4px 8px; font-family: inherit; border: 1px solid var(--border); border-radius: 4px; overflow-y: hidden;" placeholder="Từ khóa tìm biên bản..." onkeydown="handleSearchEnter(event)"></textarea>
@@ -349,7 +339,7 @@
         };
 
         function setNow() {
-            var now = new Date();
+            const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
             document.getElementById('meetingDate').value = now.toISOString().slice(0,16);
         }
@@ -368,13 +358,11 @@
         }
 
         function toggleButtons(state) {
-            document.getElementById('btnReformat').disabled = state;
-            document.getElementById('btnDraft').disabled = state;
-            document.getElementById('btnSaveDraft').disabled = state;
-            document.getElementById('btnGenerate').disabled = state;
-            document.getElementById('btnPreviewExport').disabled = state;
-            document.getElementById('btnReset').disabled = state;
-            document.getElementById('btnSearch').disabled = state;
+            const buttons = ['btnReformat', 'btnDraft', 'btnSaveDraft', 'btnGenerate', 'btnPreviewExport', 'btnReset', 'btnSearch'];
+            buttons.forEach(id => {
+                const btn = document.getElementById(id);
+                if (btn) btn.disabled = state;
+            });
         }
 
         function formatDateTimeForDisplay(dateStr) {
@@ -456,8 +444,7 @@
                     if(result.recordId) { document.getElementById('recordId').value = result.recordId; }
                 } else if (result.status === 'success_text') {
                     statusBox.className = 'status-success';
-                   
-            statusBox.innerHTML = 'Trợ lý AI đang quét sổ và trích xuất dữ liệu phân tích theo yêu cầu...';
+                    statusBox.innerHTML = 'Trợ lý AI đang quét sổ và trích xuất dữ liệu phân tích theo yêu cầu...';
                     
                     let cleanText = result.text;
                     
@@ -467,17 +454,17 @@
                         cleanText = cleanText.substring(cleanText.indexOf(markerMatch[0]) + markerMatch[0].length);
                     }
                     
-                    cleanText = cleanText.replace(/Để chuẩn hóa biên bản.*?NĐ-CP.*?\n/ig, '');
-                    cleanText = cleanText.replace(/\(Tên cơ quan.*?\)\n/ig, '');
-                    cleanText = cleanText.replace(/\*\*?BIÊN BẢN HỌP\*\*?\n?/ig, '');
-                    cleanText = cleanText.replace(/Về việc.*?\n/ig, '');
-                    cleanText = cleanText.replace(/Thời gian:.*?\n/ig, '');
-                    cleanText = cleanText.replace(/Địa điểm:.*?\n/ig, '');
-                    cleanText = cleanText.replace(/Thành phần tham dự:[\s\S]*?(?=Chủ trì:|Thư ký:|I\.|1\.)/ig, '');
-                    cleanText = cleanText.replace(/Chủ trì:.*?\n/ig, '');
-                    cleanText = cleanText.replace(/Thư ký:.*?\n/ig, '');
-                    
-                    cleanText = cleanText.replace(/^[\s\-=\*_]+/g, '').trim();
+                    cleanText = cleanText.replace(/Để chuẩn hóa biên bản.*?NĐ-CP.*?\n/ig, '')
+                                         .replace(/\(Tên cơ quan.*?\)\n/ig, '')
+                                         .replace(/\*\*?BIÊN BẢN HỌP\*\*?\n?/ig, '')
+                                         .replace(/Về việc.*?\n/ig, '')
+                                         .replace(/Thời gian:.*?\n/ig, '')
+                                         .replace(/Địa điểm:.*?\n/ig, '')
+                                         .replace(/Thành phần tham dự:[\s\S]*?(?=Chủ trì:|Thư ký:|I\.|1\.)/ig, '')
+                                         .replace(/Chủ trì:.*?\n/ig, '')
+                                         .replace(/Thư ký:.*?\n/ig, '')
+                                         .replace(/^[\s\-=\*_]+/g, '')
+                                         .trim();
 
                     if(actionType === 'reformat') {
                         rawContentField.value = cleanText;
@@ -497,9 +484,8 @@
         }
 
        function handleSearchEnter(event) {
-            // Nếu ấn Enter mà KHÔNG giữ phím Shift thì thực hiện Tìm kiếm
             if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault(); // Ngăn chặn con trỏ tạo dòng mới
+                event.preventDefault();
                 searchMeetingData();
             }
         }
@@ -565,24 +551,24 @@
                 
                 document.getElementById('meetingTitle').value = dataBlock.title || '';
                 
-                let fullContent = dataBlock.content || '';
+                const fullContent = dataBlock.content || '';
                 let extLocation = dataBlock.location || '';
                 let extAttendees = dataBlock.attendees || '';
                 let extDate = dataBlock.date || '';
                 
-                const dateRegex = new RegExp("1\\.\\s*Thời\\s*gian:\\s*(\\d{2}/\\d{2}/\\d{4}\\s*\\d{2}:\\d{2}|\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2})", "i");
+                const dateRegex = /1\.\s*Thời\s*gian:\s*(\d{2}\/\d{2}\/\d{4}\s*\d{2}:\d{2}|\d{4}-\d{2}-\d{2}T\d{2}:\d{2})/i;
                 const dateMatch = fullContent.match(dateRegex);
                 if (dateMatch && !extDate) { extDate = dateMatch[1].trim(); }
 
-                const locRegex = new RegExp("2\\.\\s*Địa\\s*điểm:\\s*(.*)", "i");
+                const locRegex = /2\.\s*Địa\s*điểm:\s*(.*)/i;
                 const locMatch = fullContent.match(locRegex);
                 if (locMatch && !extLocation) extLocation = locMatch[1].trim();
                 
-                const attRegex = new RegExp("3\\.\\s*Thành\\s*phần\\s*tham\\s*dự:\\s*(.*)", "i");
+                const attRegex = /3\.\s*Thành\s*phần\s*tham\s*dự:\s*(.*)/i;
                 const attMatch = fullContent.match(attRegex);
                 if (attMatch && !extAttendees) extAttendees = attMatch[1].trim();
                 
-                const idRegex = new RegExp("\\[Mã\\s*hồ\\s*sơ:\\s*(.*?)\\]", "i");
+                const idRegex = /\[Mã\s*hồ\s*sơ:\s*(.*?)\]/i;
                 const idMatch = fullContent.match(idRegex);
                 if (idMatch) {
                     document.getElementById('recordId').value = idMatch[1].trim();
@@ -600,24 +586,24 @@
                 ];
                 
                 for (let marker of splitMarkers) {
-                    let regex = new RegExp(marker.replace(/\*/g, '\\*'), "i");
-                    let parts = pureContent.split(regex);
+                    const regex = new RegExp(marker.replace(/\*/g, '\\*'), "i");
+                    const parts = pureContent.split(regex);
                     if (parts.length > 1) {
                         pureContent = parts[1];
                         break; 
                     }
                 }
 
-                pureContent = pureContent.replace(/Để chuẩn hóa biên bản.*?NĐ-CP.*?\n/ig, '');
-                pureContent = pureContent.replace(/\(Tên cơ quan.*?\)\n/ig, '');
-                pureContent = pureContent.replace(/Về việc.*?\n/ig, '');
-                pureContent = pureContent.replace(/Thời gian:.*?\n/ig, '');
-                pureContent = pureContent.replace(/Địa điểm:.*?\n/ig, '');
-                pureContent = pureContent.replace(/Thành phần tham dự:[\s\S]*?(?=Chủ trì:|Thư ký:|I\.|1\.)/ig, '');
-                pureContent = pureContent.replace(/Chủ trì:.*?\n/ig, '');
-                pureContent = pureContent.replace(/Thư ký:.*?\n/ig, '');
-                
-                pureContent = pureContent.replace(/^[\s\-=\*_]+/g, '').trim();
+                pureContent = pureContent.replace(/Để chuẩn hóa biên bản.*?NĐ-CP.*?\n/ig, '')
+                                         .replace(/\(Tên cơ quan.*?\)\n/ig, '')
+                                         .replace(/Về việc.*?\n/ig, '')
+                                         .replace(/Thời gian:.*?\n/ig, '')
+                                         .replace(/Địa điểm:.*?\n/ig, '')
+                                         .replace(/Thành phần tham dự:[\s\S]*?(?=Chủ trì:|Thư ký:|I\.|1\.)/ig, '')
+                                         .replace(/Chủ trì:.*?\n/ig, '')
+                                         .replace(/Thư ký:.*?\n/ig, '')
+                                         .replace(/^[\s\-=\*_]+/g, '')
+                                         .trim();
 
                 document.getElementById('location').value = extLocation;
                 document.getElementById('attendees').value = extAttendees;
@@ -639,15 +625,15 @@
         }
 
         // ============================================================
-        // HÀM XỬ LÝ GIAO DIỆN TỔNG HỢP VÀ HỎI AI ĐỘNG (BỔ SUNG)
+        // HÀM XỬ LÝ GIAO DIỆN TỔNG HỢP VÀ HỎI AI ĐỘNG
         // ============================================================
-      function handleAiSearchEnter(event) {
-            // Nếu ấn Enter mà KHÔNG giữ phím Shift thì thực hiện Hỏi AI
+        function handleAiSearchEnter(event) {
             if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault(); // Ngăn chặn con trỏ tạo dòng mới
+                event.preventDefault();
                 searchMeetingAI();
             }
         }
+
         async function searchMeetingAI() {
             const aiQuery = document.getElementById('aiSearchQuery').value;
             const rawContentField = document.getElementById('rawContent');
@@ -658,7 +644,6 @@
                 return; 
             }
             
-            // Ẩn danh sách tìm kiếm cũ nếu đang mở để hiển thị khu vực nội dung
             document.getElementById('searchResultsSection').style.display = 'none';
             document.getElementById('meetingContentSection').style.display = 'block';
             
@@ -688,7 +673,6 @@
                     statusBox.className = 'status-success';
                     statusBox.innerHTML = 'AI đã phân tích xong. Dữ liệu đã được nạp vào khung Nội dung diễn biến.';
                     
-                    // Nếu khung nội dung đang trống thì ghi đè, nếu có chữ sẵn thì nối tiếp xuống dưới
                     if (rawContentField.value.trim() === '') {
                         rawContentField.value = result.text.trim();
                     } else {
@@ -708,7 +692,7 @@
             }
         }
         
-function previewWordDocument() {
+        function previewWordDocument() {
             const orgParent = document.getElementById('orgParent').value.trim() || 'CƠ QUAN CHỦ QUẢN';
             const orgName = document.getElementById('orgName').value.trim() || 'TÊN ĐƠN VỊ';
             let docNumber = document.getElementById('docNumber').value.trim() || '';
@@ -747,8 +731,6 @@ function previewWordDocument() {
                 orgParent, orgName, docNumber, docPlace, title, rawContent, location, attendees, displayTime, exportDateText
             };
 
-            // CHUẨN HÓA ĐỊNH DẠNG XEM TRƯỚC THEO THÔNG SỐ PARAGRAPH
-            // Before: 6pt, After: 0pt, Line-height: Single (1.0), First-line indent: 1cm, Align: Justify
             const webFormattedContent = rawContent.split('\n').map(line => {
                 if(line.trim() === '') return '<p style="margin-top: 6pt; margin-bottom: 0pt;">&nbsp;</p>';
                 return `<p style="margin-top: 6pt; margin-bottom: 0pt; text-align: justify; text-indent: 1cm; line-height: 1.0;">${line}</p>`;
@@ -794,7 +776,7 @@ function previewWordDocument() {
             document.getElementById('previewModal').style.display = 'none';
         }
 
-function downloadWordFile() {
+        function downloadWordFile() {
             if(!window.previewDataCache) return;
             const data = window.previewDataCache;
 
@@ -803,7 +785,6 @@ function downloadWordFile() {
                 return `<p class="content-line">${line}</p>`;
             }).join('');
 
-            // CSS XUẤT FILE ĐÃ CHUẨN HÓA
             const htmlContent = `
             <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
             <head>
@@ -836,7 +817,6 @@ function downloadWordFile() {
                     .sub-title { text-align: center; font-size: 14pt; font-weight: bold; margin-bottom: 20px; }
                     .section { margin-bottom: 10px; text-align: justify; }
                     
-                    /* ĐỊNH DẠNG PARAGRAPH CHUẨN MS WORD NHƯ ẢNH MINH HỌA */
                     .content-line { 
                         margin-top: 6pt; 
                         margin-bottom: 0pt; 
