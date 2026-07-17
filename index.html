@@ -372,8 +372,8 @@
         window.searchResultsData = [];
         window.previewDataCache = null;
         
-        // ============================================
-        // LOGIC KHỞI ĐỘNG VÀ QUẢN LÝ ACCOUNT
+// ============================================
+        // LOGIC KHỞI ĐỘNG VÀ QUẢN LÝ ACCOUNT (ĐÃ SỬA LỖI REDIRECT)
         // ============================================
         window.onload = async function() {
             document.getElementById('headerArea').innerHTML = `
@@ -384,6 +384,7 @@
             try {
                 const response = await fetch(KET_NOI.URL_API_BACKEND, {
                     method: 'POST',
+                    redirect: 'follow', // Đã bổ sung tham số bắt buộc cho GAS
                     headers: { "Content-Type": "text/plain;charset=utf-8" },
                     body: JSON.stringify({ action: 'check_account' })
                 });
@@ -396,6 +397,13 @@
                 }
             } catch (error) {
                 console.error("Lỗi xác thực hệ thống:", error);
+                // Bổ sung hiển thị bảng báo lỗi nếu đường truyền gặp sự cố
+                const statusDiv = document.getElementById('setupStatus');
+                if (statusDiv) {
+                    statusDiv.innerText = "Lỗi kết nối máy chủ Web App. Vui lòng kiểm tra lại URL Backend!";
+                    statusDiv.style.display = "block";
+                }
+                document.getElementById('accountModal').style.display = 'flex';
             }
         };
 
@@ -416,6 +424,7 @@
             try {
                 const response = await fetch(KET_NOI.URL_API_BACKEND, {
                     method: 'POST',
+                    redirect: 'follow', // Đã bổ sung tham số bắt buộc cho GAS
                     headers: { "Content-Type": "text/plain;charset=utf-8" },
                     body: JSON.stringify({ action: 'setup_account', apiKey: keyInput })
                 });
@@ -426,7 +435,7 @@
                 }
             } catch (error) {
                 statusDiv.style.color = "#dc2626";
-                statusDiv.innerText = "Lỗi kết nối máy chủ!";
+                statusDiv.innerText = "Lỗi kết nối máy chủ! Chi tiết: " + error.toString();
             }
         }
 
