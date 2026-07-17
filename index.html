@@ -129,6 +129,14 @@
             grid-template-columns: repeat(6, 1fr);
             gap: 4px;
             margin-top: 6px;
+            /* --- BỔ SUNG LỆNH CỐ ĐỊNH DƯỚI ĐÁY MÀN HÌNH --- */
+            position: sticky;
+            bottom: 0px; 
+            z-index: 1000; /* Nổi lên trên mọi thành phần khác */
+            background: rgba(255, 255, 255, 0.95); /* Nền trắng trong suốt */
+            backdrop-filter: blur(8px); /* Hiệu ứng mờ nền chuẩn UI hiện đại */
+            padding: 10px 0; /* Tạo khoảng trống trên dưới cho nút bấm */
+            border-top: 2px solid var(--primary); /* Thanh kẻ nhấn mạnh phân tách nội dung */
         }
         .all-actions-row button {
             padding: 0.5rem 0.2rem;
