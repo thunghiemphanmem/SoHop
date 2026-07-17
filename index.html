@@ -123,11 +123,19 @@
             resize: vertical; font-size: 0.95rem; line-height: 1.4;
         }
         
-        .all-actions-row {
+      .all-actions-row {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             gap: 4px;
-            margin-top: 6px;
+            
+            /* TỐI ƯU GIAO DIỆN: Cố định dính chặt vào đáy màn hình khi cuộn/zoom */
+            position: sticky;
+            bottom: 0;
+            background-color: var(--card); /* Phủ nền che văn bản cuộn bên dưới */
+            padding: 12px 0 10px 0;
+            margin-top: 5px;
+            z-index: 1000;
+            border-top: 1px dashed var(--border); /* Viền ngăn cách với khu vực gõ văn bản */
         }
         .all-actions-row button {
             padding: 0.5rem 0.2rem;
