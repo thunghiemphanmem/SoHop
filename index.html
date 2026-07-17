@@ -305,6 +305,9 @@
                 <textarea id="rawContent" placeholder="Ghi chép nhanh các ý kiến thảo luận tại đây..."></textarea>
             </div>
 
+            <!-- CHUYỂN HỘP THÔNG BÁO LÊN ĐÂY: Tránh bị hàng nút cố định che khuất -->
+            <div id="statusBox" style="display:none; margin-bottom: 8px;"></div>
+
             <div class="all-actions-row">
                 <button id="btnReformat" class="btn-reformat" onclick="processAction('reformat')">Trình bày văn bản</button>
                 <button id="btnDraft" class="btn-draft" onclick="processAction('draft')">Dự thảo kết luận</button>
@@ -314,6 +317,7 @@
                 <button id="btnReset" class="btn-reset" onclick="resetMeeting()">Tạo mới</button>
             </div>
         </div>
+    </div> <!-- Thẻ đóng của class="container" -->
 
         <div id="statusBox" style="display:none;"></div>
     </div>
