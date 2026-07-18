@@ -643,7 +643,7 @@
             }
         }
 
-        async function searchMeetingAI() {
+async function searchMeetingAI() {
             const aiQuery = document.getElementById('aiSearchQuery').value;
             const rawContentField = document.getElementById('rawContent');
             const statusBox = document.getElementById('statusBox');
@@ -678,16 +678,36 @@
                 
                 const result = await response.json();
                 
-                if(result.status === 'success_text') {
-                    statusBox.className = 'status-success';
-                    statusBox.innerHTML = 'AI đã phân tích xong. Dữ liệu đã được nạp vào khung Nội dung diễn biến.';
-                    
-                    if (rawContentField.value.trim() === '') {
-                        rawContentField.value = result.text.trim();
-                    } else {
-                        rawContentField.value += "\n\n" + result.text.trim();
+                if(result.status === 'success_ai_search' || result.status === 'success_text') {
+                    // BƯỚC 1: Nạp mảng dữ liệu vào bộ nhớ để sự kiện onclick (extractToForm) có thể lấy được
+                    if(result.data) {
+                        window.searchResultsData = result.data;
                     }
-                    rawContentField.scrollIntoView({ behavior: "smooth", block: "center" });
+
+                    // BƯỚC 2: Hiển thị giao diện Báo cáo AI dạng HTML đẹp mắt ngay trong statusBox
+                    statusBox.className = 'status-success';
+                    statusBox.style.textAlign = 'left';
+                    
+                    let htmlReport = result.text.replace(/\n/g, '<br>');
+                    
+                    statusBox.innerHTML = `
+                        <div style="background: #ffffff; padding: 15px; border-radius: 6px; border: 1px solid #94a3b8; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 10px;">
+                            <h4 style="color: #8b5cf6; margin-top: 0; margin-bottom: 10px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 5px;">🤖 KẾT QUẢ PHÂN TÍCH TỪ AI</h4>
+                            <div style="font-size: 0.95rem; line-height: 1.6; color: #1e293b;">
+                                ${htmlReport}
+                            </div>
+                        </div>
+                    `;
+                    
+                    // BƯỚC 3: Đồng thời vẫn nạp văn bản thô (loại bỏ thẻ HTML) vào textarea để lưu trữ nếu cần
+                    let plainTextReport = result.text.replace(/<[^>]*>?/gm, '').trim();
+                    if (rawContentField.value.trim() === '') {
+                        rawContentField.value = "--- BÁO CÁO AI ---\n" + plainTextReport;
+                    } else {
+                        rawContentField.value += "\n\n--- BÁO CÁO AI ---\n" + plainTextReport;
+                    }
+                    
+                    statusBox.scrollIntoView({ behavior: "smooth", block: "start" });
                 } else {
                     statusBox.className = 'status-error';
                     statusBox.innerHTML = `Lỗi từ AI: ${result.message}`;
