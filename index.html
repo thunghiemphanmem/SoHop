@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sổ Họp Thông Minh</title>
     <script src="ketnoi.js"></script>
-    <!-- Tải thư viện Google (Xóa onload ở đây để xử lý an toàn bằng JS bên dưới) -->
+    <!-- Tích hợp thư viện Google Identity Services (Tải ngầm, khởi tạo bằng JS) -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
@@ -66,27 +66,40 @@
         }
 
         .container {
-            background: var(--card); width: 100%; max-width: 98%;
-            min-height: 100vh; padding: 0 10px 20px 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05); box-sizing: border-box;
+            background: var(--card);
+            width: 100%;
+            max-width: 98%;
+            min-height: 100vh;
+            padding: 0 10px 20px 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
         }
         
         .header {
-            position: sticky; top: 0; z-index: 1000;
-            background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(8px);
-            display: flex; align-items: center; justify-content: center;
-            padding: 8px 10px; margin-bottom: 5px; border-bottom: 2px solid var(--primary); min-height: 40px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 10px;
+            margin-bottom: 5px;
+            border-bottom: 2px solid var(--primary);
+            min-height: 40px;
         }
-        .header img { position: absolute; left: 10px; width: 38px; height: auto; display: block; }
+        .header img { 
+            position: absolute; left: 10px; width: 38px; height: auto; display: block; 
+        }
         .header h1 { 
-            margin: 0; color: var(--primary); font-size: 1.25rem; 
-            font-weight: 700; line-height: 1.2; text-transform: uppercase; text-align: center;
+            margin: 0; color: var(--primary); font-size: 1.25rem; font-weight: 700; 
+            line-height: 1.2; text-transform: uppercase; text-align: center;
         }
         
         .compact-header-grid {
-            display: grid; grid-template-columns: 60% 40%; gap: 4px;
-            margin-bottom: 5px; background: #f8fafc; padding: 4px;
-            border-radius: 6px; border: 1px solid var(--border);
+            display: grid; grid-template-columns: 60% 40%; gap: 4px; margin-bottom: 5px;
+            background: #f8fafc; padding: 4px; border-radius: 6px; border: 1px solid var(--border);
         }
         
         .form-group { display: flex; flex-direction: row; align-items: center; margin: 0; padding: 0; }
@@ -106,9 +119,8 @@
         
         .all-actions-row {
             display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px;
-            position: sticky; bottom: 0; background-color: var(--card); 
-            padding: 12px 0 10px 0; margin-top: 5px; z-index: 1000;
-            border-top: 1px dashed var(--border); 
+            position: sticky; bottom: 0; background-color: var(--card); padding: 12px 0 10px 0;
+            margin-top: 5px; z-index: 1000; border-top: 1px dashed var(--border); 
         }
         .all-actions-row button { padding: 0.5rem 0.2rem; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         
@@ -137,18 +149,15 @@
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.8); z-index: 2000;
-            display: none; justify-content: center; align-items: flex-start;
+            background: rgba(15, 23, 42, 0.8); z-index: 2000; display: none; justify-content: center; align-items: flex-start;
             overflow-y: auto; padding: 30px 10px; box-sizing: border-box; backdrop-filter: blur(4px);
         }
         .modal-content {
             background: #cbd5e1; width: 100%; max-width: 900px;
-            border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
-            display: flex; flex-direction: column; position: relative;
+            border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); display: flex; flex-direction: column; position: relative;
         }
         .modal-header {
-            background: #fff; padding: 15px 20px; border-radius: 8px 8px 0 0;
-            display: flex; justify-content: space-between; align-items: center;
+            background: #fff; padding: 15px 20px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;
             border-bottom: 3px solid var(--primary); position: sticky; top: 0; z-index: 10;
         }
         .modal-header h3 { margin: 0; color: var(--primary); font-size: 1.2rem; }
@@ -187,7 +196,7 @@
             <h2 class="login-title">SỔ HỌP THÔNG MINH</h2>
             <h3 class="login-subtitle">TRƯỜNG TH&THCS HỢP THÀNH</h3>
             
-            <div class="login-version">Phiên bản: V1.0.2026</div>
+            <div class="login-version">Phiên bản: V2.5.2026</div>
             
             <!-- Vùng chứa nút đăng nhập Google được khởi tạo an toàn từ JS -->
             <div class="google-btn-container">
@@ -195,7 +204,7 @@
             </div>
             
             <!-- Nút Đăng nhập Khách chỉ thông báo hướng dẫn, không báo lỗi chủ sổ -->
-            <button class="guest-btn" onclick="alert('Hệ thống bảo mật: Yêu cầu xác thực bằng Tài khoản Google. Vui lòng chọn Đăng nhập Google phía trên!')">
+            <button class="guest-btn" onclick="document.getElementById('loginWarning').innerHTML = 'Hệ thống bảo mật: Vui lòng chọn Đăng nhập Google phía trên!'; document.getElementById('loginWarning').style.display='block';">
                 👤 Đăng nhập Khách
             </button>
             
@@ -271,7 +280,7 @@
             </div>
         </div>
         
-        <!-- KHỐI NỘI DUNG FORM -->
+        <!-- KHỐI NỘI DUNG FORM ĐƯỢC ĐƯA LÊN TRÊN -->
         <div id="meetingContentSection">
             <div class="content-group">
                 <label style="color:var(--primary); font-size:1rem; display: block; margin-bottom: 3px;">Nội dung diễn biến (Khung nhập thô):</label>
@@ -290,7 +299,7 @@
             </div>
         </div>
 
-        <!-- KHỐI DANH SÁCH TÌM KIẾM -->
+        <!-- KHỐI DANH SÁCH TÌM KIẾM ĐƯỢC CHUYỂN XUỐNG DƯỚI CÙNG -->
         <div id="searchResultsSection" style="display:none; margin-top: 15px; margin-bottom: 8px; background: #fafafa; border: 1px solid var(--border); border-radius: 6px; padding: 6px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 4px;">
                 <span style="font-weight: 600; color: var(--primary); font-size: 0.9rem;">Danh sách kết quả tìm kiếm:</span>
@@ -298,7 +307,7 @@
             </div>
             <ul id="searchResults" class="search-results" style="max-height: 250px; overflow-y: auto; padding: 0; margin: 0; list-style: none;"></ul>
         </div>
-    </div>
+    </div> <!-- Thẻ đóng của class="container" -->
 
     <!-- KHỐI GIAO DIỆN MODAL XEM TRƯỚC VĂN BẢN -->
     <div id="previewModal" class="modal-overlay">
@@ -320,10 +329,11 @@
         // ============================================================
         // HỆ THỐNG XÁC THỰC TÀI KHOẢN AN TOÀN
         // ============================================================
-        // Biến này nhận dữ liệu từ file CauHinh do GAS (doGet) truyền sang
+        
+        // Nhận dữ liệu truyền từ Backend qua thẻ đánh dấu
         const KHOA_CHU_SO = "<?= typeof ChuSoAccount !== 'undefined' ? ChuSoAccount : '' ?>";
 
-        // Khởi tạo nút Google Login bằng JS để tránh lỗi chưa tải kịp file ketnoi.js
+        // Khởi tạo nút Google Login
         function initGoogleLogin() {
             if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
                 google.accounts.id.initialize({
@@ -338,12 +348,12 @@
                     { theme: "outline", size: "large", type: "standard", shape: "rectangular", text: "signin_with", logo_alignment: "left" }
                 );
             } else {
-                // Thử lại sau 100ms nếu thư viện google tải chậm
+                // Thử lại nếu thư viện chưa tải xong
                 setTimeout(initGoogleLogin, 100);
             }
         }
 
-        // Hàm giải mã Token (JWT) từ Google
+        // Giải mã JWT Token Google
         function parseJwt(token) {
             try {
                 var base64Url = token.split('.')[1];
@@ -357,32 +367,31 @@
             }
         }
 
-        // Hàm nhận và đối chiếu dữ liệu đăng nhập
+        // Đối chiếu dữ liệu đăng nhập
         function handleAccountCredentialResponse(response) {
             const responsePayload = parseJwt(response.credential);
-            const currentAccount = responsePayload.email; 
+            
+            // Ép kiểu chữ thường và cắt khoảng trắng. .email là thuộc tính bắt buộc của payload Google
+            const currentAccount = (responsePayload.email || "").toLowerCase().trim(); 
+            const validAccount = (KHOA_CHU_SO || "").toLowerCase().trim();
 
-            // Kiểm tra ánh xạ với khai báo ChuSo
-            if (currentAccount && currentAccount === KHOA_CHU_SO) {
+            if (currentAccount === validAccount && currentAccount !== "") {
                 document.getElementById('loginUI').style.display = 'none';
                 document.getElementById('loginWarning').style.display = 'none';
             } else {
-                // Nếu sai mật mã, hiển thị lỗi báo danh tài khoản đó
                 const warningBox = document.getElementById('loginWarning');
                 warningBox.innerHTML = `Tài khoản <b>${currentAccount}</b> không có quyền truy cập.<br>Bạn không phải chủ cuốn sổ này!`;
                 warningBox.style.display = 'block';
-                
-                // Hủy tự động chọn tài khoản để hệ thống cho phép người dùng click Đăng nhập lại
                 google.accounts.id.disableAutoSelect();
             }
         }
-        
+
         // ============================================================
         // MÃ NGUỒN CHÍNH CỦA ỨNG DỤNG
         // ============================================================
         window.searchResultsData = [];
         window.previewDataCache = null;
-        window.isAiReportActive = false; 
+        window.isAiReportActive = false; // Cờ toàn cục bảo vệ báo cáo AI
         
         window.onload = function() {
             document.getElementById('headerArea').innerHTML = `
@@ -391,7 +400,7 @@
             `;
             setNow();
             
-            // Kích hoạt vẽ nút Google khi toàn bộ DOM và biến KET_NOI đã sẵn sàng
+            // Kích hoạt nút đăng nhập an toàn
             initGoogleLogin();
         };
 
@@ -554,6 +563,7 @@
             const meetingContentSection = document.getElementById('meetingContentSection');
             
             if(!keyword.trim()) { alert('Vui lòng nhập từ khóa!'); return; }
+            
             window.isAiReportActive = false;
             
             searchResultsSection.style.display = 'block';
@@ -603,6 +613,7 @@
         function extractToForm(index) {
             if(window.searchResultsData && window.searchResultsData[index]) {
                 const dataBlock = window.searchResultsData[index];
+                
                 document.getElementById('meetingContentSection').style.display = 'block';
                 document.getElementById('meetingTitle').value = dataBlock.title || '';
                 
@@ -632,7 +643,14 @@
                 }
 
                 let pureContent = fullContent;
-                const splitMarkers = [ "--- NỘI DUNG VÀ KẾT LUẬN ---", "**NỘI DUNG CUỘC HỌP**", "NỘI DUNG CUỘC HỌP", "NỘI DUNG CHÍNH" ];
+                
+                const splitMarkers = [
+                    "--- NỘI DUNG VÀ KẾT LUẬN ---",
+                    "**NỘI DUNG CUỘC HỌP**",
+                    "NỘI DUNG CUỘC HỌP",
+                    "NỘI DUNG CHÍNH"
+                ];
+                
                 for (let marker of splitMarkers) {
                     const regex = new RegExp(marker.replace(/\*/g, '\\*'), "i");
                     const parts = pureContent.split(regex);
@@ -658,16 +676,19 @@
                 document.getElementById('rawContent').value = pureContent;
                 
                 if (extDate) {
-                    try { document.getElementById('meetingDate').value = parseFormattedDate(extDate); } 
-                    catch (e) { console.error("Lỗi đồng bộ ngày tháng:", e); }
+                    try {
+                        document.getElementById('meetingDate').value = parseFormattedDate(extDate);
+                    } catch (e) { console.error("Lỗi đồng bộ ngày tháng:", e); }
                 }
 
                 const statusBox = document.getElementById('statusBox');
+                
                 if (window.isAiReportActive !== true && statusBox.innerHTML.indexOf('KẾT QUẢ PHÂN TÍCH TỪ AI') === -1) {
                     statusBox.className = 'status-success';
                     statusBox.innerHTML = 'Đã bóc tách Biên bản vào các trường. Sẵn sàng chỉnh sửa & Ghi đè!';
                     statusBox.style.display = 'block';
                 }
+
                 document.getElementById('meetingTitle').scrollIntoView({ behavior: "smooth", block: "center" });
             }
         }
@@ -684,13 +705,19 @@
             const rawContentField = document.getElementById('rawContent'); 
             const statusBox = document.getElementById('statusBox');
             
-            if(!aiQuery.trim()) { alert('Vui lòng nhập nội dung yêu cầu AI tổng hợp!'); return; }
+            if(!aiQuery.trim()) { 
+                alert('Vui lòng nhập nội dung yêu cầu AI tổng hợp!'); 
+                return; 
+            }
+            
             rawContentField.value = '';
+            
             document.getElementById('searchResultsSection').style.display = 'none';
             document.getElementById('meetingContentSection').style.display = 'block';
             
             toggleButtons(true);
             document.getElementById('btnAiSearch').disabled = true;
+            
             window.isAiReportActive = false; 
             
             statusBox.style.display = 'block';
@@ -710,7 +737,10 @@
                 const result = await response.json();
                 
                 if(result.status === 'success_ai_search' || result.status === 'success_text') {
-                    if(result.data) { window.searchResultsData = result.data; }
+                    if(result.data) {
+                        window.searchResultsData = result.data;
+                    }
+
                     window.isAiReportActive = true; 
                     
                     statusBox.className = 'status-success';
@@ -725,6 +755,7 @@
                             </div>
                         </div>
                     `;
+                    
                     statusBox.scrollIntoView({ behavior: "smooth", block: "start" });
                 } else {
                     statusBox.className = 'status-error';
@@ -743,14 +774,20 @@
             const orgParent = document.getElementById('orgParent').value.trim() || 'CƠ QUAN CHỦ QUẢN';
             const orgName = document.getElementById('orgName').value.trim() || 'TÊN ĐƠN VỊ';
             let docNumber = document.getElementById('docNumber').value.trim() || '';
-            if(docNumber !== '' && !docNumber.toLowerCase().startsWith('số')) { docNumber = 'Số: ' + docNumber; }
+            if(docNumber !== '' && !docNumber.toLowerCase().startsWith('số')) {
+                docNumber = 'Số: ' + docNumber;
+            }
             const docPlace = document.getElementById('docPlace').value.trim() || '.........';
+            
             const title = document.getElementById('meetingTitle').value.trim() || 'NỘI DUNG CUỘC HỌP';
             const rawContent = document.getElementById('rawContent').value.trim();
             const location = document.getElementById('location').value.trim();
             const attendees = document.getElementById('attendees').value.trim();
             
-            if(!rawContent) { alert("Không có nội dung cuộc họp để xuất ra Word!"); return; }
+            if(!rawContent) {
+                alert("Không có nội dung cuộc họp để xuất ra Word!");
+                return;
+            }
 
             const rawDate = document.getElementById('meetingDate').value;
             let displayTime = '';
@@ -768,7 +805,9 @@
                 displayTime = `${hours} giờ ${minutes} phút, ngày ${day}/${month}/${year}`;
             }
 
-            window.previewDataCache = { orgParent, orgName, docNumber, docPlace, title, rawContent, location, attendees, displayTime, exportDateText };
+            window.previewDataCache = {
+                orgParent, orgName, docNumber, docPlace, title, rawContent, location, attendees, displayTime, exportDateText
+            };
 
             const webFormattedContent = rawContent.split('\n').map(line => {
                 if(line.trim() === '') return '<p style="margin-top: 6pt; margin-bottom: 0pt;">&nbsp;</p>';
@@ -830,8 +869,16 @@
                 <meta charset='utf-8'>
                 <title>Export Doc</title>
                 <style>
-                    @page { size: 21cm 29.7cm; margin: 2cm 2cm 2cm 3cm; mso-page-orientation: portrait; }
-                    body { font-family: 'Times New Roman', serif; font-size: 14pt; line-height: 1.5; }
+                    @page {
+                        size: 21cm 29.7cm;
+                        margin: 2cm 2cm 2cm 3cm; 
+                        mso-page-orientation: portrait;
+                    }
+                    body {
+                        font-family: 'Times New Roman', serif;
+                        font-size: 14pt;
+                        line-height: 1.5;
+                    }
                     .header-table { width: 100%; border-collapse: collapse; border: none; margin-bottom: 20px; }
                     .header-table td { vertical-align: top; text-align: center; padding: 0; border: none; }
                     .td-left { width: 40%; }
@@ -847,7 +894,15 @@
                     .main-title { text-align: center; font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-top: 20px; margin-bottom: 5px;}
                     .sub-title { text-align: center; font-size: 14pt; font-weight: bold; margin-bottom: 20px; }
                     .section { margin-bottom: 10px; text-align: justify; }
-                    .content-line { margin-top: 6pt; margin-bottom: 0pt; text-align: justify; text-indent: 1cm; line-height: 1.0; }
+                    
+                    .content-line { 
+                        margin-top: 6pt; 
+                        margin-bottom: 0pt; 
+                        text-align: justify; 
+                        text-indent: 1cm; 
+                        line-height: 1.0; 
+                    }
+                    
                     .signature-table { width: 100%; margin-top: 30px; border: none; }
                     .signature-table td { width: 50%; text-align: center; vertical-align: top; border: none; font-weight: bold;}
                 </style>
