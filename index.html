@@ -551,7 +551,7 @@
             }
         }
 
-        function extractToForm(index) {
+function extractToForm(index) {
             if(window.searchResultsData && window.searchResultsData[index]) {
                 const dataBlock = window.searchResultsData[index];
                 
@@ -625,11 +625,16 @@
                 }
 
                 const statusBox = document.getElementById('statusBox');
-                statusBox.className = 'status-success';
-                statusBox.innerHTML = 'Đã bóc tách Biên bản vào các trường. Sẵn sàng chỉnh sửa & Ghi đè!';
-                statusBox.style.display = 'block';
                 
-                document.getElementById('rawContent').scrollIntoView({ behavior: "smooth", block: "center" });
+                // CHÚ Ý NÂNG CẤP: Nếu Khung dưới đang hiển thị Báo cáo AI thì GIỮ NGUYÊN không ghi đè thông báo thành công lên đó.
+                if (statusBox.innerHTML.indexOf('KẾT QUẢ PHÂN TÍCH TỪ AI') === -1) {
+                    statusBox.className = 'status-success';
+                    statusBox.innerHTML = 'Đã bóc tách Biên bản vào các trường. Sẵn sàng chỉnh sửa & Ghi đè!';
+                    statusBox.style.display = 'block';
+                }
+                
+                // CHÚ Ý NÂNG CẤP: Cuộn trang lên mục Tên Cuộc Họp để thấy dữ liệu vừa nạp, thay vì cuộn xuống đáy.
+                document.getElementById('meetingTitle').scrollIntoView({ behavior: "smooth", block: "center" });
             }
         }
 
@@ -645,7 +650,6 @@
 
 async function searchMeetingAI() {
             const aiQuery = document.getElementById('aiSearchQuery').value;
-            const rawContentField = document.getElementById('rawContent');
             const statusBox = document.getElementById('statusBox');
             
             if(!aiQuery.trim()) { 
@@ -679,12 +683,12 @@ async function searchMeetingAI() {
                 const result = await response.json();
                 
                 if(result.status === 'success_ai_search' || result.status === 'success_text') {
-                    // BƯỚC 1: Nạp mảng dữ liệu vào bộ nhớ để sự kiện onclick (extractToForm) có thể lấy được
+                    // Nạp mảng dữ liệu vào bộ nhớ để sự kiện onclick có thể lấy được
                     if(result.data) {
                         window.searchResultsData = result.data;
                     }
 
-                    // BƯỚC 2: Hiển thị giao diện Báo cáo AI dạng HTML đẹp mắt ngay trong statusBox
+                    // Hiển thị báo cáo AI ở khung dưới
                     statusBox.className = 'status-success';
                     statusBox.style.textAlign = 'left';
                     
@@ -699,13 +703,7 @@ async function searchMeetingAI() {
                         </div>
                     `;
                     
-                    // BƯỚC 3: Đồng thời vẫn nạp văn bản thô (loại bỏ thẻ HTML) vào textarea để lưu trữ nếu cần
-                    let plainTextReport = result.text.replace(/<[^>]*>?/gm, '').trim();
-                    if (rawContentField.value.trim() === '') {
-                        rawContentField.value = "--- BÁO CÁO AI ---\n" + plainTextReport;
-                    } else {
-                        rawContentField.value += "\n\n--- BÁO CÁO AI ---\n" + plainTextReport;
-                    }
+                    // CHÚ Ý NÂNG CẤP: Đã gỡ bỏ phần gán dữ liệu vào rawContent (Khung trên) để tránh trùng lặp
                     
                     statusBox.scrollIntoView({ behavior: "smooth", block: "start" });
                 } else {
