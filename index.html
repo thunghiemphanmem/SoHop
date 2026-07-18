@@ -331,9 +331,9 @@
         // ============================================================
         
         // Nhận dữ liệu truyền từ Backend qua thẻ đánh dấu
-        const KHOA_CHU_SO = "<?= typeof ChuSoAccount !== 'undefined' ? ChuSoAccount : '' ?>";
+       const KHOA_CHU_SO = "<?= ChuSoAccount ?>";
 
-        // Khởi tạo nút Google Login
+// Khởi tạo nút Google Login
         function initGoogleLogin() {
             if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
                 google.accounts.id.initialize({
@@ -348,12 +348,12 @@
                     { theme: "outline", size: "large", type: "standard", shape: "rectangular", text: "signin_with", logo_alignment: "left" }
                 );
             } else {
-                // Thử lại nếu thư viện chưa tải xong
                 setTimeout(initGoogleLogin, 100);
             }
         }
 
         // Giải mã JWT Token Google
+
         function parseJwt(token) {
             try {
                 var base64Url = token.split('.')[1];
@@ -367,11 +367,10 @@
             }
         }
 
-        // Đối chiếu dữ liệu đăng nhập
+   // Đối chiếu dữ liệu đăng nhập
         function handleAccountCredentialResponse(response) {
             const responsePayload = parseJwt(response.credential);
             
-            // Ép kiểu chữ thường và cắt khoảng trắng. .email là thuộc tính bắt buộc của payload Google
             const currentAccount = (responsePayload.email || "").toLowerCase().trim(); 
             const validAccount = (KHOA_CHU_SO || "").toLowerCase().trim();
 
@@ -380,12 +379,12 @@
                 document.getElementById('loginWarning').style.display = 'none';
             } else {
                 const warningBox = document.getElementById('loginWarning');
-                warningBox.innerHTML = `Tài khoản <b>${currentAccount}</b> không có quyền truy cập.<br>Bạn không phải chủ cuốn sổ này!`;
+                // NÂNG CẤP: Thêm dòng báo lỗi Dev info để nhìn rõ hệ thống đang kẹt biến gì
+                warningBox.innerHTML = `Tài khoản <b>${currentAccount}</b> không có quyền truy cập.<br>Bạn không phải chủ cuốn sổ này!<br><br><span style="font-size: 0.85rem; color: #7f1d1d; background: #fecaca; padding: 4px; border-radius: 4px;">[Gỡ lỗi: Hệ thống đang hiểu Chủ sổ là: <b>'${validAccount}'</b>]</span>`;
                 warningBox.style.display = 'block';
                 google.accounts.id.disableAutoSelect();
             }
         }
-
         // ============================================================
         // MÃ NGUỒN CHÍNH CỦA ỨNG DỤNG
         // ============================================================
