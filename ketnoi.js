@@ -23,6 +23,6 @@ const KET_NOI = {
   // Danh sách các định danh (Gmail) được quyền truy cập sổ
   LIST_ACCOUNT_ADMIN: [
       'hoangngoclamlc@gmail.com', 
-      'taikhoan2@gmail.com'       // Thầy có thể phẩy và thêm các tài khoản khác tại đây
+      'tulieuhopthanh@gmail.com'       // Thầy có thể phẩy và thêm các tài khoản khác tại đây
   ]
 };
