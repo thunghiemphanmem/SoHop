@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -627,14 +626,15 @@ function extractToForm(index) {
 
                 const statusBox = document.getElementById('statusBox');
                 
-                // CHÚ Ý NÂNG CẤP: Nếu Khung dưới đang hiển thị Báo cáo AI thì GIỮ NGUYÊN không ghi đè thông báo thành công lên đó.
-                if (statusBox.innerHTML.indexOf('KẾT QUẢ PHÂN TÍCH TỪ AI') === -1) {
+                // KIỂM TRA CỜ: Chỉ hiển thị thông báo "Bóc tách" nếu đang dùng chức năng Tìm kiếm thông thường.
+                // Nếu đang hiển thị Báo cáo AI (cờ = true) thì BỎ QUA, giữ nguyên báo cáo để xem tiếp.
+                if (statusBox.dataset.isAiReport !== "true") {
                     statusBox.className = 'status-success';
                     statusBox.innerHTML = 'Đã bóc tách Biên bản vào các trường. Sẵn sàng chỉnh sửa & Ghi đè!';
                     statusBox.style.display = 'block';
                 }
-                
-                // CHÚ Ý NÂNG CẤP: Cuộn trang lên mục Tên Cuộc Họp để thấy dữ liệu vừa nạp, thay vì cuộn xuống đáy.
+
+                // Cuộn trang lên ô tiêu đề để xem nội dung đã nạp vào form
                 document.getElementById('meetingTitle').scrollIntoView({ behavior: "smooth", block: "center" });
             }
         }
@@ -651,12 +651,16 @@ function extractToForm(index) {
 
 async function searchMeetingAI() {
             const aiQuery = document.getElementById('aiSearchQuery').value;
+            const rawContentField = document.getElementById('rawContent'); 
             const statusBox = document.getElementById('statusBox');
             
             if(!aiQuery.trim()) { 
                 alert('Vui lòng nhập nội dung yêu cầu AI tổng hợp!'); 
                 return; 
             }
+            
+            // XÓA RỖNG KHUNG TRÊN THEO YÊU CẦU ĐỂ TẬP TRUNG XEM BÁO CÁO AI
+            rawContentField.value = '';
             
             document.getElementById('searchResultsSection').style.display = 'none';
             document.getElementById('meetingContentSection').style.display = 'block';
@@ -667,6 +671,7 @@ async function searchMeetingAI() {
             statusBox.style.display = 'block';
             statusBox.className = 'status-loading';
             statusBox.innerHTML = 'Trợ lý AI đang quét sổ và trích xuất dữ liệu phân tích theo yêu cầu...';
+            statusBox.dataset.isAiReport = "false"; // Đặt lại trạng thái cờ
             
             const payload = { 
                 action: 'ai_search', 
@@ -684,14 +689,15 @@ async function searchMeetingAI() {
                 const result = await response.json();
                 
                 if(result.status === 'success_ai_search' || result.status === 'success_text') {
-                    // Nạp mảng dữ liệu vào bộ nhớ để sự kiện onclick có thể lấy được
                     if(result.data) {
                         window.searchResultsData = result.data;
                     }
 
-                    // Hiển thị báo cáo AI ở khung dưới
                     statusBox.className = 'status-success';
                     statusBox.style.textAlign = 'left';
+                    
+                    // GẮN CỜ BẢO VỆ KẾT QUẢ AI
+                    statusBox.dataset.isAiReport = "true"; 
                     
                     let htmlReport = result.text.replace(/\n/g, '<br>');
                     
@@ -703,8 +709,6 @@ async function searchMeetingAI() {
                             </div>
                         </div>
                     `;
-                    
-                    // CHÚ Ý NÂNG CẤP: Đã gỡ bỏ phần gán dữ liệu vào rawContent (Khung trên) để tránh trùng lặp
                     
                     statusBox.scrollIntoView({ behavior: "smooth", block: "start" });
                 } else {
