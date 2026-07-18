@@ -499,7 +499,7 @@
             }
         }
 
-        async function searchMeetingData() {
+async function searchMeetingData() {
             const keyword = document.getElementById('searchKeyword').value;
             const resultList = document.getElementById('searchResults');
             const searchResultsSection = document.getElementById('searchResultsSection');
@@ -507,8 +507,9 @@
             
             if(!keyword.trim()) { alert('Vui lòng nhập từ khóa!'); return; }
             
+            // CẬP NHẬT NÂNG CẤP: Luôn hiển thị cả Khung kết quả (trên) và Khung Form (dưới)
             searchResultsSection.style.display = 'block';
-            meetingContentSection.style.display = 'none';
+            meetingContentSection.style.display = 'block';
             
             resultList.innerHTML = '<li class="result-item" style="justify-content:center; color:var(--primary); text-align:center;">Đang quét nội dung Sổ...</li>';
             toggleButtons(true);
@@ -555,7 +556,8 @@ function extractToForm(index) {
             if(window.searchResultsData && window.searchResultsData[index]) {
                 const dataBlock = window.searchResultsData[index];
                 
-                document.getElementById('searchResultsSection').style.display = 'none';
+                // CẬP NHẬT QUAN TRỌNG: LOẠI BỎ LỆNH ẨN KHUNG DANH SÁCH TÌM KIẾM
+                // document.getElementById('searchResultsSection').style.display = 'none'; 
                 document.getElementById('meetingContentSection').style.display = 'block';
                 
                 document.getElementById('meetingTitle').value = dataBlock.title || '';
@@ -617,7 +619,7 @@ function extractToForm(index) {
                 document.getElementById('location').value = extLocation;
                 document.getElementById('attendees').value = extAttendees;
                 
-                // 4. GÁN NỘI DUNG VÀO KHUNG TRÊN
+                // GÁN NỘI DUNG VÀO KHUNG NHẬP LIỆU
                 document.getElementById('rawContent').value = pureContent;
                 
                 if (extDate) {
@@ -628,15 +630,14 @@ function extractToForm(index) {
 
                 const statusBox = document.getElementById('statusBox');
                 
-                // 5. KIỂM TRA TOÀN DIỆN: CHỈ HIỂN THỊ THÔNG BÁO BÓC TÁCH NẾU KHÔNG ĐANG CÓ BÁO CÁO AI
-                // Nếu window.isAiReportActive === true, khối lệnh này sẽ bị BỎ QUA hoàn toàn, bảo vệ Khung dưới.
+                // KIỂM TRA TOÀN DIỆN BẢO VỆ GIAO DIỆN AI (NẾU CÓ)
                 if (window.isAiReportActive !== true && statusBox.innerHTML.indexOf('KẾT QUẢ PHÂN TÍCH TỪ AI') === -1) {
                     statusBox.className = 'status-success';
                     statusBox.innerHTML = 'Đã bóc tách Biên bản vào các trường. Sẵn sàng chỉnh sửa & Ghi đè!';
                     statusBox.style.display = 'block';
                 }
 
-                // 6. CUỘN TRANG LÊN KHUNG TRÊN ĐỂ CÁN BỘ XEM NỘI DUNG
+                // CUỘN TRANG VỀ PHẦN KHUNG FORM ĐỂ CÁN BỘ TIỆN KIỂM TRA NỘI DUNG NẠP
                 document.getElementById('meetingTitle').scrollIntoView({ behavior: "smooth", block: "center" });
             }
         }
