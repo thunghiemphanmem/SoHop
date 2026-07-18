@@ -1,6 +1,3 @@
-// ==========================================
-// CẤU HÌNH GIAO DIỆN & KẾT NỐI (FRONTEND)
-// ==========================================
 const KET_NOI = {
   // Đường dẫn Web App của Google Apps Script (Lấy sau khi Deploy GAS)
   URL_API_BACKEND: 'https://script.google.com/macros/s/AKfycbw6JYOuithvUH64LxH2pc4d54BOSqdeEtquKCnCCxzzDhJIRoMZhqgaU9r7xcAmzQ5y/exec',
