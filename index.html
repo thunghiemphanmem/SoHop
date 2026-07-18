@@ -7,7 +7,7 @@
     <!-- Thư viện Đăng nhập Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- Gọi tệp cấu hình trung tâm với tham số chống lưu cache -->
-    <script src="ketnoi.js?v=3.2"></script>
+    <script src="ketnoi.js?v=3.3"></script>
     <style>
         :root {
             --primary: #0284c7;
@@ -22,6 +22,8 @@
         .header { position: sticky; top: 0; z-index: 1000; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 8px 10px; margin-bottom: 5px; border-bottom: 2px solid var(--primary); min-height: 40px; }
         .header img { position: absolute; left: 10px; width: 38px; height: auto; display: block; }
         .header h1 { margin: 0; color: var(--primary); font-size: 1.25rem; font-weight: 700; line-height: 1.2; text-transform: uppercase; text-align: center; }
+        .btn-logout { position: absolute; right: 10px; background: #ef4444; padding: 5px 10px; font-size: 0.75rem; border-radius: 4px; border: none; color: white; cursor: pointer; font-weight: bold; transition: opacity 0.2s; }
+        .btn-logout:hover { opacity: 0.8; }
         .compact-header-grid { display: grid; grid-template-columns: 60% 40%; gap: 4px; margin-bottom: 5px; background: #f8fafc; padding: 4px; border-radius: 6px; border: 1px solid var(--border); }
         .form-group { display: flex; flex-direction: row; align-items: center; margin: 0; padding: 0; }
         label { font-weight: 600; font-size: 0.85rem; margin-right: 5px; margin-bottom: 0; color: #334155; white-space: nowrap; }
@@ -53,11 +55,11 @@
         .preview-area-container { padding: 20px; display: flex; justify-content: center; overflow-x: auto; }
         .preview-a4 { background: white; width: 21cm; min-height: 29.7cm; padding: 2cm 2cm 2cm 3cm; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); box-sizing: border-box; font-family: 'Times New Roman', Times, serif; font-size: 14pt; line-height: 1.5; color: black; }
         @media screen and (max-width: 800px) { .all-actions-row { grid-template-columns: repeat(3, 1fr); } .preview-a4 { width: 100%; padding: 1.5cm; } }
-        @media screen and (max-width: 600px) { .compact-header-grid { grid-template-columns: 1fr; } .form-group { flex-direction: column; align-items: flex-start; } .all-actions-row { grid-template-columns: repeat(2, 1fr); } .search-row-container { flex-direction: column; align-items: flex-start; } .search-row-container button { width: 100%; margin-top: 4px; } .modal-header { flex-direction: column; gap: 10px; align-items: flex-start; } .modal-actions { width: 100%; } .modal-actions button { flex: 1; } .header h1 { font-size: 1.1rem; margin-left: 40px; } }
+        @media screen and (max-width: 600px) { .compact-header-grid { grid-template-columns: 1fr; } .form-group { flex-direction: column; align-items: flex-start; } .all-actions-row { grid-template-columns: repeat(2, 1fr); } .search-row-container { flex-direction: column; align-items: flex-start; } .search-row-container button { width: 100%; margin-top: 4px; } .modal-header { flex-direction: column; gap: 10px; align-items: flex-start; } .modal-actions { width: 100%; } .modal-actions button { flex: 1; } .header h1 { font-size: 1.1rem; margin-left: 40px; } .btn-logout { padding: 4px; font-size: 0.65rem; } }
     </style>
 </head>
 <body>
-    <!-- KHỐI MÀN HÌNH KHÓA ĐĂNG NHẬP (Bổ sung lại) -->
+    <!-- KHỐI MÀN HÌNH KHÓA ĐĂNG NHẬP -->
     <div id="loginUI" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.95); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px);">
         <div style="background:#fff; padding:30px; border-radius:8px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.5); max-width:400px; width:90%;">
             <img src="" id="loginLogo" style="width:80px; margin-bottom:15px; display:none;">
@@ -183,13 +185,13 @@
         window.isAiReportActive = false;
         
         window.onload = function() {
-            // Nạp cấu hình từ KET_NOI vào giao diện
+            // Nạp cấu hình từ KET_NOI vào giao diện (Đã bổ sung Nút Đăng xuất)
             document.getElementById('headerArea').innerHTML = `
                 <img src="${KET_NOI.LOGO_TRUONG || ''}" alt="Logo" onerror="this.style.display='none'">
                 <h1>${KET_NOI.TIEU_DE_PHAN_MEM || ''}</h1>
+                <button class="btn-logout" onclick="executeLogout()">Đăng xuất</button>
             `;
 
-            // Nạp Logo vào Màn hình khóa
             const loginLogo = document.getElementById('loginLogo');
             if (KET_NOI.LOGO_TRUONG) {
                 loginLogo.src = KET_NOI.LOGO_TRUONG;
@@ -203,12 +205,26 @@
             
             setNow();
             
-            // Khởi tạo luồng xác thực bảo mật
+            // KIỂM TRA PHIÊN LÀM VIỆC LƯU TRỮ CỤC BỘ (LOCAL STORAGE)
+            const activeSession = localStorage.getItem('SessionAccountActive');
+            if (activeSession) {
+                const isStillAuthorized = KET_NOI.LIST_ACCOUNT_ADMIN.some(function(acc) {
+                    return acc.toLowerCase().trim() === activeSession;
+                });
+                
+                if (isStillAuthorized) {
+                    document.getElementById('loginUI').style.display = 'none';
+                    return; // Thoát hàm, không hiển thị màn hình đăng nhập
+                } else {
+                    localStorage.removeItem('SessionAccountActive'); // Xóa phiên nếu tài khoản đã bị gỡ khỏi danh sách
+                }
+            }
+
             initGoogleLogin();
         };
 
         // ============================================================
-        // KHỐI XÁC THỰC BẢO MẬT (FRONTEND) - Đọc động từ ketnoi.js
+        // KHỐI XÁC THỰC BẢO MẬT (FRONTEND)
         // ============================================================
         function initGoogleLogin() {
             if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
@@ -244,17 +260,18 @@
 
         function handleAccountCredentialResponse(response) {
             const responsePayload = parseJwt(response.credential);
-            // Thuộc tính chuẩn của API Google trả về, biến gán tuân thủ tuyệt đối chuẩn Account
             const currentAccount = (responsePayload['email'] || "").toLowerCase().trim(); 
 
             const warningBox = document.getElementById('loginWarning');
             
-            // Đối chiếu với danh sách tại KET_NOI.LIST_ACCOUNT_ADMIN (tệp ketnoi.js)
             const isAuthorized = KET_NOI.LIST_ACCOUNT_ADMIN.some(function(acc) {
                 return acc.toLowerCase().trim() === currentAccount;
             });
             
             if (isAuthorized && currentAccount !== "") {
+                // NÂNG CẤP: Lưu trạng thái đăng nhập vào Local Storage
+                localStorage.setItem('SessionAccountActive', currentAccount);
+                
                 document.getElementById('loginUI').style.display = 'none';
                 if(warningBox) warningBox.style.display = 'none';
             } else {
@@ -270,6 +287,17 @@
                     warningBox.style.display = 'block';
                 }
                 google.accounts.id.disableAutoSelect();
+            }
+        }
+
+        // HÀM XỬ LÝ SỰ KIỆN ĐĂNG XUẤT
+        function executeLogout() {
+            if (confirm("Thầy/Cô có chắc chắn muốn đăng xuất khỏi phiên làm việc hiện tại?")) {
+                localStorage.removeItem('SessionAccountActive');
+                if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                    google.accounts.id.disableAutoSelect();
+                }
+                location.reload(); // Tải lại toàn bộ trang để khóa làm sạch hoàn toàn trạng thái
             }
         }
 
@@ -334,7 +362,6 @@
             const rawContentField = document.getElementById('rawContent');
             const statusBox = document.getElementById('statusBox');
             
-            // Đóng gói ID_SO_HOP từ cấu hình để gửi xuống Backend
             const payload = {
                 action: actionType,
                 idSoHop: KET_NOI.ID_SO_HOP, 
