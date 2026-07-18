@@ -402,7 +402,7 @@
             document.getElementById('searchResultsSection').style.display = 'none';
         }
 
-        async function processAction(actionType) {
+async function processAction(actionType) {
             const rawContentField = document.getElementById('rawContent');
             const statusBox = document.getElementById('statusBox');
             
@@ -450,7 +450,8 @@
                 
                 if(result.status === 'success_doc') {
                     statusBox.className = 'status-success';
-                    statusBox.innerHTML = `${result.message} <br><br> <a href="${result.url}" target="_blank" style="color:#166534; text-decoration:underline;">Mở Sổ Trực Tuyến</a>`;
+                    // NÂNG CẤP UI: Loại bỏ <br><br> gây tốn diện tích, gộp link lên cùng 1 dòng
+                    statusBox.innerHTML = `${result.message} &nbsp;|&nbsp; <a href="${result.url}" target="_blank" style="color:#166534; font-weight:bold; text-decoration:underline;">Mở Sổ Trực Tuyến</a>`;
                     if(result.recordId) { document.getElementById('recordId').value = result.recordId; }
                 } else if (result.status === 'success_text') {
                     statusBox.className = 'status-success';
