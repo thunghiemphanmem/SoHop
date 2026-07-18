@@ -616,6 +616,8 @@ function extractToForm(index) {
 
                 document.getElementById('location').value = extLocation;
                 document.getElementById('attendees').value = extAttendees;
+                
+                // 4. GÁN NỘI DUNG VÀO KHUNG TRÊN
                 document.getElementById('rawContent').value = pureContent;
                 
                 if (extDate) {
@@ -626,15 +628,15 @@ function extractToForm(index) {
 
                 const statusBox = document.getElementById('statusBox');
                 
-                // KIỂM TRA CỜ: Chỉ hiển thị thông báo "Bóc tách" nếu đang dùng chức năng Tìm kiếm thông thường.
-                // Nếu đang hiển thị Báo cáo AI (cờ = true) thì BỎ QUA, giữ nguyên báo cáo để xem tiếp.
-                if (statusBox.dataset.isAiReport !== "true") {
+                // 5. KIỂM TRA TOÀN DIỆN: CHỈ HIỂN THỊ THÔNG BÁO BÓC TÁCH NẾU KHÔNG ĐANG CÓ BÁO CÁO AI
+                // Nếu window.isAiReportActive === true, khối lệnh này sẽ bị BỎ QUA hoàn toàn, bảo vệ Khung dưới.
+                if (window.isAiReportActive !== true && statusBox.innerHTML.indexOf('KẾT QUẢ PHÂN TÍCH TỪ AI') === -1) {
                     statusBox.className = 'status-success';
                     statusBox.innerHTML = 'Đã bóc tách Biên bản vào các trường. Sẵn sàng chỉnh sửa & Ghi đè!';
                     statusBox.style.display = 'block';
                 }
 
-                // Cuộn trang lên ô tiêu đề để xem nội dung đã nạp vào form
+                // 6. CUỘN TRANG LÊN KHUNG TRÊN ĐỂ CÁN BỘ XEM NỘI DUNG
                 document.getElementById('meetingTitle').scrollIntoView({ behavior: "smooth", block: "center" });
             }
         }
@@ -659,7 +661,7 @@ async function searchMeetingAI() {
                 return; 
             }
             
-            // XÓA RỖNG KHUNG TRÊN THEO YÊU CẦU ĐỂ TẬP TRUNG XEM BÁO CÁO AI
+            // 1. NGAY LẬP TỨC XÓA RỖNG KHUNG TRÊN NHƯ YÊU CẦU
             rawContentField.value = '';
             
             document.getElementById('searchResultsSection').style.display = 'none';
@@ -668,15 +670,14 @@ async function searchMeetingAI() {
             toggleButtons(true);
             document.getElementById('btnAiSearch').disabled = true;
             
+            // 2. TẮT CỜ BẢO VỆ ĐỂ NẠP TRẠNG THÁI LOADING
+            window.isAiReportActive = false;
+            
             statusBox.style.display = 'block';
             statusBox.className = 'status-loading';
             statusBox.innerHTML = 'Trợ lý AI đang quét sổ và trích xuất dữ liệu phân tích theo yêu cầu...';
-            statusBox.dataset.isAiReport = "false"; // Đặt lại trạng thái cờ
             
-            const payload = { 
-                action: 'ai_search', 
-                keyword: aiQuery 
-            };
+            const payload = { action: 'ai_search', keyword: aiQuery };
             
             try {
                 const response = await fetch(KET_NOI.URL_API_BACKEND, {
@@ -693,12 +694,11 @@ async function searchMeetingAI() {
                         window.searchResultsData = result.data;
                     }
 
+                    // 3. BẬT CỜ BẢO VỆ: KHÓA CHẶT KHUNG DƯỚI, KHÔNG CHO AI XÓA NỮA
+                    window.isAiReportActive = true;
+                    
                     statusBox.className = 'status-success';
                     statusBox.style.textAlign = 'left';
-                    
-                    // GẮN CỜ BẢO VỆ KẾT QUẢ AI
-                    statusBox.dataset.isAiReport = "true"; 
-                    
                     let htmlReport = result.text.replace(/\n/g, '<br>');
                     
                     statusBox.innerHTML = `
