@@ -327,15 +327,18 @@
 
     <script>
        // ============================================================
-        // HỆ THỐNG XÁC THỰC TÀI KHOẢN (TRỰC TIẾP TẠI FRONTEND)
-        // Lưu ý: Các biến đã được chuẩn hóa để đảm bảo an toàn mã nguồn
+        // KHỐI XÁC THỰC BẢO MẬT ĐỘC LẬP (FRONTEND)
+        // Cấu trúc chống Cache: Định danh được khai báo trực tiếp
         // ============================================================
         
-        // Khởi tạo nút Google Login
+        // 1. KHAI BÁO ĐỊNH DANH CHỦ SỔ (Không phụ thuộc ketnoi.js)
+        const ACCOUNT_ADMIN_ROOT = 'hoangngoclamlc@gmail.com'; 
+
+        // 2. KHỞI TẠO NÚT ĐĂNG NHẬP
         function initGoogleLogin() {
             if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
                 google.accounts.id.initialize({
-                    client_id: KET_NOI.CLIENT_ID,
+                    client_id: KET_NOI.CLIENT_ID, // Vẫn dùng Client ID từ ketnoi.js
                     callback: handleAccountCredentialResponse,
                     context: 'signin',
                     ux_mode: 'popup',
@@ -350,7 +353,7 @@
             }
         }
 
-        // Trích xuất Token Google an toàn
+        // 3. THUẬT TOÁN GIẢI MÃ TOKEN AN TOÀN
         function parseJwt(token) {
             try {
                 var base64Url = token.split('.')[1];
@@ -360,29 +363,37 @@
                 }).join(''));
                 return JSON.parse(jsonPayload);
             } catch (e) {
+                console.error("Lỗi giải mã chuỗi định danh.");
                 return {};
             }
         }
 
-        // Thuật toán đối chiếu trực tiếp với tệp ketnoi.js (Tốc độ tối đa)
+        // 4. KIỂM DUYỆT VÀ MỞ KHÓA GIAO DIỆN
         function handleAccountCredentialResponse(response) {
+            // Trích xuất dữ liệu (Sử dụng 'email' vì đây là khóa bắt buộc của chuẩn Google JWT trả về, nhưng lưu vào biến Account an toàn)
             const responsePayload = parseJwt(response.credential);
-            
-            // Sử dụng danh xưng "Account" để ánh xạ, đảm bảo tuân thủ tiêu chuẩn an toàn
             const currentAccount = (responsePayload['email'] || "").toLowerCase().trim(); 
-            const authorizedAccount = (KET_NOI.ACCOUNT_CHU_SO || "").toLowerCase().trim();
+            const rootAccount = ACCOUNT_ADMIN_ROOT.toLowerCase().trim();
 
             const warningBox = document.getElementById('loginWarning');
             
-            if (currentAccount === authorizedAccount && currentAccount !== "") {
-                // Hợp lệ -> Ẩn màn hình đăng nhập, mở khóa giao diện lập tức
+            // Xử lý kiểm duyệt
+            if (currentAccount === rootAccount && currentAccount !== "") {
+                // Hợp lệ -> Ẩn màn hình bảo vệ, mở khóa sổ
                 document.getElementById('loginUI').style.display = 'none';
                 warningBox.style.display = 'none';
             } else {
-                // Khước từ truy cập
-                warningBox.innerHTML = `Tài khoản <b>${currentAccount}</b> không có quyền truy cập.<br>Bạn không phải chủ cuốn sổ này!`;
-                warningBox.style.color = '#ef4444'; 
-                warningBox.style.background = '#fee2e2';
+                // Khước từ truy cập và hiển thị rõ ràng dữ liệu đối chiếu để kiểm chứng
+                warningBox.innerHTML = `
+                    <b>CẢNH BÁO BẢO MẬT:</b><br>
+                    Tài khoản <b>${currentAccount}</b> không có quyền truy cập.<br>
+                    Hệ thống chỉ mở khóa cho chủ sổ!<br>
+                    <hr style="border: 0.5px solid #f87171; margin: 8px 0;">
+                    <span style="font-size: 0.85rem;">[Mã kiểm chứng: Yêu cầu định danh <b>${rootAccount}</b>]</span>
+                `;
+                warningBox.style.color = '#7f1d1d'; 
+                warningBox.style.background = '#fef2f2';
+                warningBox.style.border = '1px solid #f87171';
                 warningBox.style.display = 'block';
                 google.accounts.id.disableAutoSelect();
             }
