@@ -4,7 +4,11 @@ const KET_NOI = {
   
   // Khai báo Google Client ID dùng cho đăng nhập
   CLIENT_ID: '95180316485-a577mlt4a1ve3u52pd0t4rkm6bnljuns.apps.googleusercontent.com',
-  
+  // Đường dẫn API từ Google Apps Script (Backend)
+    URL_API_BACKEND: 'ĐƯỜNG_DẪN_MACRO_CỦA_BẠN_Ở_ĐÂY', 
+
+    // ĐỊNH DANH CHỦ SỔ (Xác thực trực tiếp tại Client)
+    ACCOUNT_CHU_SO: 'hoangngoclamlc@gmail.com',
   // Thông tin tổ chức và định danh hiển thị
   TEN_TO_CHUC: 'TRƯỜNG TH VÀ THCS HỢP THÀNH',
   TIEU_DE_PHAN_MEM: 'SỔ HỌP THÔNG MINH',
