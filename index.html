@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sổ Họp Thông Minh</title>
-    <script src="ketnoi.js"></script>
-    <!-- Tích hợp thư viện Google Identity Services (Tải ngầm, khởi tạo bằng JS) -->
+    <!-- Thư viện Đăng nhập Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Gọi tệp cấu hình trung tâm với tham số chống lưu cache -->
+    <script src="ketnoi.js?v=3.1"></script>
     <style>
         :root {
             --primary: #0284c7;
@@ -16,202 +17,60 @@
             --text: #1e293b;
             --border: #cbd5e1;
         }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-        }
-        
-        /* Lớp phủ UI Đăng nhập */
-        #loginUI {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #f0fdf4; z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-        }
-        .custom-login-box {
-            background: white; padding: 35px 30px 25px 30px; 
-            border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
-            text-align: center; max-width: 450px; width: 90%;
-            border-top: 6px solid #1e3a8a;
-        }
-        .login-logo { width: 85px; height: auto; margin-bottom: 15px; }
-        .login-title { 
-            color: #b91c1c; margin: 0 0 10px 0; font-size: 1.4rem; 
-            text-transform: uppercase; font-weight: bold; 
-        }
-        .login-subtitle {
-            color: #1e3a8a; margin: 0 0 20px 0; font-size: 1.1rem;
-            text-transform: uppercase; font-weight: bold;
-        }
-        .login-version {
-            color: #b91c1c; font-weight: bold; font-size: 0.95rem; margin-bottom: 20px;
-        }
-        .google-btn-container {
-            display: flex; justify-content: center; margin-bottom: 15px; min-height: 44px;
-        }
-        .guest-btn {
-            background: #ea580c; color: white; width: 100%; max-width: 250px;
-            padding: 10px; border-radius: 6px; font-size: 1rem; font-weight: bold;
-            border: none; cursor: pointer; margin-bottom: 20px;
-            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-        }
-        .guest-btn:hover { background: #c2410c; }
-        .login-footer {
-            color: #6b7280; font-size: 0.85rem; font-weight: bold;
-            padding-top: 15px; text-transform: uppercase; letter-spacing: 0.5px;
-        }
-
-        .container {
-            background: var(--card);
-            width: 100%;
-            max-width: 98%;
-            min-height: 100vh;
-            padding: 0 10px 20px 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
-            box-sizing: border-box;
-        }
-        
-        .header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(8px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8px 10px;
-            margin-bottom: 5px;
-            border-bottom: 2px solid var(--primary);
-            min-height: 40px;
-        }
-        .header img { 
-            position: absolute; left: 10px; width: 38px; height: auto; display: block; 
-        }
-        .header h1 { 
-            margin: 0; color: var(--primary); font-size: 1.25rem; font-weight: 700; 
-            line-height: 1.2; text-transform: uppercase; text-align: center;
-        }
-        
-        .compact-header-grid {
-            display: grid; grid-template-columns: 60% 40%; gap: 4px; margin-bottom: 5px;
-            background: #f8fafc; padding: 4px; border-radius: 6px; border: 1px solid var(--border);
-        }
-        
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; display: flex; justify-content: center; }
+        .container { background: var(--card); width: 100%; max-width: 98%; min-height: 100vh; padding: 0 10px 20px 10px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.05); box-sizing: border-box; }
+        .header { position: sticky; top: 0; z-index: 1000; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; padding: 8px 10px; margin-bottom: 5px; border-bottom: 2px solid var(--primary); min-height: 40px; }
+        .header img { position: absolute; left: 10px; width: 38px; height: auto; display: block; }
+        .header h1 { margin: 0; color: var(--primary); font-size: 1.25rem; font-weight: 700; line-height: 1.2; text-transform: uppercase; text-align: center; }
+        .compact-header-grid { display: grid; grid-template-columns: 60% 40%; gap: 4px; margin-bottom: 5px; background: #f8fafc; padding: 4px; border-radius: 6px; border: 1px solid var(--border); }
         .form-group { display: flex; flex-direction: row; align-items: center; margin: 0; padding: 0; }
         label { font-weight: 600; font-size: 0.85rem; margin-right: 5px; margin-bottom: 0; color: #334155; white-space: nowrap; }
-        input, textarea {
-            flex: 1; width: 100%; padding: 0.3rem; border: 1px solid var(--border);
-            border-radius: 4px; box-sizing: border-box; font-family: inherit;
-        }
-        
+        input, textarea { flex: 1; width: 100%; padding: 0.3rem; border: 1px solid var(--border); border-radius: 4px; box-sizing: border-box; font-family: inherit; }
         .search-row-container { display: flex; flex-direction: row; align-items: center; gap: 4px; }
         .search-row-container label { margin-right: 4px; }
         .search-row-container input { flex: 1; }
         .search-row-container button { padding: 0.4rem 0.8rem; white-space: nowrap; width: auto; flex: 0 0 auto; }
-
         .content-group { margin-bottom: 5px; }
         textarea { height: calc(100vh - 520px); min-height: 300px; resize: vertical; font-size: 0.95rem; line-height: 1.4; }
-        
-        .all-actions-row {
-            display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px;
-            position: sticky; bottom: 0; background-color: var(--card); padding: 12px 0 10px 0;
-            margin-top: 5px; z-index: 1000; border-top: 1px dashed var(--border); 
-        }
+        .all-actions-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; position: sticky; bottom: 0; background-color: var(--card); padding: 12px 0 10px 0; margin-top: 5px; z-index: 1000; border-top: 1px dashed var(--border); }
         .all-actions-row button { padding: 0.5rem 0.2rem; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        
         button { padding: 0.5rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; border: none; border-radius: 4px; color: white; transition: all 0.2s; }
         button:hover { opacity: 0.9; }
-        .btn-reformat { background: #3b82f6; }
-        .btn-draft { background: #8b5cf6; }
-        .btn-save-draft { background: #f59e0b; color: #fff; } 
-        .btn-generate { background: #10b981; }
-        .btn-export { background: #0ea5e9; }
-        .btn-reset { background: #ef4444; }
-        .btn-search { background: var(--primary); }
+        .btn-reformat { background: #3b82f6; } .btn-draft { background: #8b5cf6; } .btn-save-draft { background: #f59e0b; color: #fff; } .btn-generate { background: #10b981; } .btn-export { background: #0ea5e9; } .btn-reset { background: #ef4444; } .btn-search { background: var(--primary); }
         button:disabled { opacity: 0.6; cursor: not-allowed; }
-        
         #statusBox { margin-top: 8px; padding: 0.5rem; border-radius: 4px; font-size: 0.9rem; text-align: center; }
-        .status-loading { background: #e0f2fe; color: #0284c7; }
-        .status-success { background: #dcfce7; color: #166534; }
-        .status-error { background: #fee2e2; color: #991b1b; }
-        
+        .status-loading { background: #e0f2fe; color: #0284c7; } .status-success { background: #dcfce7; color: #166534; } .status-error { background: #fee2e2; color: #991b1b; }
         .divider { margin: 10px 0; border-top: 1px dashed var(--border); }
         .search-results { max-height: 250px; overflow-y: auto; padding: 0; list-style: none; margin-top: 5px; }
         .result-item { padding: 8px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; }
         .result-item a { text-decoration: none; font-weight: 600; color: var(--primary); }
-        
         .section-title { font-size: 0.85rem; font-weight: bold; color: var(--secondary); margin-bottom: 2px; text-transform: uppercase; }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.8); z-index: 2000; display: none; justify-content: center; align-items: flex-start;
-            overflow-y: auto; padding: 30px 10px; box-sizing: border-box; backdrop-filter: blur(4px);
-        }
-        .modal-content {
-            background: #cbd5e1; width: 100%; max-width: 900px;
-            border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); display: flex; flex-direction: column; position: relative;
-        }
-        .modal-header {
-            background: #fff; padding: 15px 20px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 3px solid var(--primary); position: sticky; top: 0; z-index: 10;
-        }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.8); z-index: 2000; display: none; justify-content: center; align-items: flex-start; overflow-y: auto; padding: 30px 10px; box-sizing: border-box; backdrop-filter: blur(4px); }
+        .modal-content { background: #cbd5e1; width: 100%; max-width: 900px; border-radius: 8px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); display: flex; flex-direction: column; position: relative; }
+        .modal-header { background: #fff; padding: 15px 20px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center; border-bottom: 3px solid var(--primary); position: sticky; top: 0; z-index: 10; }
         .modal-header h3 { margin: 0; color: var(--primary); font-size: 1.2rem; }
         .modal-actions { display: flex; gap: 10px; }
         .preview-area-container { padding: 20px; display: flex; justify-content: center; overflow-x: auto; }
-        .preview-a4 {
-            background: white; width: 21cm; min-height: 29.7cm; padding: 2cm 2cm 2cm 3cm;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); 
-            box-sizing: border-box; font-family: 'Times New Roman', Times, serif; font-size: 14pt; line-height: 1.5; color: black;
-        }
-
-        @media screen and (max-width: 800px) {
-            .all-actions-row { grid-template-columns: repeat(3, 1fr); }
-            .preview-a4 { width: 100%; padding: 1.5cm; }
-        }
-        @media screen and (max-width: 600px) {
-            .compact-header-grid { grid-template-columns: 1fr; }
-            .form-group { flex-direction: column; align-items: flex-start; }
-            .all-actions-row { grid-template-columns: repeat(2, 1fr); }
-            .search-row-container { flex-direction: column; align-items: flex-start; }
-            .search-row-container button { width: 100%; margin-top: 4px; }
-            .modal-header { flex-direction: column; gap: 10px; align-items: flex-start; }
-            .modal-actions { width: 100%; }
-            .modal-actions button { flex: 1; }
-            .header h1 { font-size: 1.1rem; margin-left: 40px; } 
-        }
+        .preview-a4 { background: white; width: 21cm; min-height: 29.7cm; padding: 2cm 2cm 2cm 3cm; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); box-sizing: border-box; font-family: 'Times New Roman', Times, serif; font-size: 14pt; line-height: 1.5; color: black; }
+        @media screen and (max-width: 800px) { .all-actions-row { grid-template-columns: repeat(3, 1fr); } .preview-a4 { width: 100%; padding: 1.5cm; } }
+        @media screen and (max-width: 600px) { .compact-header-grid { grid-template-columns: 1fr; } .form-group { flex-direction: column; align-items: flex-start; } .all-actions-row { grid-template-columns: repeat(2, 1fr); } .search-row-container { flex-direction: column; align-items: flex-start; } .search-row-container button { width: 100%; margin-top: 4px; } .modal-header { flex-direction: column; gap: 10px; align-items: flex-start; } .modal-actions { width: 100%; } .modal-actions button { flex: 1; } .header h1 { font-size: 1.1rem; margin-left: 40px; } }
     </style>
 </head>
 <body>
-
-    <!-- MÀN HÌNH ĐĂNG NHẬP -->
-    <div id="loginUI">
-        <div class="custom-login-box">
-            <img src="https://i.ibb.co/d0JNW94Z/logo-l-a-ch-n6.png" alt="Logo" class="login-logo">
+    <!-- KHỐI MÀN HÌNH KHÓA ĐĂNG NHẬP (Bổ sung lại) -->
+    <div id="loginUI" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15,23,42,0.95); z-index:9999; display:flex; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px);">
+        <div style="background:#fff; padding:30px; border-radius:8px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.5); max-width:400px; width:90%;">
+            <img src="" id="loginLogo" style="width:80px; margin-bottom:15px; display:none;">
+            <h2 style="color:#0284c7; margin-top:0;">XÁC THỰC BẢO MẬT</h2>
+            <p style="color:#475569; font-size:0.9rem; margin-bottom:20px;">Hệ thống Sổ Họp Thông Minh yêu cầu cấp quyền truy cập. Vui lòng sử dụng tài khoản cán bộ để tiếp tục.</p>
             
-            <h2 class="login-title">SỔ HỌP THÔNG MINH</h2>
-            <h3 class="login-subtitle">TRƯỜNG TH&THCS HỢP THÀNH</h3>
+            <div id="googleButtonDiv" style="display:flex; justify-content:center; margin-bottom:15px;"></div>
             
-            <div class="login-version">Phiên bản: V2.5.2026</div>
-            
-            <!-- Vùng chứa nút đăng nhập Google được khởi tạo an toàn từ JS -->
-            <div class="google-btn-container">
-                <div id="googleButtonDiv"></div>
-            </div>
-            
-  
-            <!-- Hộp thoại cảnh báo lỗi chỉ hiện lên sau khi check Token sai -->
-            <div id="loginWarning" style="color: #ef4444; background: #fee2e2; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 0.95rem; font-weight: bold; display: none; line-height: 1.4;">
-            </div>
-            
-            <div class="login-footer">Phát triển bởi: HOÀNG NGỌC LÂM</div>
+            <div id="loginWarning" style="display:none; margin-top:15px; padding:10px; font-size:0.85rem; border-radius:4px;"></div>
         </div>
     </div>
 
+    <!-- KHỐI GIAO DIỆN CHÍNH -->
     <div class="container">
         <div class="header" id="headerArea"></div>
         <input type="hidden" id="recordId" value="">
@@ -220,19 +79,19 @@
         <div class="compact-header-grid" style="background: #fff; border-color: #94a3b8;">
             <div class="form-group">
                 <label>CQ Chủ quản:</label>
-                <input type="text" id="orgParent" value="UBND XÃ HỢP THÀNH" placeholder="Cơ quan cấp trên...">
+                <input type="text" id="orgParent" value="" placeholder="Cơ quan cấp trên...">
             </div>
             <div class="form-group">
                 <label>Nơi ban hành:</label>
-                <input type="text" id="docPlace" value="Hợp Thành" placeholder="Địa danh...">
+                <input type="text" id="docPlace" value="" placeholder="Địa danh...">
             </div>
             <div class="form-group">
                 <label>Cơ quan/Đơn vị:</label>
-                <input type="text" id="orgName" value="TRƯỜNG TH&THCS HỢP THÀNH" placeholder="Tên đơn vị...">
+                <input type="text" id="orgName" value="" placeholder="Tên đơn vị...">
             </div>
             <div class="form-group">
                 <label>Số văn bản:</label>
-                <input type="text" id="docNumber" value="/ BB-THHT" placeholder="Ví dụ: 12/BB-THHT">
+                <input type="text" id="docNumber" value="" placeholder="Ví dụ: 12/BB-THHT">
             </div>
         </div>
 
@@ -261,7 +120,6 @@
             <input type="text" id="focusNote" placeholder="Ví dụ: Nhấn mạnh công tác chuyên môn, kiểm tra hồ sơ...">
         </div>
 
-        <!-- Khối Tìm Kiếm & Hỏi AI -->
         <div class="form-group search-row-container" style="margin-bottom: 6px; background: #f0fdf4; padding: 6px; border-radius: 4px; border: 1px solid #bbf7d0; align-items: center; flex-wrap: wrap; gap: 8px;">
             <div style="display: flex; align-items: center; flex: 1; min-width: 250px;">
                 <label style="color:#16a34a; font-size:0.9rem;">🔍 Tìm Sổ:</label>
@@ -276,7 +134,6 @@
             </div>
         </div>
         
-        <!-- KHỐI NỘI DUNG FORM ĐƯỢC ĐƯA LÊN TRÊN -->
         <div id="meetingContentSection">
             <div class="content-group">
                 <label style="color:var(--primary); font-size:1rem; display: block; margin-bottom: 3px;">Nội dung diễn biến (Khung nhập thô):</label>
@@ -295,7 +152,6 @@
             </div>
         </div>
 
-        <!-- KHỐI DANH SÁCH TÌM KIẾM ĐƯỢC CHUYỂN XUỐNG DƯỚI CÙNG -->
         <div id="searchResultsSection" style="display:none; margin-top: 15px; margin-bottom: 8px; background: #fafafa; border: 1px solid var(--border); border-radius: 6px; padding: 6px;">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 4px;">
                 <span style="font-weight: 600; color: var(--primary); font-size: 0.9rem;">Danh sách kết quả tìm kiếm:</span>
@@ -303,7 +159,7 @@
             </div>
             <ul id="searchResults" class="search-results" style="max-height: 250px; overflow-y: auto; padding: 0; margin: 0; list-style: none;"></ul>
         </div>
-    </div> <!-- Thẻ đóng của class="container" -->
+    </div>
 
     <!-- KHỐI GIAO DIỆN MODAL XEM TRƯỚC VĂN BẢN -->
     <div id="previewModal" class="modal-overlay">
@@ -322,19 +178,42 @@
     </div>
 
     <script>
-       // ============================================================
-        // KHỐI XÁC THỰC BẢO MẬT ĐỘC LẬP (FRONTEND)
-        // Cấu trúc chống Cache: Định danh được khai báo trực tiếp
-        // ============================================================
+        window.searchResultsData = [];
+        window.previewDataCache = null;
+        window.isAiReportActive = false;
         
-        // 1. KHAI BÁO ĐỊNH DANH CHỦ SỔ (Không phụ thuộc ketnoi.js)
-        const ACCOUNT_ADMIN_ROOT = 'hoangngoclamlc@gmail.com'; 
+        window.onload = function() {
+            // Nạp cấu hình từ KET_NOI vào giao diện
+            document.getElementById('headerArea').innerHTML = `
+                <img src="${KET_NOI.LOGO_TRUONG || ''}" alt="Logo" onerror="this.style.display='none'">
+                <h1>${KET_NOI.TIEU_DE_PHAN_MEM || ''}</h1>
+            `;
 
-        // 2. KHỞI TẠO NÚT ĐĂNG NHẬP
+            // Nạp Logo vào Màn hình khóa
+            const loginLogo = document.getElementById('loginLogo');
+            if (KET_NOI.LOGO_TRUONG) {
+                loginLogo.src = KET_NOI.LOGO_TRUONG;
+                loginLogo.style.display = 'inline-block';
+            }
+
+            document.getElementById('orgParent').value = KET_NOI.CQ_CHU_QUAN || '';
+            document.getElementById('orgName').value = KET_NOI.TEN_TO_CHUC || '';
+            document.getElementById('docPlace').value = KET_NOI.NOI_BAN_HANH || '';
+            document.getElementById('docNumber').value = KET_NOI.MA_SO_VAN_BAN || '';
+            
+            setNow();
+            
+            // Khởi tạo luồng xác thực bảo mật
+            initGoogleLogin();
+        };
+
+        // ============================================================
+        // KHỐI XÁC THỰC BẢO MẬT (FRONTEND) - Đọc động từ ketnoi.js
+        // ============================================================
         function initGoogleLogin() {
             if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
                 google.accounts.id.initialize({
-                    client_id: KET_NOI.CLIENT_ID, // Vẫn dùng Client ID từ ketnoi.js
+                    client_id: KET_NOI.CLIENT_ID,
                     callback: handleAccountCredentialResponse,
                     context: 'signin',
                     ux_mode: 'popup',
@@ -349,7 +228,6 @@
             }
         }
 
-        // 3. THUẬT TOÁN GIẢI MÃ TOKEN AN TOÀN
         function parseJwt(token) {
             try {
                 var base64Url = token.split('.')[1];
@@ -364,54 +242,36 @@
             }
         }
 
-        // 4. KIỂM DUYỆT VÀ MỞ KHÓA GIAO DIỆN
         function handleAccountCredentialResponse(response) {
-            // Trích xuất dữ liệu (Sử dụng 'email' vì đây là khóa bắt buộc của chuẩn Google JWT trả về, nhưng lưu vào biến Account an toàn)
             const responsePayload = parseJwt(response.credential);
+            // Thuộc tính chuẩn của API Google trả về, biến gán tuân thủ tuyệt đối chuẩn Account
             const currentAccount = (responsePayload['email'] || "").toLowerCase().trim(); 
-            const rootAccount = ACCOUNT_ADMIN_ROOT.toLowerCase().trim();
 
             const warningBox = document.getElementById('loginWarning');
             
-            // Xử lý kiểm duyệt
-            if (currentAccount === rootAccount && currentAccount !== "") {
-                // Hợp lệ -> Ẩn màn hình bảo vệ, mở khóa sổ
+            // Đối chiếu với danh sách tại KET_NOI.LIST_ACCOUNT_ADMIN (tệp ketnoi.js)
+            if (KET_NOI.LIST_ACCOUNT_ADMIN.includes(currentAccount) && currentAccount !== "") {
                 document.getElementById('loginUI').style.display = 'none';
-                warningBox.style.display = 'none';
+                if(warningBox) warningBox.style.display = 'none';
             } else {
-                // Khước từ truy cập và hiển thị rõ ràng dữ liệu đối chiếu để kiểm chứng
-                warningBox.innerHTML = `
-                    <b>CẢNH BÁO BẢO MẬT:</b><br>
-                    Tài khoản <b>${currentAccount}</b> không có quyền truy cập.<br>
-                    Hệ thống chỉ mở khóa cho chủ sổ!<br>
-                    <hr style="border: 0.5px solid #f87171; margin: 8px 0;">
-                    <span style="font-size: 0.85rem;">[Mã kiểm chứng: Yêu cầu định danh <b>${rootAccount}</b>]</span>
-                `;
-                warningBox.style.color = '#7f1d1d'; 
-                warningBox.style.background = '#fef2f2';
-                warningBox.style.border = '1px solid #f87171';
-                warningBox.style.display = 'block';
+                if(warningBox) {
+                    warningBox.innerHTML = `
+                        <b>CẢNH BÁO BẢO MẬT:</b><br>
+                        Tài khoản <b>${currentAccount}</b> không có quyền truy cập.<br>
+                        Hệ thống chỉ mở khóa cho các chủ sổ được cấp phép!<br>
+                    `;
+                    warningBox.style.color = '#7f1d1d'; 
+                    warningBox.style.background = '#fef2f2';
+                    warningBox.style.border = '1px solid #f87171';
+                    warningBox.style.display = 'block';
+                }
                 google.accounts.id.disableAutoSelect();
             }
         }
-        // ============================================================
-        // MÃ NGUỒN CHÍNH CỦA ỨNG DỤNG
-        // ============================================================
-        window.searchResultsData = [];
-        window.previewDataCache = null;
-        window.isAiReportActive = false; // Cờ toàn cục bảo vệ báo cáo AI
-        
-        window.onload = function() {
-            document.getElementById('headerArea').innerHTML = `
-                <img src="${KET_NOI.LOGO_TRUONG || ''}" alt="Logo" onerror="this.style.display='none'">
-                <h1>${KET_NOI.TIEU_DE_PHAN_MEM || ''}</h1>
-            `;
-            setNow();
-            
-            // Kích hoạt nút đăng nhập an toàn
-            initGoogleLogin();
-        };
 
+        // ============================================================
+        // KHỐI NGHIỆP VỤ XỬ LÝ (FRONTEND)
+        // ============================================================
         function setNow() {
             const now = new Date();
             now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
@@ -470,8 +330,10 @@
             const rawContentField = document.getElementById('rawContent');
             const statusBox = document.getElementById('statusBox');
             
+            // Đóng gói ID_SO_HOP từ cấu hình để gửi xuống Backend
             const payload = {
                 action: actionType,
+                idSoHop: KET_NOI.ID_SO_HOP, 
                 isDraft: (actionType === 'save_draft'),
                 recordId: document.getElementById('recordId').value, 
                 title: document.getElementById('meetingTitle').value,
@@ -521,7 +383,6 @@
                     statusBox.innerHTML = 'Trợ lý AI đang quét sổ và trích xuất dữ liệu phân tích theo yêu cầu...';
                     
                     let cleanText = result.text;
-                    
                     const matchPattern = /(?:NỘI DUNG CUỘC HỌP|NỘI DUNG VÀ KẾT LUẬN|NỘI DUNG CHÍNH)/i;
                     const markerMatch = cleanText.match(matchPattern);
                     if (markerMatch) {
@@ -573,14 +434,13 @@
             if(!keyword.trim()) { alert('Vui lòng nhập từ khóa!'); return; }
             
             window.isAiReportActive = false;
-            
             searchResultsSection.style.display = 'block';
             meetingContentSection.style.display = 'block';
             
             resultList.innerHTML = '<li class="result-item" style="justify-content:center; color:var(--primary); text-align:center;">Đang quét nội dung Sổ...</li>';
             toggleButtons(true);
             
-            const payload = { action: 'search', keyword: keyword };
+            const payload = { action: 'search', keyword: keyword, idSoHop: KET_NOI.ID_SO_HOP };
             
             try {
                 const response = await fetch(KET_NOI.URL_API_BACKEND, {
@@ -621,7 +481,6 @@
         function extractToForm(index) {
             if(window.searchResultsData && window.searchResultsData[index]) {
                 const dataBlock = window.searchResultsData[index];
-                
                 document.getElementById('meetingContentSection').style.display = 'block';
                 document.getElementById('meetingTitle').value = dataBlock.title || '';
                 
@@ -651,21 +510,11 @@
                 }
 
                 let pureContent = fullContent;
-                
-                const splitMarkers = [
-                    "--- NỘI DUNG VÀ KẾT LUẬN ---",
-                    "**NỘI DUNG CUỘC HỌP**",
-                    "NỘI DUNG CUỘC HỌP",
-                    "NỘI DUNG CHÍNH"
-                ];
-                
+                const splitMarkers = [ "--- NỘI DUNG VÀ KẾT LUẬN ---", "**NỘI DUNG CUỘC HỌP**", "NỘI DUNG CUỘC HỌP", "NỘI DUNG CHÍNH" ];
                 for (let marker of splitMarkers) {
                     const regex = new RegExp(marker.replace(/\*/g, '\\*'), "i");
                     const parts = pureContent.split(regex);
-                    if (parts.length > 1) {
-                        pureContent = parts[1];
-                        break; 
-                    }
+                    if (parts.length > 1) { pureContent = parts[1]; break; }
                 }
 
                 pureContent = pureContent.replace(/Để chuẩn hóa biên bản.*?NĐ-CP.*?\n/ig, '')
@@ -684,19 +533,16 @@
                 document.getElementById('rawContent').value = pureContent;
                 
                 if (extDate) {
-                    try {
-                        document.getElementById('meetingDate').value = parseFormattedDate(extDate);
-                    } catch (e) { console.error("Lỗi đồng bộ ngày tháng:", e); }
+                    try { document.getElementById('meetingDate').value = parseFormattedDate(extDate); } 
+                    catch (e) { console.error("Lỗi đồng bộ ngày tháng:", e); }
                 }
 
                 const statusBox = document.getElementById('statusBox');
-                
                 if (window.isAiReportActive !== true && statusBox.innerHTML.indexOf('KẾT QUẢ PHÂN TÍCH TỪ AI') === -1) {
                     statusBox.className = 'status-success';
                     statusBox.innerHTML = 'Đã bóc tách Biên bản vào các trường. Sẵn sàng chỉnh sửa & Ghi đè!';
                     statusBox.style.display = 'block';
                 }
-
                 document.getElementById('meetingTitle').scrollIntoView({ behavior: "smooth", block: "center" });
             }
         }
@@ -713,26 +559,21 @@
             const rawContentField = document.getElementById('rawContent'); 
             const statusBox = document.getElementById('statusBox');
             
-            if(!aiQuery.trim()) { 
-                alert('Vui lòng nhập nội dung yêu cầu AI tổng hợp!'); 
-                return; 
-            }
+            if(!aiQuery.trim()) { alert('Vui lòng nhập nội dung yêu cầu AI tổng hợp!'); return; }
             
             rawContentField.value = '';
-            
             document.getElementById('searchResultsSection').style.display = 'none';
             document.getElementById('meetingContentSection').style.display = 'block';
             
             toggleButtons(true);
             document.getElementById('btnAiSearch').disabled = true;
-            
             window.isAiReportActive = false; 
             
             statusBox.style.display = 'block';
             statusBox.className = 'status-loading';
             statusBox.innerHTML = 'Trợ lý AI đang quét sổ và trích xuất dữ liệu phân tích theo yêu cầu...';
             
-            const payload = { action: 'ai_search', keyword: aiQuery };
+            const payload = { action: 'ai_search', keyword: aiQuery, idSoHop: KET_NOI.ID_SO_HOP };
             
             try {
                 const response = await fetch(KET_NOI.URL_API_BACKEND, {
@@ -745,10 +586,7 @@
                 const result = await response.json();
                 
                 if(result.status === 'success_ai_search' || result.status === 'success_text') {
-                    if(result.data) {
-                        window.searchResultsData = result.data;
-                    }
-
+                    if(result.data) { window.searchResultsData = result.data; }
                     window.isAiReportActive = true; 
                     
                     statusBox.className = 'status-success';
@@ -763,7 +601,6 @@
                             </div>
                         </div>
                     `;
-                    
                     statusBox.scrollIntoView({ behavior: "smooth", block: "start" });
                 } else {
                     statusBox.className = 'status-error';
@@ -782,20 +619,14 @@
             const orgParent = document.getElementById('orgParent').value.trim() || 'CƠ QUAN CHỦ QUẢN';
             const orgName = document.getElementById('orgName').value.trim() || 'TÊN ĐƠN VỊ';
             let docNumber = document.getElementById('docNumber').value.trim() || '';
-            if(docNumber !== '' && !docNumber.toLowerCase().startsWith('số')) {
-                docNumber = 'Số: ' + docNumber;
-            }
+            if(docNumber !== '' && !docNumber.toLowerCase().startsWith('số')) { docNumber = 'Số: ' + docNumber; }
             const docPlace = document.getElementById('docPlace').value.trim() || '.........';
-            
             const title = document.getElementById('meetingTitle').value.trim() || 'NỘI DUNG CUỘC HỌP';
             const rawContent = document.getElementById('rawContent').value.trim();
             const location = document.getElementById('location').value.trim();
             const attendees = document.getElementById('attendees').value.trim();
             
-            if(!rawContent) {
-                alert("Không có nội dung cuộc họp để xuất ra Word!");
-                return;
-            }
+            if(!rawContent) { alert("Không có nội dung cuộc họp để xuất ra Word!"); return; }
 
             const rawDate = document.getElementById('meetingDate').value;
             let displayTime = '';
@@ -808,14 +639,11 @@
                 const year = d.getFullYear();
                 const hours = d.getHours().toString().padStart(2, '0');
                 const minutes = d.getMinutes().toString().padStart(2, '0');
-                
                 exportDateText = `ngày ${day} tháng ${month} năm ${year}`;
                 displayTime = `${hours} giờ ${minutes} phút, ngày ${day}/${month}/${year}`;
             }
 
-            window.previewDataCache = {
-                orgParent, orgName, docNumber, docPlace, title, rawContent, location, attendees, displayTime, exportDateText
-            };
+            window.previewDataCache = { orgParent, orgName, docNumber, docPlace, title, rawContent, location, attendees, displayTime, exportDateText };
 
             const webFormattedContent = rawContent.split('\n').map(line => {
                 if(line.trim() === '') return '<p style="margin-top: 6pt; margin-bottom: 0pt;">&nbsp;</p>';
@@ -858,9 +686,7 @@
             document.getElementById('previewModal').style.display = 'flex';
         }
 
-        function closePreviewModal() {
-            document.getElementById('previewModal').style.display = 'none';
-        }
+        function closePreviewModal() { document.getElementById('previewModal').style.display = 'none'; }
 
         function downloadWordFile() {
             if(!window.previewDataCache) return;
@@ -877,20 +703,11 @@
                 <meta charset='utf-8'>
                 <title>Export Doc</title>
                 <style>
-                    @page {
-                        size: 21cm 29.7cm;
-                        margin: 2cm 2cm 2cm 3cm; 
-                        mso-page-orientation: portrait;
-                    }
-                    body {
-                        font-family: 'Times New Roman', serif;
-                        font-size: 14pt;
-                        line-height: 1.5;
-                    }
+                    @page { size: 21cm 29.7cm; margin: 2cm 2cm 2cm 3cm; mso-page-orientation: portrait; }
+                    body { font-family: 'Times New Roman', serif; font-size: 14pt; line-height: 1.5; }
                     .header-table { width: 100%; border-collapse: collapse; border: none; margin-bottom: 20px; }
                     .header-table td { vertical-align: top; text-align: center; padding: 0; border: none; }
-                    .td-left { width: 40%; }
-                    .td-right { width: 60%; }
+                    .td-left { width: 40%; } .td-right { width: 60%; }
                     .org-parent { font-size: 13pt; text-transform: uppercase; }
                     .org-name { font-size: 13pt; font-weight: bold; text-transform: uppercase; }
                     .line-org { border-top: 1px solid black; width: 40%; margin: 0 auto; margin-top: 2px; margin-bottom: 5px; }
@@ -902,15 +719,7 @@
                     .main-title { text-align: center; font-size: 16pt; font-weight: bold; text-transform: uppercase; margin-top: 20px; margin-bottom: 5px;}
                     .sub-title { text-align: center; font-size: 14pt; font-weight: bold; margin-bottom: 20px; }
                     .section { margin-bottom: 10px; text-align: justify; }
-                    
-                    .content-line { 
-                        margin-top: 6pt; 
-                        margin-bottom: 0pt; 
-                        text-align: justify; 
-                        text-indent: 1cm; 
-                        line-height: 1.0; 
-                    }
-                    
+                    .content-line { margin-top: 6pt; margin-bottom: 0pt; text-align: justify; text-indent: 1cm; line-height: 1.0; }
                     .signature-table { width: 100%; margin-top: 30px; border: none; }
                     .signature-table td { width: 50%; text-align: center; vertical-align: top; border: none; font-weight: bold;}
                 </style>
@@ -944,10 +753,7 @@
                         <td>THƯ KÝ<br><span style="font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span></td>
                         <td>CHỦ TỌA<br><span style="font-weight: normal; font-style: italic;">(Ký, ghi rõ họ tên)</span></td>
                     </tr>
-                    <tr>
-                        <td style="height: 100px;"></td>
-                        <td></td>
-                    </tr>
+                    <tr><td style="height: 100px;"></td><td></td></tr>
                 </table>
             </body>
             </html>
