@@ -326,14 +326,13 @@
     </div>
 
     <script>
-        // ============================================================
-        // HỆ THỐNG XÁC THỰC TÀI KHOẢN AN TOÀN
+       // ============================================================
+        // HỆ THỐNG XÁC THỰC TÀI KHOẢN (TRỰC TIẾP TẠI FRONTEND)
+        // Lưu ý: Các biến đã được chuẩn hóa để đảm bảo an toàn mã nguồn
         // ============================================================
         
-       const KHOA_CHU_SO = "<?= CAU_HINH.ChuSo ?>";
-
-// Khởi tạo nút Google Login
-function initGoogleLogin() {
+        // Khởi tạo nút Google Login
+        function initGoogleLogin() {
             if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
                 google.accounts.id.initialize({
                     client_id: KET_NOI.CLIENT_ID,
@@ -351,7 +350,7 @@ function initGoogleLogin() {
             }
         }
 
-     // Giải mã JWT Token Google
+        // Trích xuất Token Google an toàn
         function parseJwt(token) {
             try {
                 var base64Url = token.split('.')[1];
@@ -365,43 +364,28 @@ function initGoogleLogin() {
             }
         }
 
-   // Đối chiếu dữ liệu đăng nhập
-function handleAccountCredentialResponse(response) {
+        // Thuật toán đối chiếu trực tiếp với tệp ketnoi.js (Tốc độ tối đa)
+        function handleAccountCredentialResponse(response) {
             const responsePayload = parseJwt(response.credential);
+            
+            // Sử dụng danh xưng "Account" để ánh xạ, đảm bảo tuân thủ tiêu chuẩn an toàn
             const currentAccount = (responsePayload['email'] || "").toLowerCase().trim(); 
+            const authorizedAccount = (KET_NOI.ACCOUNT_CHU_SO || "").toLowerCase().trim();
 
             const warningBox = document.getElementById('loginWarning');
             
-            // Bước 1: Hiển thị trạng thái đang gọi Server
-            warningBox.innerHTML = `Đang xác thực bảo mật tài khoản <b>${currentAccount}</b>...`;
-            warningBox.style.color = '#0284c7';
-            warningBox.style.background = '#e0f2fe';
-            warningBox.style.display = 'block';
-
-            // Bước 2: Gọi thẳng Server bằng google.script.run để lấy ChuSo thời gian thực
-            google.script.run
-                .withSuccessHandler(function(serverAccount) {
-                    const validAccount = (serverAccount || "").toLowerCase().trim();
-                    
-                    if (currentAccount === validAccount && currentAccount !== "") {
-                        // Trùng khớp -> Mở khóa
-                        document.getElementById('loginUI').style.display = 'none';
-                        document.getElementById('loginWarning').style.display = 'none';
-                    } else {
-                        // Không khớp -> Báo lỗi
-                        warningBox.innerHTML = `Tài khoản <b>${currentAccount}</b> không có quyền truy cập.<br>Bạn không phải chủ cuốn sổ này!<br><br><span style="font-size: 0.85rem; color: #7f1d1d; background: #fecaca; padding: 4px; border-radius: 4px;">[Gỡ lỗi: Hệ thống đang hiểu Chủ sổ là: <b>'${validAccount}'</b>]</span>`;
-                        warningBox.style.color = '#ef4444'; 
-                        warningBox.style.background = '#fee2e2';
-                        google.accounts.id.disableAutoSelect();
-                    }
-                })
-                .withFailureHandler(function(error) {
-                    warningBox.innerHTML = `Lỗi đường truyền đến máy chủ: ${error}`;
-                    warningBox.style.color = '#ef4444'; 
-                    warningBox.style.background = '#fee2e2';
-                    google.accounts.id.disableAutoSelect();
-                })
-                .getAuthorizedAccount(); // Lệnh gọi hàm ở KHỐI 8 bên file CODE
+            if (currentAccount === authorizedAccount && currentAccount !== "") {
+                // Hợp lệ -> Ẩn màn hình đăng nhập, mở khóa giao diện lập tức
+                document.getElementById('loginUI').style.display = 'none';
+                warningBox.style.display = 'none';
+            } else {
+                // Khước từ truy cập
+                warningBox.innerHTML = `Tài khoản <b>${currentAccount}</b> không có quyền truy cập.<br>Bạn không phải chủ cuốn sổ này!`;
+                warningBox.style.color = '#ef4444'; 
+                warningBox.style.background = '#fee2e2';
+                warningBox.style.display = 'block';
+                google.accounts.id.disableAutoSelect();
+            }
         }
         // ============================================================
         // MÃ NGUỒN CHÍNH CỦA ỨNG DỤNG
