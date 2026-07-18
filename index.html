@@ -26,19 +26,44 @@
             justify-content: center;
         }
         
-        /* Lớp phủ UI Đăng nhập */
+        /* Lớp phủ UI Đăng nhập - Nâng cấp theo mẫu Hình 2 */
         #loginUI {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg); z-index: 9999;
+            background-color: #f0fdf4; z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .login-box {
-            background: white; padding: 40px; border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); text-align: center;
-            max-width: 400px; width: 90%;
+        .custom-login-box {
+            background: white; padding: 35px 30px 25px 30px; 
+            border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.15); 
+            text-align: center; max-width: 450px; width: 90%;
+            border-top: 6px solid #1e3a8a;
         }
-        .login-box h2 { color: var(--primary); margin-top: 0; text-transform: uppercase; }
-        .login-box p { color: var(--secondary); margin-bottom: 25px; font-size: 0.95rem; }
+        .login-logo { width: 85px; height: auto; margin-bottom: 15px; }
+        .login-title { 
+            color: #b91c1c; margin: 0 0 10px 0; font-size: 1.4rem; 
+            text-transform: uppercase; font-weight: bold; 
+        }
+        .login-subtitle {
+            color: #1e3a8a; margin: 0 0 20px 0; font-size: 1.1rem;
+            text-transform: uppercase; font-weight: bold;
+        }
+        .login-version {
+            color: #b91c1c; font-weight: bold; font-size: 0.95rem; margin-bottom: 20px;
+        }
+        .google-btn-container {
+            display: flex; justify-content: center; margin-bottom: 15px;
+        }
+        .guest-btn {
+            background: #ea580c; color: white; width: 100%; max-width: 250px;
+            padding: 10px; border-radius: 6px; font-size: 1rem; font-weight: bold;
+            border: none; cursor: pointer; margin-bottom: 25px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .guest-btn:hover { background: #c2410c; }
+        .login-footer {
+            color: #6b7280; font-size: 0.85rem; font-weight: bold;
+            padding-top: 20px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
 
         .container {
             background: var(--card); width: 100%; max-width: 98%;
@@ -154,18 +179,31 @@
 </head>
 <body>
 
-    <!-- MÀN HÌNH ĐĂNG NHẬP (LỚP PHỦ BẢO MẬT) -->
+    <!-- MÀN HÌNH ĐĂNG NHẬP (LỚP PHỦ BẢO MẬT GIAO DIỆN MỚI) -->
     <div id="loginUI">
-        <div class="login-box">
-            <h2>Hệ thống quản lý</h2>
-            <p>Vui lòng đăng nhập bằng tài khoản Quản trị viên (Chủ sổ) để tiếp tục truy cập phần mềm.</p>
+        <div class="custom-login-box">
+            <img src="https://i.ibb.co/d0JNW94Z/logo-l-a-ch-n6.png" alt="Logo" class="login-logo">
             
-            <!-- Vùng chứa nút đăng nhập Google được khởi tạo từ JS thay vì HTML -->
-            <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+            <h2 class="login-title">SỔ HỌP THÔNG MINH</h2>
+            <h3 class="login-subtitle">TRƯỜNG TH&THCS HỢP THÀNH</h3>
+            
+            <div class="login-version">Phiên bản: V1.0.2026</div>
+            
+            <!-- Vùng chứa nút đăng nhập Google được khởi tạo từ JS -->
+            <div class="google-btn-container">
                 <div id="googleButtonDiv"></div>
             </div>
             
-            <div id="loginWarning" style="color: #ef4444; margin-top: 15px; font-weight: bold; display: none; padding: 10px; border-radius: 4px; background-color: #fee2e2;"></div>
+            <!-- Nút Đăng nhập Khách (Tạo hiệu ứng cảnh báo vì không có quyền) -->
+            <button class="guest-btn" onclick="document.getElementById('loginWarning').style.display='block'">
+                👤 Đăng nhập Khách
+            </button>
+            
+            <div id="loginWarning" style="color: #ef4444; margin-bottom: 15px; font-size: 0.9rem; font-weight: bold; display: none;">
+                Bạn không phải chủ cuốn sổ này!
+            </div>
+            
+            <div class="login-footer">Phát triển bởi: HOÀNG NGỌC LÂM</div>
         </div>
     </div>
 
