@@ -7,7 +7,7 @@
     <!-- Thư viện Đăng nhập Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <!-- Gọi tệp cấu hình trung tâm với tham số chống lưu cache -->
-    <script src="ketnoi.js?v=3.3"></script>
+    <script src="ketnoi.js?v=4.0"></script>
     <style>
         :root {
             --primary: #0284c7;
@@ -184,8 +184,10 @@
         window.previewDataCache = null;
         window.isAiReportActive = false;
         
+        // Cấu trúc Nâng cấp: Khởi tạo biến lưu trữ ID Sổ động theo Account
+        window.currentUserConfig = null;
+        
         window.onload = function() {
-            // Nạp cấu hình từ KET_NOI vào giao diện (Đã bổ sung Nút Đăng xuất)
             document.getElementById('headerArea').innerHTML = `
                 <img src="${KET_NOI.LOGO_TRUONG || ''}" alt="Logo" onerror="this.style.display='none'">
                 <h1>${KET_NOI.TIEU_DE_PHAN_MEM || ''}</h1>
@@ -205,18 +207,16 @@
             
             setNow();
             
-            // KIỂM TRA PHIÊN LÀM VIỆC LƯU TRỮ CỤC BỘ (LOCAL STORAGE)
+            // KIỂM TRA PHIÊN LÀM VIỆC TỪ LOCAL STORAGE ĐỂ XÁC NHẬN ACCOUNT
             const activeSession = localStorage.getItem('SessionAccountActive');
             if (activeSession) {
-                const isStillAuthorized = KET_NOI.LIST_ACCOUNT_ADMIN.some(function(acc) {
-                    return acc.toLowerCase().trim() === activeSession;
-                });
-                
-                if (isStillAuthorized) {
+                // Đối chiếu với từ điển đối tượng tại ketnoi.js
+                if (KET_NOI.PHAN_QUYEN_TAI_KHOAN && KET_NOI.PHAN_QUYEN_TAI_KHOAN[activeSession]) {
+                    window.currentUserConfig = KET_NOI.PHAN_QUYEN_TAI_KHOAN[activeSession];
                     document.getElementById('loginUI').style.display = 'none';
-                    return; // Thoát hàm, không hiển thị màn hình đăng nhập
+                    return; 
                 } else {
-                    localStorage.removeItem('SessionAccountActive'); // Xóa phiên nếu tài khoản đã bị gỡ khỏi danh sách
+                    localStorage.removeItem('SessionAccountActive'); 
                 }
             }
 
@@ -224,7 +224,7 @@
         };
 
         // ============================================================
-        // KHỐI XÁC THỰC BẢO MẬT (FRONTEND)
+        // KHỐI XÁC THỰC BẢO MẬT VÀ GÁN CẤU HÌNH THEO ĐỊNH DANH (FRONTEND)
         // ============================================================
         function initGoogleLogin() {
             if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
@@ -260,17 +260,15 @@
 
         function handleAccountCredentialResponse(response) {
             const responsePayload = parseJwt(response.credential);
+            // Chuỗi dữ liệu lấy từ Payload Google quy định (bắt buộc theo chuẩn token)
             const currentAccount = (responsePayload['email'] || "").toLowerCase().trim(); 
 
             const warningBox = document.getElementById('loginWarning');
             
-            const isAuthorized = KET_NOI.LIST_ACCOUNT_ADMIN.some(function(acc) {
-                return acc.toLowerCase().trim() === currentAccount;
-            });
-            
-            if (isAuthorized && currentAccount !== "") {
-                // NÂNG CẤP: Lưu trạng thái đăng nhập vào Local Storage
+            // XÁC MINH CÓ NẰM TRONG DANH SÁCH KHÓA CẤU HÌNH TỪ ĐIỂN KHÔNG
+            if (KET_NOI.PHAN_QUYEN_TAI_KHOAN && KET_NOI.PHAN_QUYEN_TAI_KHOAN[currentAccount]) {
                 localStorage.setItem('SessionAccountActive', currentAccount);
+                window.currentUserConfig = KET_NOI.PHAN_QUYEN_TAI_KHOAN[currentAccount];
                 
                 document.getElementById('loginUI').style.display = 'none';
                 if(warningBox) warningBox.style.display = 'none';
@@ -290,14 +288,13 @@
             }
         }
 
-        // HÀM XỬ LÝ SỰ KIỆN ĐĂNG XUẤT
         function executeLogout() {
             if (confirm("Thầy/Cô có chắc chắn muốn đăng xuất khỏi phiên làm việc hiện tại?")) {
                 localStorage.removeItem('SessionAccountActive');
                 if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
                     google.accounts.id.disableAutoSelect();
                 }
-                location.reload(); // Tải lại toàn bộ trang để khóa làm sạch hoàn toàn trạng thái
+                location.reload(); 
             }
         }
 
@@ -362,9 +359,10 @@
             const rawContentField = document.getElementById('rawContent');
             const statusBox = document.getElementById('statusBox');
             
+            // Đóng gói ID_SO_HOP theo cấu hình phiên động
             const payload = {
                 action: actionType,
-                idSoHop: KET_NOI.ID_SO_HOP, 
+                idSoHop: window.currentUserConfig.ID_SO_HOP, // TRUYỀN ID SỔ TỪ BIẾN CẤU HÌNH ĐỘNG
                 isDraft: (actionType === 'save_draft'),
                 recordId: document.getElementById('recordId').value, 
                 title: document.getElementById('meetingTitle').value,
@@ -411,7 +409,7 @@
                     if(result.recordId) { document.getElementById('recordId').value = result.recordId; }
                 } else if (result.status === 'success_text') {
                     statusBox.className = 'status-success';
-                    statusBox.innerHTML = 'Trợ lý AI đang quét sổ và trích xuất dữ liệu phân tích theo yêu cầu...';
+                    statusBox.innerHTML = 'Trợ lý AI đang xử lý hoàn thiện định dạng...';
                     
                     let cleanText = result.text;
                     const matchPattern = /(?:NỘI DUNG CUỘC HỌP|NỘI DUNG VÀ KẾT LUẬN|NỘI DUNG CHÍNH)/i;
@@ -471,7 +469,7 @@
             resultList.innerHTML = '<li class="result-item" style="justify-content:center; color:var(--primary); text-align:center;">Đang quét nội dung Sổ...</li>';
             toggleButtons(true);
             
-            const payload = { action: 'search', keyword: keyword, idSoHop: KET_NOI.ID_SO_HOP };
+            const payload = { action: 'search', keyword: keyword, idSoHop: window.currentUserConfig.ID_SO_HOP };
             
             try {
                 const response = await fetch(KET_NOI.URL_API_BACKEND, {
@@ -604,7 +602,7 @@
             statusBox.className = 'status-loading';
             statusBox.innerHTML = 'Trợ lý AI đang quét sổ và trích xuất dữ liệu phân tích theo yêu cầu...';
             
-            const payload = { action: 'ai_search', keyword: aiQuery, idSoHop: KET_NOI.ID_SO_HOP };
+            const payload = { action: 'ai_search', keyword: aiQuery, idSoHop: window.currentUserConfig.ID_SO_HOP };
             
             try {
                 const response = await fetch(KET_NOI.URL_API_BACKEND, {
