@@ -128,14 +128,13 @@
             grid-template-columns: repeat(6, 1fr);
             gap: 4px;
             
-            /* TỐI ƯU GIAO DIỆN: Cố định dính chặt vào đáy màn hình khi cuộn/zoom */
             position: sticky;
             bottom: 0;
-            background-color: var(--card); /* Phủ nền che văn bản cuộn bên dưới */
+            background-color: var(--card); 
             padding: 12px 0 10px 0;
             margin-top: 5px;
             z-index: 1000;
-            border-top: 1px dashed var(--border); /* Viền ngăn cách với khu vực gõ văn bản */
+            border-top: 1px dashed var(--border); 
         }
         .all-actions-row button {
             padding: 0.5rem 0.2rem;
@@ -291,21 +290,13 @@
             </div>
         </div>
         
-        <div id="searchResultsSection" style="display:none; margin-bottom: 8px; background: #fafafa; border: 1px solid var(--border); border-radius: 6px; padding: 6px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 4px;">
-                <span style="font-weight: 600; color: var(--primary); font-size: 0.9rem;">Danh sách kết quả tìm kiếm:</span>
-                <button onclick="closeSearchResults()" style="background: var(--secondary); padding: 2px 8px; font-size: 0.75rem; border: none; border-radius: 3px; color: white; cursor: pointer;">Đóng danh mục</button>
-            </div>
-            <ul id="searchResults" class="search-results" style="max-height: 250px; overflow-y: auto; padding: 0; margin: 0; list-style: none;"></ul>
-        </div>
-
+        <!-- KHỐI NỘI DUNG FORM ĐƯỢC ĐƯA LÊN TRÊN -->
         <div id="meetingContentSection">
             <div class="content-group">
                 <label style="color:var(--primary); font-size:1rem; display: block; margin-bottom: 3px;">Nội dung diễn biến (Khung nhập thô):</label>
                 <textarea id="rawContent" placeholder="Ghi chép nhanh các ý kiến thảo luận tại đây..."></textarea>
             </div>
 
-            <!-- CHUYỂN HỘP THÔNG BÁO LÊN ĐÂY: Tránh bị hàng nút cố định che khuất -->
             <div id="statusBox" style="display:none; margin-bottom: 8px;"></div>
 
             <div class="all-actions-row">
@@ -316,7 +307,16 @@
                 <button id="btnPreviewExport" class="btn-export" onclick="previewWordDocument()">Xuất File Word</button>
                 <button id="btnReset" class="btn-reset" onclick="resetMeeting()">Tạo mới</button>
             </div>
-        </div> <!-- Thẻ đóng của class="meetingContentSection" -->
+        </div>
+
+        <!-- KHỐI DANH SÁCH TÌM KIẾM ĐƯỢC CHUYỂN XUỐNG DƯỚI CÙNG -->
+        <div id="searchResultsSection" style="display:none; margin-top: 15px; margin-bottom: 8px; background: #fafafa; border: 1px solid var(--border); border-radius: 6px; padding: 6px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 4px; margin-bottom: 4px;">
+                <span style="font-weight: 600; color: var(--primary); font-size: 0.9rem;">Danh sách kết quả tìm kiếm:</span>
+                <button onclick="closeSearchResults()" style="background: var(--secondary); padding: 2px 8px; font-size: 0.75rem; border: none; border-radius: 3px; color: white; cursor: pointer;">Đóng danh mục</button>
+            </div>
+            <ul id="searchResults" class="search-results" style="max-height: 250px; overflow-y: auto; padding: 0; margin: 0; list-style: none;"></ul>
+        </div>
     </div> <!-- Thẻ đóng của class="container" -->
 
     <!-- KHỐI GIAO DIỆN MODAL XEM TRƯỚC VĂN BẢN -->
@@ -338,6 +338,7 @@
     <script>
         window.searchResultsData = [];
         window.previewDataCache = null;
+        window.isAiReportActive = false; // Cờ toàn cục bảo vệ báo cáo AI
         
         window.onload = function() {
             document.getElementById('headerArea').innerHTML = `
@@ -362,6 +363,7 @@
                 document.getElementById('rawContent').value = '';
                 document.getElementById('recordId').value = ''; 
                 document.getElementById('statusBox').style.display = 'none';
+                window.isAiReportActive = false;
                 setNow();
             }
         }
@@ -398,7 +400,6 @@
 
         function closeSearchResults() {
             document.getElementById('searchResultsSection').style.display = 'none';
-            document.getElementById('meetingContentSection').style.display = 'block';
         }
 
         async function processAction(actionType) {
@@ -499,7 +500,7 @@
             }
         }
 
-async function searchMeetingData() {
+        async function searchMeetingData() {
             const keyword = document.getElementById('searchKeyword').value;
             const resultList = document.getElementById('searchResults');
             const searchResultsSection = document.getElementById('searchResultsSection');
@@ -507,7 +508,10 @@ async function searchMeetingData() {
             
             if(!keyword.trim()) { alert('Vui lòng nhập từ khóa!'); return; }
             
-            // CẬP NHẬT NÂNG CẤP: Luôn hiển thị cả Khung kết quả (trên) và Khung Form (dưới)
+            // Xóa cờ AI khi thực hiện tìm kiếm thủ công
+            window.isAiReportActive = false;
+            
+            // Hiển thị đồng thời cả 2 khung
             searchResultsSection.style.display = 'block';
             meetingContentSection.style.display = 'block';
             
@@ -552,12 +556,11 @@ async function searchMeetingData() {
             }
         }
 
-function extractToForm(index) {
+        function extractToForm(index) {
             if(window.searchResultsData && window.searchResultsData[index]) {
                 const dataBlock = window.searchResultsData[index];
                 
-                // CẬP NHẬT QUAN TRỌNG: LOẠI BỎ LỆNH ẨN KHUNG DANH SÁCH TÌM KIẾM
-                // document.getElementById('searchResultsSection').style.display = 'none'; 
+                // Đảm bảo khung nội dung luôn hiển thị, không ẩn khung danh sách
                 document.getElementById('meetingContentSection').style.display = 'block';
                 
                 document.getElementById('meetingTitle').value = dataBlock.title || '';
@@ -619,7 +622,7 @@ function extractToForm(index) {
                 document.getElementById('location').value = extLocation;
                 document.getElementById('attendees').value = extAttendees;
                 
-                // GÁN NỘI DUNG VÀO KHUNG NHẬP LIỆU
+                // Gán nội dung vào Khung nhập liệu phía trên
                 document.getElementById('rawContent').value = pureContent;
                 
                 if (extDate) {
@@ -630,14 +633,14 @@ function extractToForm(index) {
 
                 const statusBox = document.getElementById('statusBox');
                 
-                // KIỂM TRA TOÀN DIỆN BẢO VỆ GIAO DIỆN AI (NẾU CÓ)
+                // Bảo vệ tuyệt đối thông báo AI nếu cờ đang kích hoạt
                 if (window.isAiReportActive !== true && statusBox.innerHTML.indexOf('KẾT QUẢ PHÂN TÍCH TỪ AI') === -1) {
                     statusBox.className = 'status-success';
                     statusBox.innerHTML = 'Đã bóc tách Biên bản vào các trường. Sẵn sàng chỉnh sửa & Ghi đè!';
                     statusBox.style.display = 'block';
                 }
 
-                // CUỘN TRANG VỀ PHẦN KHUNG FORM ĐỂ CÁN BỘ TIỆN KIỂM TRA NỘI DUNG NẠP
+                // Tự động cuộn trang lên trên để xem dữ liệu nạp
                 document.getElementById('meetingTitle').scrollIntoView({ behavior: "smooth", block: "center" });
             }
         }
@@ -652,7 +655,7 @@ function extractToForm(index) {
             }
         }
 
-async function searchMeetingAI() {
+        async function searchMeetingAI() {
             const aiQuery = document.getElementById('aiSearchQuery').value;
             const rawContentField = document.getElementById('rawContent'); 
             const statusBox = document.getElementById('statusBox');
@@ -662,7 +665,7 @@ async function searchMeetingAI() {
                 return; 
             }
             
-            // 1. NGAY LẬP TỨC XÓA RỖNG KHUNG TRÊN NHƯ YÊU CẦU
+            // Xóa nội dung cũ ở khung nhập thô
             rawContentField.value = '';
             
             document.getElementById('searchResultsSection').style.display = 'none';
@@ -671,8 +674,7 @@ async function searchMeetingAI() {
             toggleButtons(true);
             document.getElementById('btnAiSearch').disabled = true;
             
-            // 2. TẮT CỜ BẢO VỆ ĐỂ NẠP TRẠNG THÁI LOADING
-            window.isAiReportActive = false;
+            window.isAiReportActive = false; // Đặt cờ tạm thời
             
             statusBox.style.display = 'block';
             statusBox.className = 'status-loading';
@@ -695,8 +697,7 @@ async function searchMeetingAI() {
                         window.searchResultsData = result.data;
                     }
 
-                    // 3. BẬT CỜ BẢO VỆ: KHÓA CHẶT KHUNG DƯỚI, KHÔNG CHO AI XÓA NỮA
-                    window.isAiReportActive = true;
+                    window.isAiReportActive = true; // Kích hoạt cờ bảo vệ
                     
                     statusBox.className = 'status-success';
                     statusBox.style.textAlign = 'left';
