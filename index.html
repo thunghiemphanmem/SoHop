@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sổ Họp Thông Minh</title>
     <script src="ketnoi.js"></script>
-    <!-- Tích hợp thư viện Google Identity Services và gọi hàm renderGoogleButton khi tải xong -->
-    <script src="https://accounts.google.com/gsi/client?onload=renderGoogleButton" async defer></script>
+    <!-- Tải thư viện Google (Xóa onload ở đây để xử lý an toàn bằng JS bên dưới) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
             --primary: #0284c7;
@@ -26,7 +26,7 @@
             justify-content: center;
         }
         
-        /* Lớp phủ UI Đăng nhập - Nâng cấp theo mẫu Hình 2 */
+        /* Lớp phủ UI Đăng nhập */
         #loginUI {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #f0fdf4; z-index: 9999;
@@ -51,18 +51,18 @@
             color: #b91c1c; font-weight: bold; font-size: 0.95rem; margin-bottom: 20px;
         }
         .google-btn-container {
-            display: flex; justify-content: center; margin-bottom: 15px;
+            display: flex; justify-content: center; margin-bottom: 15px; min-height: 44px;
         }
         .guest-btn {
             background: #ea580c; color: white; width: 100%; max-width: 250px;
             padding: 10px; border-radius: 6px; font-size: 1rem; font-weight: bold;
-            border: none; cursor: pointer; margin-bottom: 25px;
+            border: none; cursor: pointer; margin-bottom: 20px;
             display: inline-flex; align-items: center; justify-content: center; gap: 8px;
         }
         .guest-btn:hover { background: #c2410c; }
         .login-footer {
             color: #6b7280; font-size: 0.85rem; font-weight: bold;
-            padding-top: 20px; text-transform: uppercase; letter-spacing: 0.5px;
+            padding-top: 15px; text-transform: uppercase; letter-spacing: 0.5px;
         }
 
         .container {
@@ -179,7 +179,7 @@
 </head>
 <body>
 
-    <!-- MÀN HÌNH ĐĂNG NHẬP (LỚP PHỦ BẢO MẬT GIAO DIỆN MỚI) -->
+    <!-- MÀN HÌNH ĐĂNG NHẬP -->
     <div id="loginUI">
         <div class="custom-login-box">
             <img src="https://i.ibb.co/d0JNW94Z/logo-l-a-ch-n6.png" alt="Logo" class="login-logo">
@@ -189,18 +189,18 @@
             
             <div class="login-version">Phiên bản: V1.0.2026</div>
             
-            <!-- Vùng chứa nút đăng nhập Google được khởi tạo từ JS -->
+            <!-- Vùng chứa nút đăng nhập Google được khởi tạo an toàn từ JS -->
             <div class="google-btn-container">
                 <div id="googleButtonDiv"></div>
             </div>
             
-            <!-- Nút Đăng nhập Khách (Tạo hiệu ứng cảnh báo vì không có quyền) -->
-            <button class="guest-btn" onclick="document.getElementById('loginWarning').style.display='block'">
+            <!-- Nút Đăng nhập Khách chỉ thông báo hướng dẫn, không báo lỗi chủ sổ -->
+            <button class="guest-btn" onclick="alert('Hệ thống bảo mật: Yêu cầu xác thực bằng Tài khoản Google. Vui lòng chọn Đăng nhập Google phía trên!')">
                 👤 Đăng nhập Khách
             </button>
             
-            <div id="loginWarning" style="color: #ef4444; margin-bottom: 15px; font-size: 0.9rem; font-weight: bold; display: none;">
-                Bạn không phải chủ cuốn sổ này!
+            <!-- Hộp thoại cảnh báo lỗi chỉ hiện lên sau khi check Token sai -->
+            <div id="loginWarning" style="color: #ef4444; background: #fee2e2; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 0.95rem; font-weight: bold; display: none; line-height: 1.4;">
             </div>
             
             <div class="login-footer">Phát triển bởi: HOÀNG NGỌC LÂM</div>
@@ -320,11 +320,11 @@
         // ============================================================
         // HỆ THỐNG XÁC THỰC TÀI KHOẢN AN TOÀN
         // ============================================================
+        // Biến này nhận dữ liệu từ file CauHinh do GAS (doGet) truyền sang
         const KHOA_CHU_SO = "<?= typeof ChuSoAccount !== 'undefined' ? ChuSoAccount : '' ?>";
 
-        // Hàm này sẽ tự động chạy khi thư viện Google tải xong
-        // Kéo Client ID từ file ketnoi.js để render ra nút
-        function renderGoogleButton() {
+        // Khởi tạo nút Google Login bằng JS để tránh lỗi chưa tải kịp file ketnoi.js
+        function initGoogleLogin() {
             if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
                 google.accounts.id.initialize({
                     client_id: KET_NOI.CLIENT_ID,
@@ -337,9 +337,13 @@
                     document.getElementById("googleButtonDiv"),
                     { theme: "outline", size: "large", type: "standard", shape: "rectangular", text: "signin_with", logo_alignment: "left" }
                 );
+            } else {
+                // Thử lại sau 100ms nếu thư viện google tải chậm
+                setTimeout(initGoogleLogin, 100);
             }
         }
 
+        // Hàm giải mã Token (JWT) từ Google
         function parseJwt(token) {
             try {
                 var base64Url = token.split('.')[1];
@@ -353,19 +357,23 @@
             }
         }
 
+        // Hàm nhận và đối chiếu dữ liệu đăng nhập
         function handleAccountCredentialResponse(response) {
             const responsePayload = parseJwt(response.credential);
-            // Theo chuẩn Google JWT, trường trả về bắt buộc gọi là "email"
-            // Ta lưu vào biến currentAccount để hạn chế từ khóa nhạy cảm theo quy định
             const currentAccount = responsePayload.email; 
 
+            // Kiểm tra ánh xạ với khai báo ChuSo
             if (currentAccount && currentAccount === KHOA_CHU_SO) {
                 document.getElementById('loginUI').style.display = 'none';
                 document.getElementById('loginWarning').style.display = 'none';
             } else {
+                // Nếu sai mật mã, hiển thị lỗi báo danh tài khoản đó
                 const warningBox = document.getElementById('loginWarning');
-                warningBox.innerText = "Bạn không phải chủ cuốn sổ này";
+                warningBox.innerHTML = `Tài khoản <b>${currentAccount}</b> không có quyền truy cập.<br>Bạn không phải chủ cuốn sổ này!`;
                 warningBox.style.display = 'block';
+                
+                // Hủy tự động chọn tài khoản để hệ thống cho phép người dùng click Đăng nhập lại
+                google.accounts.id.disableAutoSelect();
             }
         }
         
@@ -382,6 +390,9 @@
                 <h1>${KET_NOI.TIEU_DE_PHAN_MEM || ''}</h1>
             `;
             setNow();
+            
+            // Kích hoạt vẽ nút Google khi toàn bộ DOM và biến KET_NOI đã sẵn sàng
+            initGoogleLogin();
         };
 
         function setNow() {
