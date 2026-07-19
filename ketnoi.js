@@ -26,8 +26,8 @@ const KET_NOI = {
           ID_THU_MUC_LUU: '1imdsuJvIM1u2hyItdnxoUkJPCpvFaRdG'
       },
       'tulieuhopthanh@gmail.com': {
-          ID_SO_HOP: 'ID_CUA_FILE_DOCX_B_DIEN_VAO_DAY', 
-          ID_THU_MUC_LUU: 'ID_THU_MUC_LUU_CUA_B_DIEN_VAO_DAY' 
+          ID_SO_HOP: '1BIw2RIzpj79WDycb7DpyEyqN9lCswM4WYS3jDZtlXiA', 
+          ID_THU_MUC_LUU: '1imdsuJvIM1u2hyItdnxoUkJPCpvFaRdG' 
       }
       // Thầy có thể thêm Account C, D tại đây theo đúng cấu trúc trên
   }
