@@ -22,11 +22,11 @@ const KET_NOI = {
   // MA TRẬN PHÂN QUYỀN: Hệ thống tự động trỏ ID_SO_HOP theo Account đăng nhập
   PHAN_QUYEN_TAI_KHOAN: {
       'hoangngoclamlc@gmail.com': {
-          ID_SO_HOP: '14FPOA5brR6gUyz5gkvovE87fZkpWkQSrrtC-dJs_EqY',
+          ID_SO_HOP: '1BIw2RIzpj79WDycb7DpyEyqN9lCswM4WYS3jDZtlXiA',
           ID_THU_MUC_LUU: '1imdsuJvIM1u2hyItdnxoUkJPCpvFaRdG'
       },
       'tulieuhopthanh@gmail.com': {
-          ID_SO_HOP: '1BIw2RIzpj79WDycb7DpyEyqN9lCswM4WYS3jDZtlXiA', 
+          ID_SO_HOP: '14FPOA5brR6gUyz5gkvovE87fZkpWkQSrrtC-dJs_EqY', 
           ID_THU_MUC_LUU: '1imdsuJvIM1u2hyItdnxoUkJPCpvFaRdG' 
       }
       // Thầy có thể thêm Account C, D tại đây theo đúng cấu trúc trên
