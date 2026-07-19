@@ -185,16 +185,17 @@
         window.isAiReportActive = false;
         window.currentUserConfig = null; // Cấu trúc lưu trữ động thông số theo Phiên
         
-        // HÀM: CẬP NHẬT HEADER VÀ HUY HIỆU TÀI KHOẢN
+      // HÀM: CẬP NHẬT HEADER VÀ HUY HIỆU TÀI KHOẢN (Đã căn chỉnh cùng một hàng)
         function updateHeaderUI(accountName) {
-            let accountBadge = accountName ? `<div style="font-size: 0.75rem; color: #047857; font-weight: bold; background: #d1fae5; padding: 2px 6px; border-radius: 4px; border: 1px solid #34d399; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px;" title="${accountName}">👤 ${accountName}</div>` : '';
+            // Đã xóa margin-bottom và chỉnh lại padding để cân đối với nút Đăng xuất
+            let accountBadge = accountName ? `<div style="font-size: 0.75rem; color: #047857; font-weight: bold; background: #d1fae5; padding: 4px 8px; border-radius: 4px; border: 1px solid #34d399; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px;" title="${accountName}">👤 ${accountName}</div>` : '';
             
             document.getElementById('headerArea').innerHTML = `
                 <img src="${KET_NOI.LOGO_TRUONG || ''}" alt="Logo" onerror="this.style.display='none'">
                 <h1 style="flex: 1; text-align: center; margin-left: 40px;">${KET_NOI.TIEU_DE_PHAN_MEM || ''}</h1>
-                <div style="position: absolute; right: 10px; display: flex; flex-direction: column; align-items: flex-end; justify-content: center;">
+                <div style="position: absolute; right: 10px; display: flex; flex-direction: row; align-items: center; gap: 8px;">
                     ${accountBadge}
-                    <button class="btn-logout" style="position: relative; right: 0;" onclick="executeLogout()">Đăng xuất</button>
+                    <button class="btn-logout" style="position: relative; right: auto; margin: 0;" onclick="executeLogout()">Đăng xuất</button>
                 </div>
             `;
         }
