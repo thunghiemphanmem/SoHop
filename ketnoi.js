@@ -13,7 +13,7 @@ const KET_NOI = {
   
   // 3. CẤU HÌNH GIAO DIỆN HIỂN THỊ
   TIEU_DE_PHAN_MEM: 'SỔ HỌP THÔNG MINH',
-  LOGO_TRUONG: 'https://i.ibb.co/d0JNW94Z/logo-l-a-ch-n6.png', 
+  LOGO_TRUONG: 'https://i.postimg.cc/xjzpvXCm/Logo-HL.png', 
   CAN_BO_THAO_TAC: 'Cán bộ Hành chính',
 
   // 4. XÁC THỰC BẢO MẬT VÀ PHÂN QUYỀN ĐỘNG SỔ HỌP
